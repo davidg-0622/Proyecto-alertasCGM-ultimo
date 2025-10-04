@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+
+{% block title %}Servicios Bancolombia{% endblock %}
+
+{% block content %}
+
+<h2 class="text-success-emphasis text-center display-5 mb-4">Servicios Bancolombia</h2>
+
+<!-- Filtro de búsqueda -->
+<form method="GET" action="{{ url_for('app.listar') }}" class="row g-2 mb-3">
+    <div class="col-auto">
+        <input type="text" name="filtro" class="form-control" placeholder="Buscar por nombre de servicio..."
+            value="{{ filtro }}">
+    </div>
+    <div class="col-auto">
+        <button type="submit" class="btn btn-primary mb-3">Buscar</button>
+        <a href="{{ url_for('app.listar') }}" class="btn btn-secondary mb-3">Limpiar</a>
+    </div>
+</form>
+
+<div class="table-responsive">
+    <table class="table table-striped table-bordered table-hover align-middle text-center">
+        <thead class="table-primary">
+            <tr>
+                <th>ID</th>
+                <th>Código</th>
+                <th>Nombre del servicio</th>
+                <th>Descripcion del servicio</th>
+                <th>Promesa del servicio</th>
+                <th>SRE</th>
+                <th>EVC</th>
+                <th>Contacto Líder</th>
+                <th>PO</th>
+                <th>Elemento Configuración</th>
+                <th>Grupo Helix</th>             
+                <th>Runbook</th>
+                <th>Carpeta Servicios Entregados </th>
+                <th>Relación de Servicios</th>
+                <th>Grupo Stand By</th>
+                <th>Líder Tecnico</th>
+                <th>Líder Linea/Area conocimiento</th>
+                <th>Servicio Especial</th>
+                <th>Servicio Clave</th>
+                <th>Encargado CGM</th>      
+                <th>Plataforma</th>
+                <th>Editar</th>
+                <th>Eliminar</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for servicio in servicios %}
+            <tr>
+                <td>{{ servicio.id_servicio }}</td>
+                <td>{{ servicio.codigo_de_aplicacion }}</td>
+                <td>{{ servicio.servicio }}</td>
+                <td>{{ servicio.descripcion_del_servicio }}</td>
+                <td>{{ servicio.promesa_del_servicio or '-' }}</td>
+                <td>{{ servicio.sre }}</td>
+                <td>{{ servicio.evc }}</td>
+                <td>{{ servicio.contacto_del_lider }}</td>
+                <td>{{ servicio.po }}</td>
+                <td>{{ servicio.elemento_de_configuracion }}</td>
+                <td>{{ servicio.grupo_inc_helix }}</td>
+                <td>
+                    {% if servicio.runbook %}
+                    <a href="{{ servicio.runbook }}" target="_blank" class="btn btn-info btn-sm">Ver</a>
+                    {% else %}-{% endif %}
+                </td>
+                <td>{{ servicio.carpeta_servicios_entregados }}</td>
+                <td>{{ servicio.relacion_de_servicios or '-' }}</td>
+                <td>{{ servicio.nombre_grupo_stand_by or '-' }}</td>
+                <td>{{ servicio.lider_tecnico_evc }}</td>
+                <td>{{ servicio.lider_linea_area_conocimiento}}</td>
+                <td>{{ servicio.servicio_especial or '-' }}</td>
+                <td>{{ servicio.servicio_clave or '-' }}</td>
+                <td>{{ servicio.encargado_cgm or '-' }}</td>
+                <td>{{ servicio.plataforma }}</td>
+
+                <td>
+                    <a href="{{ url_for('app.edit_servicio', id=servicio.id_servicio) }}" class="btn btn-warning btn-sm">
+                        <i class="bi bi-pencil"></i> Editar
+                    </a>
+                </td>
+                <td>
+                    <form action="{{ url_for('app.delete_servicio', id=servicio.id_servicio) }}" method="POST"
+                        style="display:inline;">
+                        <!-- CSRF token si usas Flask-WTF -->
+                        {% if csrf_token %}
+                        {{ csrf_token() }}
+                        {% endif %}
+                        <button type="submit" class="btn btn-danger btn-sm"
+                            onclick="return confirm('¿Eliminar este servicio?');">
+                            <i class="bi bi-trash"></i> Eliminar
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Paginación -->
+<nav aria-label="Paginación">
+    <ul class="pagination justify-content-center">
+        {% if page > 1 %}
+        <li class="page-item">
+            <a class="page-link"
+                href="{{ url_for('app.listar', page=page-1, filtro=filtro) }}">Anterior</a>
+        </li>
+        {% else %}
+        <li class="page-item disabled"><span class="page-link">Anterior</span></li>
+        {% endif %}
+
+        {% for p in range(1, total_pages + 1) %}
+        <li class="page-item {% if p == page %}active{% endif %}">
+            <a class="page-link" href="{{ url_for('app.listar', page=p, filtro=filtro) }}">{{ p }}</a>
+        </li>
+        {% endfor %}
+
+        {% if page < total_pages %} <li class="page-item">
+            <a class="page-link"
+                href="{{ url_for('app.listar', page=page+1, filtro=filtro) }}">Siguiente</a>
+            </li>
+            {% else %}
+            <li class="page-item disabled"><span class="page-link">Siguiente</span></li>
+            {% endif %}
+    </ul>
+</nav>
+
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %} Servicios Bancolombia {% endblock %}
+
+{% block content %} 
+<div class="container-sm text-center">
+    <h3 class="display-6">Servicios Bancolombia</h3>
+
+    <hr class="my-4">
+
+     <p>¿Tienes una cuenta?</p>
+    <div class="d-flex justify-content-center">
+        
+        <a href="{{url_for('auth.login')}}" class="btn btn-primary m-2">iniciar sesión</a>
+        <a href="{{url_for('auth.register')}}" class="btn btn-secondary m-2">Registrarse</a>
+    </div>
+
+
+</div>
+
+
+
+
+{% endblock %}

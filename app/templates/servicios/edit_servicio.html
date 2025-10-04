@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+
+{% block title %}Editar Servicio{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow-lg">
+        <div class="card-header bg-warning text-dark">
+            <h4 class="mb-0">Editar Servicio</h4>
+        </div>
+        <div class="card-body">
+            <form method="POST">
+                <div class="mb-3">
+                    <label class="form-label">Código de Aplicación</label>
+                    <input type="text" class="form-control" name="codigo_de_aplicacion"
+                        value="{{ servicio.codigo_de_aplicacion }}" required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Servicio</label>
+                    <input type="text" class="form-control" name="servicio"
+                        value="{{ servicio.servicio }}" required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Descripción del Servicio</label>
+                    <input type="text" class="form-control" name="descripcion_del_servicio"
+                        value="{{ servicio.descripcion_del_servicio }}" required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Promesa del Servicio</label>
+                    <input type="text" class="form-control" name="promesa_del_servicio"
+                        value="{{ servicio.promesa_del_servicio }}" required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">SRE</label>
+                    <input type="text" class="form-control" name="sre"
+                        value="{{ servicio.sre or '' }}">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">EVC</label>
+                    <input type="text" class="form-control" name="evc"
+                        value="{{ servicio.evc or '' }}">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Contacto del Líder</label>
+                    <input type="text" class="form-control" name="contacto_del_lider"
+                        value="{{ servicio.contacto_del_lider or '' }}">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">PO</label>
+                    <input type="text" class="form-control" name="po"
+                        value="{{ servicio.po or '' }}" required>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">Elemento de Configuración</label>
+                    <input type="text" class="form-control" name="elemento_de_configuracion"
+                        value="{{ servicio.elemento_de_configuracion or '' }}">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Grupo Helix</label>
+                    <input type="text" class="form-control" name="grupo_inc_helix" value="{{ servicio.grupo_inc_helix }}"
+                        required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Runbook (URL)</label>
+                    <input type="text" class="form-control" name="runbook" value="{{ servicio.runbook or '' }}">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Carpeta Servicios Entregados</label>
+                    <input type="text" class="form-control" name="carpeta_servicios_entregados"
+                        value="{{ servicio.carpeta_servicios_entregados or '' }}">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Relación de Servicios</label>
+                    <input type="text" class="form-control" name="relacion_de_servicios"
+                        value="{{ servicio.relacion_de_servicios or '' }}">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Nombre Grupo Stand By</label>
+                    <input type="text" class="form-control" name="nombre_grupo_stand_by"
+                        value="{{ servicio.nombre_grupo_stand_by or '' }}">
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">Líder Técnico EVC</label>
+                    <input type="text" class="form-control" name="lider_tecnico_evc"
+                        value="{{ servicio.lider_tecnico_evc }}">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Líder Línea/Área Conocimiento</label>
+                    <input type="text" class="form-control" name="lider_linea_area_conocimiento"
+                        value="{{ servicio.lider_linea_area_conocimiento }}">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Servicio Especial</label>
+                    <input type="text" class="form-control" name="servicio_especial"
+                        value="{{ servicio.servicio_especial or '' }}">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Servicio Clave</label>
+                    <input type="text" class="form-control" name="servicio_clave"
+                        value="{{ servicio.servicio_clave or '' }}">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Encargado CGM</label>
+                    <input type="text" class="form-control" name="encargado_cgm"
+                        value="{{ servicio.encargado_cgm or '' }}">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Plataforma</label>
+                    <input type="text" class="form-control" name="plataforma"
+                        value="{{ servicio.plataforma }}" required>
+                </div>
+                
+                <button type="submit" class="btn btn-success">Guardar Cambios</button>
+                <a href="{{ url_for('app.listar') }}" class="btn btn-secondary">Cancelar</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
