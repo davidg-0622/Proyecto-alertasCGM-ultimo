@@ -14,27 +14,22 @@ def total_alertas():
     # Total de alertas
     alertas = db.session.query(Alerta).count()
 
-    # Obtener el valor del filtro desde el query string
+    # Parámetros de búsqueda y paginación
     label = request.args.get('label', '').strip()
+    page = request.args.get('page', 1, type=int)
+    per_page = 1  # Número de servicios por página
 
-    # Filtrar servicios si se ingresó un valor
+    # Consulta base
+    query = db.session.query(Servicio)
+
+    # Filtro por nombre de servicio
     if label:
-        servicios_info = (
-            db.session.query(Servicio)
-            .filter(Servicio.servicio.ilike(f'%{label}%'))
-            .all()
-        )
-    else:
-        servicios_info = db.session.query(
-            Servicio.servicio,
-            Servicio.encargado_cgm,
-            Servicio.servicio_especial,
-            Servicio.servicio_clave
-        ).all()
+        query = query.filter(Servicio.servicio.ilike(f'%{label}%'))
 
-    print(f"Servicios encontrados: {len(servicios_info)}")
+    # Paginación
+    servicios_info = query.paginate(page=page, per_page=per_page)
 
-    # Top 20 servicios con más alertas
+    # Top servicios con más alertas
     top_servicios = (
         db.session.query(Alerta.Servicio, db.func.count().label('total_alertas'))
         .group_by(Alerta.Servicio)
@@ -47,8 +42,6 @@ def total_alertas():
         'alertas/alertas_principal.html',
         alertas=alertas,
         servicios=top_servicios,
-        servicios_info=servicios_info
+        servicios_info=servicios_info,
+        label=label
     )
-
-
-
