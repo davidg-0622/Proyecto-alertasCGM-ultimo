@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+
+
+<div class="container mt-5">
+  <h1 class="text-center mb-4">Principal Alertas</h1>
+
+  <!-- Card centrado con total de alertas -->
+  <div class="d-flex justify-content-center mb-5">
+    <div class="card text-bg-primary shadow" style="max-width: 20rem;">
+      <div class="card-header text-center fw-bold">
+        <i class="bi bi-bell-fill"></i> Total Alertas
+      </div>
+      <div class="card-body text-center">
+        <h1 class="card-text display-4">{{ alertas }}</h1>
+      </div>
+    </div>
+  </div>
+
+ <!-- Busqueda del servicio -->
+  
+<h2 class="text-center mt-5">Información de Servicios</h2>
+<form method="GET" class="mb-4 d-flex justify-content-center">
+  <input type="text" name="label" class="form-control w-25 me-2" placeholder="Buscar por nombre de servicio" value="{{ request.args.get('label', '') }}">
+  <button type="submit" class="btn btn-primary">Buscar</button>
+</form>
+
+<div class="table-responsive">
+  <table class="table table-striped table-bordered text-center">
+    <thead class="table-secondary">
+      <tr>
+        <th>Servicio</th>
+        <th>Encargado CGM</th>
+        <th>Servicio Especial</th>
+        <th>servicio clave</th>
+        <th>SRE</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for servicio in servicios_info %}
+      <tr>
+        <td>{{ servicio.servicio }}</td>
+        <td>{{ servicio.encargado_cgm }}</td>
+        <td>{{ servicio.servicio_especial }}</td>
+        <td>{{ servicio.servicio_clave }}</td>
+        <td>{{ servicio.sre }}</td>
+     
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+
+  <!-- Tabla de servicios con más alertas -->
+  <h3 class="text-center mb-3">Top 10 servicios con más alertas</h3>
+  <div class="table-responsive">
+    <table class="table table-hover table-bordered align-middle text-center">
+      <thead class="table-dark">
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Servicio</th>
+          <th scope="col">Total de alertas</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for servicio, total in servicios %}
+        <tr>
+          <td>{{ loop.index }}</td>
+          <td>{{ servicio }}</td>
+          <td><span class="badge bg-danger">{{ total }}</span></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+
+
+{% endblock %}

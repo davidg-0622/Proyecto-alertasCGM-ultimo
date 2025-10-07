@@ -10,17 +10,39 @@ bp = Blueprint('app', __name__, url_prefix='/app')
 
 ###########################Listar servicio #####################
 
+from sqlalchemy import or_
+
 @bp.route('/listar')
 def listar():
     filtro = request.args.get('filtro')
-    page = request.args.get('page', 1, type=int)  # página actual
-    per_page = 1  # cantidad de registros por página
+    page = request.args.get('page', 1, type=int)
+    per_page = 1
 
     query = Servicio.query
 
     if filtro:
-        query = query.filter(Servicio.servicio.ilike(f'%{filtro}%'))
-       
+        query = query.filter(or_(
+            Servicio.codigo_de_aplicacion.ilike(f'%{filtro}%'),
+            Servicio.servicio.ilike(f'%{filtro}%'),
+            Servicio.descripcion_del_servicio.ilike(f'%{filtro}%'),
+            Servicio.promesa_del_servicio.ilike(f'%{filtro}%'),
+            Servicio.sre.ilike(f'%{filtro}%'),
+            Servicio.evc.ilike(f'%{filtro}%'),
+            Servicio.contacto_del_lider.ilike(f'%{filtro}%'),
+            Servicio.po.ilike(f'%{filtro}%'),
+            Servicio.elemento_de_configuracion.ilike(f'%{filtro}%'),
+            Servicio.grupo_inc_helix.ilike(f'%{filtro}%'),
+            Servicio.runbook.ilike(f'%{filtro}%'),
+            Servicio.carpeta_servicios_entregados.ilike(f'%{filtro}%'),
+            Servicio.relacion_de_servicios.ilike(f'%{filtro}%'),
+            Servicio.nombre_grupo_stand_by.ilike(f'%{filtro}%'),
+            Servicio.lider_tecnico_evc.ilike(f'%{filtro}%'),
+            Servicio.lider_linea_area_conocimiento.ilike(f'%{filtro}%'),
+            Servicio.servicio_especial.ilike(f'%{filtro}%'),
+            Servicio.servicio_clave.ilike(f'%{filtro}%'),
+            Servicio.encargado_cgm.ilike(f'%{filtro}%'),
+            Servicio.plataforma.ilike(f'%{filtro}%')
+        ))
 
     paginacion = query.paginate(page=page, per_page=per_page, error_out=False)
     servicios = paginacion.items
@@ -28,13 +50,12 @@ def listar():
     total_pages = ceil(total / per_page)
 
     return render_template(
-        'servicios/listar_servicio.html', 
-        servicios=servicios, 
-        page=page, 
-        total_pages=total_pages, 
+        'servicios/listar_servicio.html',
+        servicios=servicios,
+        page=page,
+        total_pages=total_pages,
         filtro=filtro
     )
-
 
 ########################editar#######################
 
@@ -97,10 +118,10 @@ def delete_servicio(id):
 
 #####################################
 
-@bp.route('/index')
+@bp.route('/')
 def index():
-    return render_template('index.html')
+     return redirect(url_for('app.listar'))
 
-@bp.route('/create')
-def create():
-    return "crear servicio "
+
+
+##########################3

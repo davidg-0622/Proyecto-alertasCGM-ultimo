@@ -12,7 +12,7 @@
     <nav class="navbar navbar-expand-sm navbar-dark bg-dark" data-bs-theme="dark">
   <div class="container-fluid">
     <a class="navbar-brand" href="{{ url_for('app.index') }}">
-      <img src="{{ url_for('static', filename='images/logo1.png') }}" alt="Logo" width="100" height="30" class="d-inline-block align-text-top">
+      <img src="{{ url_for('static', filename='images/logo1.png') }}" alt="Logo" width="120" height="40" class="d-inline-block align-text-top">
       
     </a>
     <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
@@ -38,7 +38,7 @@
               Alertas CGM
             </a>
             <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="#">Principal</a></li>
+              <li><a class="dropdown-item" href="{{ url_for('alertas.total_alertas') }}">Top alertas</a></li>
               <li><a class="dropdown-item" href="#">Pedidos</a></li>
               <li>
                 <hr class="dropdown-divider">
