@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h3 class="mt-5 text-center">Conteo de Alertas por Servicio</h3>
+<div class="table-responsive" style="max-width: 400px; margin: 0 auto;">
+    <table class="table table-bordered table-hover table-sm text-center" style="font-size: 0.9rem;">
+        <thead class="table-secondary">
+            <tr>
+                <th>Servicio</th>
+                <th>Total de Alertas</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in conteo_servicios %}
+            <td>
+
+                <a href="{{ url_for('alertas.detalle_alertas', servicio=item.Servicio) }}">{{ item.Servicio }}</a>
+            </td>
+                
+
+
+                <td><span class="badge bg-danger">{{ item.Total_Alertas }}</span></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
