@@ -5,7 +5,7 @@
 
 
 <div class="container mt-5">
-  <h1 class="text-center mb-4">Principal Alertas</h1>
+  <h1 class="text-center mb-4">Total Alertas</h1>
 
   <!-- Card centrado con total de alertas -->
   <div class="d-flex justify-content-center mb-5">
@@ -19,11 +19,11 @@
     </div>
   </div>
 
- <!-- Busqueda del servicio -->
-  
+<!-- Busqueda del servicio -->
 <h2 class="text-center mt-5">Información de Servicios</h2>
 <form method="GET" class="mb-4 d-flex justify-content-center">
   <input type="text" name="label" class="form-control w-25 me-2" placeholder="Buscar por nombre de servicio" value="{{ request.args.get('label', '') }}">
+  <input type="hidden" name="per_page" value="{{ 10 if request.args.get('label', '')|length > 1 else 1 }}">
   <button type="submit" class="btn btn-primary me-2">Buscar</button>
   <a href="{{ url_for('alertas.total_alertas') }}" class="btn btn-secondary">Limpiar</a>
 </form>
@@ -44,8 +44,20 @@
     <tr>
     <td>{{ servicio.servicio }}</td>
     <td>{{ servicio.encargado_cgm }}</td>
-    <td>{{ servicio.servicio_especial }}</td>
-    <td>{{ servicio.servicio_clave }}</td>
+    <td>
+      {% if servicio.servicio_especial == 'SI' %}
+      <span class="badge bg-success">SI</span>
+      {% else %}
+      {{ servicio.servicio_especial }}
+      {% endif %}
+    </td>
+    <td>
+      {% if servicio.servicio_clave == 'SI' %}
+      <span class="badge bg-success">SI</span>
+      {% else %}
+      {{ servicio.servicio_clave }}
+      {% endif %}
+    </td>
     <td>{{ servicio.sre }}</td>
    
     </tr>

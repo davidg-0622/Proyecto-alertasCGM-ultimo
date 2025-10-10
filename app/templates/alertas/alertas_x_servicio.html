@@ -2,7 +2,8 @@
 
 {% block content %}
 <h3 class="mt-5 text-center">Conteo de Alertas por Servicio</h3>
-<div class="table-responsive" style="max-width: 400px; margin: 0 auto;">
+<div class="table-responsive" style="max-width: 900px; margin: 0 auto;">
+    <input class="form-control mb-3" id="buscador" type="text" placeholder="Buscar servicio...">
     <table class="table table-bordered table-hover table-sm text-center" style="font-size: 0.9rem;">
         <thead class="table-secondary">
             <tr>
@@ -10,19 +11,26 @@
                 <th>Total de Alertas</th>
             </tr>
         </thead>
-        <tbody>
+        <tbody id="tabla-servicios">
             {% for item in conteo_servicios %}
-            <td>
-
-                <a href="{{ url_for('alertas.detalle_alertas', servicio=item.Servicio) }}">{{ item.Servicio }}</a>
-            </td>
-                
-
-
+            <tr>
+                <td>
+                    <a href="{{ url_for('alertas.detalle_alertas', servicio=item.Servicio) }}">{{ item.Servicio }}</a>
+                </td>
                 <td><span class="badge bg-danger">{{ item.Total_Alertas }}</span></td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
 </div>
+<script>
+document.getElementById('buscador').addEventListener('keyup', function() {
+    var filtro = this.value.toLowerCase();
+    var filas = document.querySelectorAll('#tabla-servicios tr');
+    filas.forEach(function(fila) {
+        var texto = fila.textContent.toLowerCase();
+        fila.style.display = texto.includes(filtro) ? '' : 'none';
+    });
+});
+</script>
 {% endblock %}

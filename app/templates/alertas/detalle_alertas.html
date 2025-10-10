@@ -1,12 +1,28 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h3 class="mt-5 text-center">Detalle de Alertas</h3>
 
-<!-- Gráfico de alertas por día -->
-<div class="mb-5">
-    <canvas id="graficoAlertasPorDia" width="600" height="300"></canvas>
+<!-- Card Bootstrap con el total de alertas alineado a la izquierda -->
+<div class="d-flex justify-content-start my-4"></div>
+    <div class="card text-white bg-primary mb-3" style="max-width: 18rem;">
+        <div class="card-header">Total de Alertas</div>
+        <div class="card-body">
+            <h5 class="card-title display-6">{{ alertas|length }}</h5>
+            <p class="card-text">Cantidad de alertas registradas.</p>
+        </div>
+    </div>
 </div>
+
+<h3 class="mt-5 text-center">Detalle de Alertas</h3>
+<!-- Gráfico de alertas por día -->
+<div class="mb-5" style="max-width: 900px; margin: 0 auto;">
+    <canvas id="graficoAlertasPorDia" width="400" height="200"></canvas>
+</div>
+{% set servicios = alertas | map(attribute='Servicio') | list %}
+<div class="text-center my-4">
+    <h4 class="fw-bold">Nombre del servicio: {{ servicios[0] }}</h4>
+</div>
+
 
 <!-- Tabla de alertas en Bootstrap -->
 <div class="table-responsive" style="max-width: 800px; margin: 0 auto;">

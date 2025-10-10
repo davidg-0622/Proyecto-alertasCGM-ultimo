@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+
+{% block title %}Crear servicio{% endblock %}
+
+{% block content %}
+<h1 class="mb-4 text-center">Crear Nuevo Servicio</h1>
+
+
+<div class="container mt-5">
+<form method="POST" action="{{ url_for('app.crear_servicio') }}" class="row g-3">
+    <div class="col-md-5">
+        <label class="form-label"><strong>Servicio:</strong></label>
+        <input type="text" class="form-control" name="servicio" required>
+    </div>
+    <div class="col-md-5">
+        <label class="form-label"><strong>Descripción del Servicio</strong>:</label>
+        <textarea class="form-control" name="descripcion_del_servicio" ></textarea>
+    </div>
+    <div class="col-md-5">
+        <label class="form-label"><strong>Promesa del Servicio:</strong></label>
+        <input type="text" class="form-control" name="promesa_del_servicio" >
+    </div>
+    <div class="col-md-5">
+        <label class="form-label"><strong>SRE:</strong></label>
+        <input type="text" class="form-control" name="sre" >
+    </div>
+    <div class="col-md-5">
+        <label class="form-label"><strong>EVC:</strong></label>
+        <input type="text" class="form-control" name="evc" >
+    </div>
+    <div class="col-md-5">
+        <label class="form-label"><strong>Contacto del Líder:</strong></label>
+        <input type="number" class="form-control" name="contacto_del_lider">
+    </div>
+    <div class="col-md-5">
+        <label class="form-label"><strong>PO:</strong></label>
+        <input type="text" class="form-control" name="po" >
+    </div>
+    <div class="col-md-5">
+        <label class="form-label"><strong>Elemento de Configuración:</strong></label>
+        <input type="text" class="form-control" name="elemento_de_configuracion">
+    </div>
+    <div class="col-md-5">
+        <label class="form-label"><strong>Grupo INC Helix:</strong></label>
+        <input type="text" class="form-control" name="grupo_inc_helix" >
+    </div>
+    <div class="col-md-5">
+        <label class="form-label"><strong>Runbook:</strong></label>
+        <input type="text" class="form-control" name="runbook">
+    </div>
+    <div class="col-md-5">
+        <label class="form-label"><strong>Carpeta Servicios Entregados:</strong></label>
+        <input type="text" class="form-control" name="carpeta_servicios_entregados">
+    </div>
+    <div class="col-md-5">
+        <label class="form-label"><strong>Relación de Servicios:</strong></label>
+        <input type="text" class="form-control" name="relacion_de_servicios">
+    </div>
+    <div class="col-md-5">
+        <label class="form-label"><strong>Nombre Grupo Stand By:</strong></label>
+        <input type="text" class="form-control" name="nombre_grupo_stand_by">
+    </div>
+    <div class="col-md-5">
+        <label class="form-label"><strong>Líder Técnico EVC:</strong></label>
+        <input type="text" class="form-control" name="lider_tecnico_evc" >
+    </div>
+    <div class="col-md-5">
+        <label class="form-label"><strong>Líder Línea Área Conocimiento:</strong></label>
+        <input type="text" class="form-control" name="lider_linea_area_conocimiento" >
+    </div>
+    <div class="col-md-5">
+        <label class="form-label"><strong>Servicio Especial:</strong></label>
+        <input type="text" class="form-control" name="servicio_especial">
+    </div>
+    <div class="col-md-5">
+        <label class="form-label"><strong>Servicio Clave:</strong></label>
+        <input type="text" class="form-control" name="servicio_clave">
+    </div>
+    <div class="col-md-5">
+        <label class="form-label"><strong>Encargado CGM:</strong></label>
+        <input type="text" class="form-control" name="encargado_cgm">
+    </div>
+    <div class="col-md-5">
+        <label class="form-label"><strong>Plataforma:</strong></label>
+        <input type="text" class="form-control" name="plataforma">
+    </div>
+    <div class="col-md-5">
+        <label class="form-label"><strong>Código de Aplicación:</strong></label>
+        <input type="text" class="form-control" name="codigo_de_aplicacion">
+    </div>
+    <div class="col-12" style="margin-top: 20px;">
+        <button type="submit" class="btn btn-primary">Crear Servicio</button>
+    </div>
+</form>
+
+</div>
+{% endblock %}

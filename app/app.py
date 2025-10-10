@@ -1,7 +1,8 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
 from app.models.servicio import Servicio
 from app import db # Asume que 'db' se importa desde la aplicación principal
 from math import ceil
+from sqlalchemy import or_
 
 
 # Define el blueprint una sola vez
@@ -10,39 +11,20 @@ bp = Blueprint('app', __name__, url_prefix='/app')
 
 ###########################Listar servicio #####################
 
-from sqlalchemy import or_
-
 @bp.route('/listar')
 def listar():
     filtro = request.args.get('filtro')
     page = request.args.get('page', 1, type=int)
-    per_page = 1
 
     query = Servicio.query
 
     if filtro:
         query = query.filter(or_(
-            Servicio.codigo_de_aplicacion.ilike(f'%{filtro}%'),
             Servicio.servicio.ilike(f'%{filtro}%'),
-            Servicio.descripcion_del_servicio.ilike(f'%{filtro}%'),
-            Servicio.promesa_del_servicio.ilike(f'%{filtro}%'),
-            Servicio.sre.ilike(f'%{filtro}%'),
-            Servicio.evc.ilike(f'%{filtro}%'),
-            Servicio.contacto_del_lider.ilike(f'%{filtro}%'),
-            Servicio.po.ilike(f'%{filtro}%'),
-            Servicio.elemento_de_configuracion.ilike(f'%{filtro}%'),
-            Servicio.grupo_inc_helix.ilike(f'%{filtro}%'),
-            Servicio.runbook.ilike(f'%{filtro}%'),
-            Servicio.carpeta_servicios_entregados.ilike(f'%{filtro}%'),
-            Servicio.relacion_de_servicios.ilike(f'%{filtro}%'),
-            Servicio.nombre_grupo_stand_by.ilike(f'%{filtro}%'),
-            Servicio.lider_tecnico_evc.ilike(f'%{filtro}%'),
-            Servicio.lider_linea_area_conocimiento.ilike(f'%{filtro}%'),
-            Servicio.servicio_especial.ilike(f'%{filtro}%'),
-            Servicio.servicio_clave.ilike(f'%{filtro}%'),
-            Servicio.encargado_cgm.ilike(f'%{filtro}%'),
-            Servicio.plataforma.ilike(f'%{filtro}%')
         ))
+        per_page = query.count() or 1  # Si hay filtro, per_page es el número de resultados encontrados
+    else:
+        per_page = 1  # Sin filtro, per_page es 1
 
     paginacion = query.paginate(page=page, per_page=per_page, error_out=False)
     servicios = paginacion.items
@@ -124,4 +106,44 @@ def index():
 
 
 
-##########################3
+# Mostrar el formulario
+@bp.route('/crear_servicio', methods=['GET'])
+def mostrar_formulario_servicio():
+    return render_template('servicios/create_servicio.html')
+
+# Procesar el formulario
+@bp.route('/crear_servicio', methods=['POST'])
+def crear_servicio():
+    try:
+        data = request.form
+
+        nuevo_servicio = Servicio(
+            codigo_de_aplicacion=data.get('codigo_de_aplicacion'),
+            servicio=data['servicio'],
+            descripcion_del_servicio=data['descripcion_del_servicio'],
+            promesa_del_servicio=data['promesa_del_servicio'],
+            sre=data['sre'],
+            evc=data['evc'],
+            contacto_del_lider=data.get('contacto_del_lider'),
+            po=data['po'],
+            elemento_de_configuracion=data.get('elemento_de_configuracion'),
+            grupo_inc_helix=data['grupo_inc_helix'],
+            runbook=data.get('runbook'),
+            carpeta_servicios_entregados=data.get('carpeta_servicios_entregados'),
+            relacion_de_servicios=data.get('relacion_de_servicios'),
+            nombre_grupo_stand_by=data.get('nombre_grupo_stand_by'),
+            lider_tecnico_evc=data['lider_tecnico_evc'],
+            lider_linea_area_conocimiento=data['lider_linea_area_conocimiento'],
+            servicio_especial=data.get('servicio_especial'),
+            servicio_clave=data.get('servicio_clave'),
+            encargado_cgm=data.get('encargado_cgm'),
+            plataforma=data['plataforma']
+        )
+
+        db.session.add(nuevo_servicio)
+        db.session.commit()
+
+        return redirect(url_for('app.listar'))  # o redirige a otra vista
+    except Exception as e:
+        db.session.rollback()
+        return f"Error al crear el servicio: {str(e)}", 400

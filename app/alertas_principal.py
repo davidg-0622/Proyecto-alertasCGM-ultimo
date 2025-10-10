@@ -18,17 +18,29 @@ def total_alertas():
     # Parámetros de búsqueda y paginación
     label = request.args.get('label', '').strip()
     page = request.args.get('page', 1, type=int)
-    per_page = 1  # Número de servicios por página
 
     # Consulta base
     query = db.session.query(Servicio)
 
     # Filtro por nombre de servicio
     if label:
-        query = query.filter(Servicio.servicio.ilike(f'%{label}%'))
+        query = query.filter(
+            Servicio.servicio.ilike(f'%{label}%') | Servicio.encargado_cgm.ilike(f'%{label}%')
+        )
+
+    # Total de servicios encontrados en la búsqueda
+    total_servicios = query.count()
+   
+
+    # Lógica para per_pages
+    if label:
+        per_page = total_servicios if total_servicios > 0 else 1
+    else:
+        per_page = 1
 
     # Paginación
     servicios_info = query.paginate(page=page, per_page=per_page)
+
 
     # Top servicios con más alertas
     top_servicios = (
@@ -44,9 +56,10 @@ def total_alertas():
         alertas=alertas,
         servicios=top_servicios,
         servicios_info=servicios_info,
-        label=label
+        label=label,
+        per_page=per_page,
+        total_servicios=total_servicios
     )
-
 
 
 
@@ -62,7 +75,6 @@ def alertas_por_servicio():
     alertas = Alerta.query.all()
 
     # Convertir a DataFrame
-    import pandas as pd
     df_alerts = pd.DataFrame([a.__dict__ for a in alertas])
     df_alerts.drop('_sa_instance_state', axis=1, inplace=True)
 
@@ -91,9 +103,7 @@ def alertas_por_servicio():
     conteo_por_servicio = df_alerts['Servicio'].value_counts().reset_index()
     conteo_por_servicio.columns = ['Servicio', 'Total_Alertas']
 
-    return render_template(
-        'alertas/alertas_x_servicio.html',
-        alertas=df_alerts.to_dict(orient='records'),
+    return render_template('alertas/alertas_x_servicio.html', alertas=df_alerts.to_dict(orient='records'),
         conteo_servicios=conteo_por_servicio.to_dict(orient='records')
 
     )
