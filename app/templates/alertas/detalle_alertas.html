@@ -10,7 +10,7 @@
             <div class="card text-white bg-dark mb-3">
                 <div class="card-header">Total de Alertas</div>
                 <div class="card-body">
-                    <h5 class="card-title display-6">{{ alertas|length }}</h5>
+                    <h5 class="card-title display-6 text-center">{{ alertas|length }}</h5>
                     <p class="card-text">Cantidad de alertas registradas.</p>
                 </div>
             </div>
@@ -23,7 +23,7 @@
         <div class="card text-white bg-dark mb-3">
             <div class="card-header">{{ plataforma }}</div>
             <div class="card-body">
-                <h5 class="card-title display-6">{{ conteo }}</h5>
+                <h5 class="card-title display-6 text-center" >{{ conteo }}</h5>
                 <p class="card-text">Total de alertas</p>
             </div>
         </div>
@@ -33,15 +33,17 @@
 
 
         <!-- Tarjeta: Rango Duración -->
-        <div class="col-sm-4">
-            <div class="card text-white bg-dark mb-3">
-                <div class="card-header">Rango Duración</div>
-                <div class="card-body">
-                    <h5 class="card-title display-6">{{ Rango_Duracion|length }}</h5>
-                    <p class="card-text">Rango duración</p>
-                </div>
+    {% for rango, conteo in conteo_rango_duracion.items() %}
+         <div class="col-sm-4">
+        <div class="card text-white bg-dark mb-3">
+            <div class="card-header">{{ rango }}</div>
+            <div class="card-body">
+                <h5 class="card-title display-6 text-center" >{{ conteo }}</h5>
+                <p class="card-text">Total de alertas</p>
             </div>
         </div>
+    </div>
+{% endfor %}
 
     </div>
 </div>

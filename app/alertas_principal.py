@@ -121,6 +121,7 @@ def detalle_alertas():
     fecha_inicio = request.args.get('fecha_inicio', '').strip()
     fecha_fin = request.args.get('fecha_fin', '').strip()
     Host = request.args.get('Host', '').strip()
+    rango_duracion = request.args.get('Rango_Duracion', '').strip()
 
     # Obtener todas las alertas desde la base de datos
     alertas = Alerta.query.all()
@@ -177,4 +178,6 @@ def detalle_alertas():
         alertas=df_alerts.to_dict(orient='records'),
         grafico_data=grafico_data, Host=Host,
         conteo_hosts=df_alerts['Host'].value_counts().to_dict(),
+        conteo_rango_duracion=df_alerts['Rango_Duracion'].value_counts().to_dict() 
+        
     )
