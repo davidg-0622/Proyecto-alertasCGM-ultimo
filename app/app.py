@@ -9,6 +9,13 @@ from sqlalchemy import or_
 bp = Blueprint('app', __name__, url_prefix='/app')
 
 
+@bp.route('/detalle_servicio/<int:id>')
+def detalle_servicio(id):
+    servicio = Servicio.query.get_or_404(id) 
+   
+    return render_template('servicios/detalle_servicio.html', servicio=servicio)
+
+
 ###########################Listar servicio #####################
 
 @bp.route('/listar')

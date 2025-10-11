@@ -51,7 +51,12 @@
             <tr>
                 <td>{{ servicio.id_servicio }}</td>
                 <td>{{ servicio.codigo_de_aplicacion }}</td>
-                <td>{{ servicio.servicio }}</td>
+            <td>
+                <a href="{{ url_for('app.detalle_servicio', id=servicio.id_servicio) }}">
+                    {{ servicio.servicio }}
+                </a>
+            </td>
+
                 <td>{{ servicio.descripcion_del_servicio }}</td>
                 <td>{{ servicio.horario_de_promesa or '-' }}</td>
                 <td>{{ servicio.sre }}</td>

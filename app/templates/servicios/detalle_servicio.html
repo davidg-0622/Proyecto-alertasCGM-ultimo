@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+
+{% block title %}Detalle del servicio: {{ servicio.servicio }}{% endblock %}
+
+{% block content %}
+
+<h2 class="text-success-emphasis text-center display-5 mb-4">Detalle del servicio</h2>
+
+<div class="table-responsive mb-4">
+    <!-- Añadir la clase table-sm aquí -->
+    <table class="table table-sm table-striped table-bordered table-hover align-middle">
+        <tbody>
+            <tr>
+                <th class="text-start">ID</th>
+                <td class="text-center">{{ servicio.id_servicio }}</td>
+            </tr>
+            <tr>
+                <th class="text-start">Código</th>
+                <td class="text-center">{{ servicio.codigo_de_aplicacion }}</td>
+            </tr>
+            <tr>
+                <th class="text-start">Nombre del servicio</th>
+                <td class="text-center">{{ servicio.servicio }}</td>
+            </tr>
+            <tr>
+                <th class="text-start">Descripción del servicio</th>
+                <td class="text-center">{{ servicio.descripcion_del_servicio }}</td>
+            </tr>
+            <tr>
+                <th class="text-start">Promesa del servicio</th>
+                <td class="text-center">{{ servicio.horario_de_promesa or '-' }}</td>
+            </tr>
+            <tr>
+                <th class="text-start">SRE</th>
+                <td class="text-center">{{ servicio.sre }}</td>
+            </tr>
+            <tr>
+                <th class="text-start">EVC</th>
+                <td class="text-center">{{ servicio.evc }}</td>
+            </tr>
+            <tr>
+                <th class="text-start">Contacto Líder</th>
+                <td class="text-center">{{ servicio.contacto_del_lider }}</td>
+            </tr>
+            <tr>
+                <th class="text-start">PO</th>
+                <td class="text-center">{{ servicio.po }}</td>
+            </tr>
+            <tr>
+                <th class="text-start">Elemento Configuración</th>
+                <td class="text-center">{{ servicio.elemento_de_configuracion }}</td>
+            </tr>
+            <tr>
+                <th class="text-start">Grupo Helix</th>
+                <td class="text-center">{{ servicio.grupo_inc_helix }}</td>
+            </tr>
+            <tr>
+                <th class="text-start">Runbook</th>
+                <td class="text-center">
+                    {% if servicio.runbook %}
+                    <a href="{{ servicio.runbook }}" target="_blank" class="btn btn-info btn-sm">Ver</a>
+                    {% else %}-{% endif %}
+                </td>
+            </tr>
+            <tr>
+                <th class="text-start">Carpeta Servicios Entregados</th>
+                <td class="text-center">{{ servicio.carpeta_servicios_entregados }}</td>
+            </tr>
+            <tr>
+                <th class="text-start">Relación de Servicios</th>
+                <td class="text-center">{{ servicio.relacion_de_servicios or '-' }}</td>
+            </tr>
+            <tr>
+                <th class="text-start">Grupo Stand By</th>
+                <td class="text-center">{{ servicio.nombre_grupo_stand_by or '-' }}</td>
+            </tr>
+            <tr>
+                <th class="text-start">Líder Técnico</th>
+                <td class="text-center">{{ servicio.lider_tecnico_evc }}</td>
+            </tr>
+            <tr>
+                <th class="text-start">Líder Línea/Área conocimiento</th>
+                <td class="text-center">{{ servicio.lider_linea_area_conicimiento }}</td>
+            </tr>
+            <tr>
+                <th class="text-start">Servicio Especial</th>
+                <td class="text-center">{{ servicio.servicio_especial or '-' }}</td>
+            </tr>
+            <tr>
+                <th class="text-start">Servicio Clave</th>
+                <td class="text-center">{{ servicio.servicio_clave or '-' }}</td>
+            </tr>
+            <tr>
+                <th class="text-start">Encargado CGM</th>
+                <td class="text-center">{{ servicio.encargado_cgm or '-' }}</td>
+            </tr>
+            <tr>
+                <th class="text-start">Plataforma</th>
+                <td class="text-center">{{ servicio.plataforma }}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="mt-4 text-center">
+    <a href="{{ url_for('app.edit_servicio', id=servicio.id_servicio) }}" class="btn btn-warning btn-sm">
+        <i class="bi bi-pencil"></i> Editar
+    </a>
+    <form action="{{ url_for('app.delete_servicio', id=servicio.id_servicio) }}" method="POST" style="display:inline;">
+        {% if csrf_token %}
+        {{ csrf_token() }}
+        {% endif %}
+        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Eliminar este servicio?');">
+            <i class="bi bi-trash"></i> Eliminar
+        </button>
+    </form>
+    <a href="{{ url_for('app.listar') }}" class="btn btn-secondary btn-sm">Volver a la lista</a>
+</div>
+
+{% endblock %}
