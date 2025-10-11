@@ -6,6 +6,8 @@ import pandas as pd
 
 
 
+
+
 # Define el blueprint una sola vez
 bp = Blueprint('alertas', __name__, url_prefix='/alertas')
 
@@ -108,18 +110,17 @@ def alertas_por_servicio():
 
     )
 
-###################################Detalle alertas ####################
+###################################   Detalle alertas   ####################
 
 @bp.route('/detalle_alertas')
 def detalle_alertas():
-    from flask import request, render_template
-    import pandas as pd
 
     # Obtener parámetros de la URL
     servicio = request.args.get('servicio', '').strip()
     severidad = request.args.get('severidad', '').strip()
     fecha_inicio = request.args.get('fecha_inicio', '').strip()
     fecha_fin = request.args.get('fecha_fin', '').strip()
+    Host = request.args.get('Host', '').strip()
 
     # Obtener todas las alertas desde la base de datos
     alertas = Alerta.query.all()
@@ -133,7 +134,10 @@ def detalle_alertas():
         'servicio': 'Servicio',
         'alerta': 'Alerta',
         'severity': 'Severidad',
-        'time': 'Time'
+        'time': 'Time',
+        'Host': 'Host'
+
+
     }, inplace=True)
 
     # Convertir columna 'Time' a datetime
@@ -165,9 +169,12 @@ def detalle_alertas():
     conteo_por_dia = df_alerts.groupby('Fecha').size().reset_index(name='Cantidad_Alertas')
     grafico_data = conteo_por_dia.to_dict(orient='records')
 
+
+  
     # Renderizar plantilla con alertas filtradas y datos del gráfico
     return render_template(
         'alertas/detalle_alertas.html',
         alertas=df_alerts.to_dict(orient='records'),
-        grafico_data=grafico_data
+        grafico_data=grafico_data, Host=Host,
+        conteo_hosts=df_alerts['Host'].value_counts().to_dict(),
     )

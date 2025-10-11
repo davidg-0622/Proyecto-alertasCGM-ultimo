@@ -2,16 +2,50 @@
 
 {% block content %}
 
-<!-- Card Bootstrap con el total de alertas alineado a la izquierda -->
-<div class="d-flex justify-content-start my-4"></div>
-    <div class="card text-white bg-primary mb-3" style="max-width: 18rem;">
-        <div class="card-header">Total de Alertas</div>
-        <div class="card-body">
-            <h5 class="card-title display-6">{{ alertas|length }}</h5>
-            <p class="card-text">Cantidad de alertas registradas.</p>
+<div class="container">
+    <div class="row justify-content-start my-4">
+
+        <!-- Tarjeta: Total de Alertas -->
+        <div class="col-sm-4">
+            <div class="card text-white bg-dark mb-3">
+                <div class="card-header">Total de Alertas</div>
+                <div class="card-body">
+                    <h5 class="card-title display-6">{{ alertas|length }}</h5>
+                    <p class="card-text">Cantidad de alertas registradas.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tarjeta: Plataforma -->
+{% for plataforma, conteo in conteo_hosts.items() %}
+    <!-- Tarjeta: Plataforma -->
+    <div class="col-sm-4">
+        <div class="card text-white bg-dark mb-3">
+            <div class="card-header">{{ plataforma }}</div>
+            <div class="card-body">
+                <h5 class="card-title display-6">{{ conteo }}</h5>
+                <p class="card-text">Total de alertas</p>
+            </div>
         </div>
     </div>
+{% endfor %}
+
+
+
+        <!-- Tarjeta: Rango Duración -->
+        <div class="col-sm-4">
+            <div class="card text-white bg-dark mb-3">
+                <div class="card-header">Rango Duración</div>
+                <div class="card-body">
+                    <h5 class="card-title display-6">{{ Rango_Duracion|length }}</h5>
+                    <p class="card-text">Rango duración</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
 </div>
+
 
 <h3 class="mt-5 text-center">Detalle de Alertas</h3>
 <!-- Gráfico de alertas por día -->
@@ -25,7 +59,7 @@
 
 
 <!-- Tabla de alertas en Bootstrap -->
-<div class="table-responsive" style="max-width: 800px; margin: 0 auto;">
+<div class="table-responsive" style="max-width: 900px; margin: 0 auto;">
     <table class="table table-bordered table-hover table-sm text-center align-middle" style="font-size: 0.9rem;">
         <thead class="table-secondary">
             <tr>
