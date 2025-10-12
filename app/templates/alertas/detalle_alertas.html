@@ -1,6 +1,55 @@
 {% extends 'base.html' %}
 
 {% block content %}
+  <!-- filtro por fecha -->
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <form action="{{ url_for('alertas.detalle_alertas') }}" method="get">
+        <h5 class="text-center mb-4">Filtrar alertas</h5>
+        <div class="row g-3">
+          <div class="col-md-4">
+            <label for="fecha_inicio" class="form-label">Fecha Inicio</label>
+            <input
+              type="date"
+              class="form-control"
+              id="fecha_inicio"
+              name="fecha_inicio"
+              value="{{ fecha_inicio or '' }}"
+            />
+          </div>
+          <div class="col-md-4">
+            <label for="fecha_fin" class="form-label">Fecha Fin</label>
+            <input
+              type="date"
+              class="form-control"
+              id="fecha_fin"
+              name="fecha_fin"
+              value="{{ fecha_fin or '' }}"
+            />
+          </div>
+          <div class="col-md-4">
+            <label for="servicio" class="form-label">Servicio</label>
+            <input
+              type="text"
+              class="form-control"
+              id="servicio"
+              name="servicio"
+              value="{{ request.args.get('servicio', servicios.Servicio if servicios else '') }}"
+              readonly
+            />
+          </div>
+          <div class="col-12 text-center">
+            <button type="submit" class="btn btn-primary me-2">Filtrar</button>
+            <a href="{{ url_for('alertas.detalle_alertas', servicio=request.args.get('servicio')) }}" class="btn btn-secondary">Limpiar</a>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
 
 <div class="container">
     <div class="row justify-content-start my-4">

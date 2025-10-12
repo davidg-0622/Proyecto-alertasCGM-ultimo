@@ -1,6 +1,46 @@
 {% extends 'base.html' %}
 
 {% block content %}
+    <!-- Filtro de fecha -->
+
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <form action="{{ url_for('alertas.alertas_por_servicio') }}" method="get">
+        <h5 class="text-center mb-4">Filtrar por fecha</h5>
+        <div class="row g-3 align-items-end">
+          <div class="col-md-5">
+            <label for="fecha_inicio" class="form-label"><strong>Fecha Inicio</strong> </label>
+            <input
+              type="date"
+              class="form-control"
+              id="fecha_inicio"
+              name="fecha_inicio"
+              value="{{ fecha_inicio or '' }}"
+            />
+          </div>
+          <div class="col-md-5">
+            <label for="fecha_fin" class="form-label"><strong>Fecha Fin</strong></label>
+            <input
+              type="date"
+              class="form-control"
+              id="fecha_fin"
+              name="fecha_fin"
+              value="{{ fecha_fin or '' }}"
+            />
+          </div>
+          <div class="col-md-2">
+            <button type="submit" class="btn btn-primary w-100">Filtrar</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+
+
 <h3 class="mt-5 text-center">Conteo de Alertas por Servicio</h3>
 <div class="table-responsive" style="max-width: 900px; margin: 0 auto;">
     <input class="form-control mb-3" id="buscador" type="text" placeholder="Buscar servicio...">
