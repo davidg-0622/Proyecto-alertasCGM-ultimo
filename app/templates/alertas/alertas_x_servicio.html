@@ -1,12 +1,12 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <!-- Filtro de fecha -->
+  <!-- Filtro de fecha -->
 
 <div class="container mt-5">
   <div class="row justify-content-center">
     <div class="col-md-8">
-      <form action="{{ url_for('alertas.alertas_por_servicio') }}" method="get">
+      <form id="formFiltro" action="{{ url_for('alertas.alertas_por_servicio') }}" method="get">
         <h5 class="text-center mb-4">Filtrar por fecha</h5>
         <div class="row g-3 align-items-end">
           <div class="col-md-5">
@@ -29,14 +29,17 @@
               value="{{ fecha_fin or '' }}"
             />
           </div>
-          <div class="col-md-2">
-            <button type="submit" class="btn btn-primary w-100">Filtrar</button>
+          <div class="col-md-2 d-flex align-items-end">
+            <button type="submit" class="btn btn-primary me-2">Filtrar</button>
+            <!-- Botón de borrar como enlace que redirige a la URL base -->
+            <a href="{{ url_for('alertas.alertas_por_servicio') }}" class="btn btn-secondary">Borrar</a>
           </div>
         </div>
       </form>
     </div>
   </div>
 </div>
+
 
 
 
