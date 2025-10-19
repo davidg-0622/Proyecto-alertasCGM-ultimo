@@ -1,5 +1,8 @@
 {% extends 'base.html' %}
 
+
+{% block title %}Top alertas{% endblock %}
+
 {% block content %}
 
 
@@ -71,7 +74,7 @@
           <th>Servicio</th>
           <th>Encargado CGM</th>
           <th>Servicio Especial</th>
-          <th>servicio clave</th>
+          <th>Servicio clave</th>
           <th>SRE</th>
         </tr>
       </thead>
@@ -112,7 +115,7 @@
 
 
     <!-- Tabla de servicios con más alertas -->
-    <h3 class="text-center mb-3">Top 10 servicios con más alertas</h3>
+    <h3 class="text-center mb-3">Top 20 servicios con más alertas</h3>
     <div class="table-responsive">
       <table class="table table-hover table-bordered align-middle text-center">
         <thead class="table-dark">

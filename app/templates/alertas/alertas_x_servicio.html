@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
 
+{% block title %}Cantidad de alertas por servicio{% endblock %}
+
 {% block content %}
   <!-- Filtro de fecha -->
 
@@ -50,6 +52,7 @@
     <table class="table table-bordered table-hover table-sm text-center" style="font-size: 0.9rem;">
         <thead class="table-secondary">
             <tr>
+               <th scope="col">#</th>
                 <th>Servicio</th>
                 <th>Total de Alertas</th>
             </tr>
@@ -57,6 +60,7 @@
         <tbody id="tabla-servicios">
             {% for item in conteo_servicios %}
             <tr>
+               <td>{{ loop.index }}</td>
                 <td>
                     <a href="{{ url_for('alertas.detalle_alertas', servicio=item.Servicio) }}">{{ item.Servicio }}</a>
                 </td>

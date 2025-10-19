@@ -196,7 +196,7 @@ def detalle_alertas():
     
     # Aplicar el filtro de servicio
     if servicio:
-        query_alertas = query_alertas.filter(Alerta.Servicio.ilike(f'%{servicio}%'))
+        query_alertas = query_alertas.filter(Alerta.Servicio == servicio)
     
     if severidad:
         query_alertas = query_alertas.filter(Alerta.Severity.ilike(f'%{severidad}%'))
