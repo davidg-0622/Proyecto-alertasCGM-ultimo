@@ -9,7 +9,7 @@
 
 <!-- Filtro de búsqueda -->
 <form method="GET" action="{{ url_for('app.listar') }}" class="row g-2 mb-3">
-    <div class="col-auto">
+    <div class="col-3">
         <input type="text" name="filtro" class="form-control" placeholder="Buscar por nombre de servicio..." value="{{ filtro or '' }}">
     </div>
     <div class="col-auto">

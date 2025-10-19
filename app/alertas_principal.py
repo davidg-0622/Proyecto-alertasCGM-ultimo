@@ -6,6 +6,7 @@ import pandas as pd
 from datetime import datetime
 from datetime import datetime, timedelta
 from sqlalchemy import func
+from app.auth import login_required
 
 
 
@@ -15,6 +16,7 @@ bp = Blueprint('alertas', __name__, url_prefix='/alertas')
 
 
 @bp.route('/', methods=['GET', 'POST'])
+@login_required
 def total_alertas():
     # Inicializa las variables
     fecha_inicial = None
@@ -91,6 +93,7 @@ def total_alertas():
 ###################################alertas por servicio######################
 
 @bp.route('/alertas_por_servicio', methods=['GET', 'POST'])
+@login_required
 def alertas_por_servicio():
     servicio = request.args.get('servicio', '').strip()
     severidad = request.args.get('severidad', '').strip()
@@ -159,6 +162,7 @@ def alertas_por_servicio():
 
 
 @bp.route('/detalle_alertas', methods=['GET', 'POST'])
+@login_required
 def detalle_alertas():
     # Obtener parámetros de la URL
     servicio = request.args.get('servicio', '').strip()

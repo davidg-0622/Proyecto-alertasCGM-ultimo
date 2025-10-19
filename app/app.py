@@ -3,6 +3,7 @@ from app.models.servicio import Servicio
 from app import db # Asume que 'db' se importa desde la aplicación principal
 from math import ceil
 from sqlalchemy import or_
+from app.auth import login_required
 
 
 # Define el blueprint una sola vez
@@ -19,6 +20,7 @@ def detalle_servicio(id):
 ###########################Listar servicio #####################
 
 @bp.route('/listar')
+@login_required
 def listar():
     filtro = request.args.get('filtro')
     page = request.args.get('page', 1, type=int)
@@ -49,6 +51,7 @@ def listar():
 ########################editar#######################
 
 @bp.route('/editar/<int:id>', methods=['GET', 'POST'])
+@login_required
 def edit_servicio(id):
     """Maneja la edición de un servicio existente."""
     servicio = Servicio.query.get_or_404(id)
@@ -91,6 +94,7 @@ def edit_servicio(id):
 ####################### delete ####################
 
 @bp.route('/eliminar/<int:id>', methods=['POST'])
+@login_required
 def delete_servicio(id):
     """Elimina un servicio de la base de datos."""
     servicio = Servicio.query.get_or_404(id)
@@ -108,6 +112,7 @@ def delete_servicio(id):
 #####################################
 
 @bp.route('/')
+@login_required
 def index():
      return redirect(url_for('app.listar'))
 
@@ -120,6 +125,7 @@ def mostrar_formulario_servicio():
 
 # Procesar el formulario
 @bp.route('/crear_servicio', methods=['POST'])
+@login_required
 def crear_servicio():
     try:
         data = request.form

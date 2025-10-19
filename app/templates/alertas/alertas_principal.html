@@ -71,6 +71,7 @@
     <table class="table table-striped table-bordered text-center">
       <thead class="table-secondary">
         <tr>
+          <th>Codigo de aplicación</th>
           <th>Servicio</th>
           <th>Encargado CGM</th>
           <th>Servicio Especial</th>
@@ -81,6 +82,7 @@
       <tbody>
         {% for servicio in servicios_info %}
         <tr>
+          <td>{{ servicio.codigo_de_aplicacion}}</td>
           <td>
             <a href="{{ url_for('app.detalle_servicio', id=servicio.id_servicio) }}">
               {{ servicio.servicio }}
