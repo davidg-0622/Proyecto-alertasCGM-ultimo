@@ -8,6 +8,12 @@
 
 <div class="container mt-5">
 <form method="POST" action="{{ url_for('app.crear_servicio') }}" class="row g-3">
+
+     <div class="col-md-5">
+        <label class="form-label"><strong>Código de Aplicación:</strong></label>
+        <input type="text" class="form-control" name="codigo_de_aplicacion">
+    </div>
+    
     <div class="col-md-5">
         <label class="form-label"><strong>Servicio:</strong></label>
         <input type="text" class="form-control" name="servicio" required>
@@ -84,10 +90,7 @@
         <label class="form-label"><strong>Plataforma:</strong></label>
         <input type="text" class="form-control" name="plataforma">
     </div>
-    <div class="col-md-5">
-        <label class="form-label"><strong>Código de Aplicación:</strong></label>
-        <input type="text" class="form-control" name="codigo_de_aplicacion">
-    </div>
+   
     <div class="col-12" style="margin-top: 20px;">
         <button type="submit" class="btn btn-primary">Crear Servicio</button>
     </div>

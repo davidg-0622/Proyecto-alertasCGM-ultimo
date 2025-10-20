@@ -6,7 +6,8 @@
 
 
 <div class="container mt-5">
-     <div class="row justify-content-center">
+     <!-- Aquí se agregan las clases de centrado vertical -->
+     <div class="row justify-content-center vh-100 align-items-center">
         <div class="col-sm-8">
             <div class="card">
                 <div class="card-header">
@@ -30,18 +31,32 @@
                         <div class="text-center">
                               <button type="submit" class="btn btn-primary">Registrar</button>
                         </div>
-                       
-
                     </form>
-                   
-
                 </div>
-
             </div>
-
         </div>
      </div>
-
-
 </div>
+
+
+   <div class="watermark-container">
+            <img src="{{ url_for('static', filename='images/fondo.png') }}" alt="Imagen principal">
+        </div>
+        
+        
+        <style>
+            .watermark-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+    
+            background-size: 50%;
+            background-position: center;
+            background-repeat: no-repeat;
+            opacity: 0.4;
+            z-index: -1;
+                }
+        </style>
 {% endblock %} 

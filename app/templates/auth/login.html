@@ -1,39 +1,58 @@
 {% extends 'base.html' %}
-
-{% block content %} 
+{% block content %}
 <div class="container mt-5">
-     <div class="row justify-content-center">
+    <!-- Se agregan las clases vh-100 y align-items-center a la fila -->
+    <div class="row justify-content-center vh-100 align-items-center">
         <div class="col-sm-8">
             <div class="card">
                 <div class="card-header">
-                      <h1 class="text-center">{% block title %} Iniciar sesión {% endblock %}</h1>
+                    <h1 class="text-center">{% block title %} Iniciar sesión {% endblock %}</h1>
                 </div>
                 <div class="card-body">
                     <form action="" method="post">
-                       <div class="form-group">
+                        <div class="form-group mb-3">
                             <label for="username">Nombre de usuario</label>
                             <input type="text" class="form-control" id="username" name="username" required>
                         </div>
-                        <br>
-                          <div class="form-group">
+                        <div class="form-group mb-3">
                             <label for="password">Contraseña</label>
-                            <input type="password" class="form-control" id="password" name="password" required> 
+                            <input type="password" class="form-control" id="password" name="password" required>
                         </div>
                         <br>
-                          <div class="text-center">
-                              <button type="submit" class="btn btn-primary">Iniciar sesión</button>
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary">Iniciar sesión</button>
                         </div>
                     </form>
-                   
-
                 </div>
-
             </div>
-
         </div>
-     </div>
-
-
+    </div>
 </div>
 
-{% endblock %} 
+
+        <div class="watermark-container">
+            <img src="{{ url_for('static', filename='images/fondo.png') }}" alt="Imagen principal">
+        </div>
+        
+        
+        <style>
+            .watermark-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+    
+            background-size: 50%;
+            background-position: center;
+            background-repeat: no-repeat;
+            opacity: 0.4;
+            z-index: -1;
+                }
+        </style>
+
+
+
+
+
+{% endblock %}
