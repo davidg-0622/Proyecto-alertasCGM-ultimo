@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block title %}Conteo de alertas{% endblock %}
+
+{% block content %}
+
+<div class="container-xxl mt-4">
+
+    <!-- Formulario de filtrado -->
+    <div class="row justify-content-center mb-5">
+        <div class="col-md-10">
+            <form action="{{ url_for('alertas.conteo_alertas_iguales') }}" method="get">
+                <h5 class="text-center mb-4">Filtrar alertas</h5>
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-3">
+                        <label for="fecha_inicio" class="form-label"><strong>Fecha Inicio</strong></label>
+                        <input type="date" class="form-control" id="fecha_inicio" name="fecha_inicio"
+                            value="{{ request.args.get('fecha_inicio') or '' }}" />
+                    </div>
+                    <div class="col-md-3">
+                        <label for="fecha_fin" class="form-label"><strong>Fecha Fin</strong></label>
+                        <input type="date" class="form-control" id="fecha_fin" name="fecha_fin"
+                            value="{{ request.args.get('fecha_fin') or '' }}" />
+                    </div>
+                    <div class="col-md-4">
+                        <label for="servicio" class="form-label"><strong>Servicio</strong></label>
+                        <select id="servicio" name="servicio" class="form-select">
+                            <option value="">Seleccione un servicio</option>
+                            {% for serv in servicios_disponibles %}
+                            <option value="{{ serv }}" {% if serv==request.args.get('servicio') %}selected{% endif %}>
+                                {{ serv }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary w-100">Filtrar</button>
+                    </div>
+                </div>
+            </form>
+            <div class="text-center mt-3">
+                <a href="{{ url_for('alertas.conteo_alertas_iguales') }}" class="btn btn-secondary">Limpiar Filtros</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabla de resultados -->
+    <h1 class="mb-4 text-center">Conteo de alertas</h1>
+    <div class="table-responsive">
+        <table class="table table-striped table-hover table-bordered caption-top tabla-nowrap-grande">
+            <caption>Listado detallado del conteo de alertas por servicio y tipo de alerta.</caption>
+            <thead class="table-dark">
+                <tr>
+                    <th>Servicio</th>
+                    <th>Operational Data</th>
+                    <th>Cantidad de Alertas</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for fila in conteo_por_servicio_y_alerta %}
+                <tr>
+                    <td>{{ fila.Servicio }}</td>
+                    <td>{{ fila.operational_data }}</td>
+                    <td>{{ fila.cantidad }}</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="3" class="text-center">No hay alertas que coincidan con los filtros.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

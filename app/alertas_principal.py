@@ -252,3 +252,79 @@ def detalle_alertas():
         fecha_inicio=fecha_inicio_str,
         fecha_fin=fecha_fin_str
     )
+
+
+
+###################################   Conteo de alertas iguales  ####################
+
+@bp.route('/conteo_alertas_iguales', methods=['GET'])
+@login_required 
+def conteo_alertas_iguales():
+    servicio = request.args.get('servicio', '').strip()
+    fecha_inicio_str = request.args.get('fecha_inicio', '').strip()
+    fecha_fin_str = request.args.get('fecha_fin', '').strip()
+    operational_data = request.args.get('operational_data', '').strip()
+    rango_duracion = request.args.get('Rango_Duracion', '').strip()
+
+    # Obtener todos los servicios únicos para el menú desplegable
+    servicios_disponibles = [
+        row[0] for row in Alerta.query.with_entities(Alerta.Servicio).distinct().order_by(Alerta.Servicio).all()
+    ]
+
+    # Inicializar la consulta base
+    query_alertas = Alerta.query
+
+    # Convertir fechas y aplicar filtros
+    if fecha_inicio_str:
+        try:
+            fecha_inicio = datetime.strptime(fecha_inicio_str, '%Y-%m-%d')
+            query_alertas = query_alertas.filter(
+                func.str_to_date(Alerta.Time, '%d/%m/%Y %H:%i') >= fecha_inicio
+            )
+        except ValueError:
+            # Manejar error de formato de fecha
+            pass
+    
+    if fecha_fin_str:
+        try:
+            fecha_fin = datetime.strptime(fecha_fin_str, '%Y-%m-%d')
+            # Sumar un día para incluir todo el último día
+            fecha_fin_ajustada = fecha_fin + timedelta(days=1)
+            query_alertas = query_alertas.filter(
+                func.str_to_date(Alerta.Time, '%d/%m/%Y %H:%i') < fecha_fin_ajustada
+            )
+        except ValueError:
+            # Manejar error de formato de fecha
+            pass
+    
+    # Aplicar el filtro de servicio
+    if servicio:
+        query_alertas = query_alertas.filter(Alerta.Servicio == servicio)
+    
+    if operational_data:
+        # Usar `ilike` para búsqueda insensible a mayúsculas
+        query_alertas = query_alertas.filter(Alerta.operational_data.ilike(f'%{operational_data}%'))
+   
+    if rango_duracion:
+        query_alertas = query_alertas.filter(Alerta.Rango_Duracion == rango_duracion)
+
+    # Obtener las alertas filtradas
+    alertas_filtradas = query_alertas.all()
+
+    # Convertir las alertas filtradas a un DataFrame de Pandas
+    df_alertas_detalladas = pd.DataFrame({
+        'time': [alerta.Time for alerta in alertas_filtradas],
+        'host': [alerta.Host for alerta in alertas_filtradas],
+        'operational_data': [alerta.Operational_data for alerta in alertas_filtradas],
+        'Servicio': [alerta.Servicio for alerta in alertas_filtradas],
+    })
+
+    # Realizar el conteo de alertas por tipo de 'operational_data' y 'Servicio'
+    if not df_alertas_detalladas.empty:
+        conteo_por_servicio_y_alerta_df = df_alertas_detalladas.groupby(['Servicio', 'operational_data']).size().reset_index(name='cantidad')
+        conteo_lista = conteo_por_servicio_y_alerta_df.to_dict('records')
+        conteo = sorted(conteo_lista, key=lambda x: x['cantidad'], reverse=True)
+    else:
+        conteo = [] # Retorna una lista vacía si no hay resultados
+    
+    return render_template('alertas/conteo_alertas_iguales.html', conteo_por_servicio_y_alerta=conteo,  servicios_disponibles=servicios_disponibles)
