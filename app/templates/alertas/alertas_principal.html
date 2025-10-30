@@ -58,7 +58,7 @@
   </div>
 
   <!-- Busqueda del servicio -->
-  <h2 class="text-center mt-5">Información del Servicios</h2>
+  <h2 class="text-center mt-5">Información del Servicio</h2>
   <form method="GET" class="mb-4 d-flex justify-content-center">
     <input type="text" name="label" class="form-control w-25 me-2" placeholder="Buscar por nombre de servicio"
       value="{{ request.args.get('label', '') }}">
@@ -128,14 +128,25 @@
           </tr>
         </thead>
         <tbody>
-          {% for servicio, total in servicios %}
-          <tr>
-            <td>{{ loop.index }}</td>
-            <td>{{ servicio }}</td>
-            <td><span class="badge bg-danger">{{ total }}</span></td>
-          </tr>
-          {% endfor %}
-        </tbody>
+    {% for nombre_servicio, total in servicios %}
+    <tr>
+        <td>{{ loop.index }}</td>
+        <td>
+            <!-- El texto debe ir DENTRO de la etiqueta <a> -->
+            <a href="{{ url_for('alertas.detalle_alertas', servicio=nombre_servicio) }}">
+                {{ nombre_servicio }}
+            </a>
+        </td>
+        <td>
+            <!-- bg-danger para rojo (puedes usar bg-warning para amarillo o bg-success para verde) -->
+            <span class="badge bg-danger">
+                {{ total }}
+            </span>
+        </td>
+    </tr>
+    {% endfor %}
+</tbody>
+
       </table>
     </div>
   </div>

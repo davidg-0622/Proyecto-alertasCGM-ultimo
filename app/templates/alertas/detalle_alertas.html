@@ -107,19 +107,21 @@
 </div>
 {% set servicios = alertas | map(attribute='Servicio') | list %}
 <div class="text-center my-4">
-    <h4 class="fw-bold">Nombre del servicio: {{ servicios[0] }}</h4>
+    <h4 class="fw-bold">Nombre del servicio:  <span class="bg-warning text-dark p-1 rounded">{{ servicios[0] }}</span></h4>
+
+
 </div>
 
 
 <!-- Tabla de alertas en Bootstrap -->
-<div class="table-responsive" style="max-width: 900px; margin: 0 auto;">
+<div class="table-responsive" style="max-width: 1200px; margin: 0 auto;">
     <table class="table table-bordered table-hover table-sm text-center align-middle" style="font-size: 0.9rem;">
-        <thead class="table-secondary">
+        <thead class="table-dark">
             <tr>
-                <th scope="col">Servicio</th>
-                <th scope="col">Alerta</th>
-                <th scope="col">Host</th>
-                <th scope="col">Fecha y Hora</th>
+                <th class="text-center align-middle"><strong>Servicio</strong></th>
+                <th class="text-center align-middle"><strong>Alerta</strong></th>
+                <th class="text-center align-middle"><strong>Host</strong></th>
+                <th class="text-center align-middle"><strong>Fecha y Hora</strong></th>
 
             </tr>
         </thead>

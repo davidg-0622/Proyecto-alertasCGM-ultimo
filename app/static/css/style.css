@@ -1,0 +1,19 @@
+body{
+    font-family: Arial, sans-serif;
+    background-color: #f2f2f2;
+    margin: 0;
+    padding: 0; 
+}
+
+
+/* Define el color de fondo amarillo oscuro y el color de texto */
+.hover-amarillo-oscuro:hover {
+    background-color: #ffc107 !important; /* El color de Bootstrap 'warning' */
+    color: #212529 !important;          /* Color de texto oscuro para que sea legible */
+}
+
+/* Opcional: Si quieres mantener el texto en blanco para mejor contraste en amarillo */
+.hover-amarillo-oscuro:hover {
+    background-color: #ffc107 !important; /* El color de Bootstrap 'warning' */
+    color: #FFFFFF !important;          /* Texto blanco */
+}
