@@ -1,0 +1,52 @@
+{% extends 'base_admin.html' %}
+
+{% block title %}Tabla Admin{% endblock %}
+
+{% block content_admin %}
+<div class="container mt-4">
+    <h1>Lista de usuarios</h1>
+    <div class="table-responsive">
+        <table class="table table-striped table-hover table-bordered">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Nombre</th>
+                    <th>Apellido</th>
+                    <th>Usuario</th> 
+                    <th>Correo</th>
+                    <th>Estado</th>
+                    <th>Acción</th>
+                    <th>Perfil</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for usuario in usuarios %}
+                <tr>
+                    <!-- nombres de atributo correctos de tu tabla -->
+                    <td>{{ usuario.nombre }}</td>
+                    <td>{{ usuario.apellido }}</td>
+                    <td>{{ usuario.username }}</td> 
+                    <td>{{ usuario.email }}</td>   
+                    <td>
+                        {% if usuario.estado == 1 %}
+                            <span class=" badge badge-success text-dark">Activo</span>
+                        {% else %}
+                            <span class="badge badge-danger text-dark">Inactivo</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <!-- Asegúrate de usar el ID correcto para el enlace -->
+                        {% if usuario.estado == 1 %}
+                            <a href="{{ url_for('auth.cambiar_estado', id_usuario=usuario.id_usuario, nuevo_estado=0) }}" class="btn btn-warning btn-sm">Desactivar</a>
+                        {% else %}
+                            <a href="{{ url_for('auth.cambiar_estado', id_usuario=usuario.id_usuario, nuevo_estado=1) }}" class="btn btn-success btn-sm">Activar</a>
+                        {% endif %}
+                    </td>
+
+                    <td>{{ usuario.perfil }}</td>   
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

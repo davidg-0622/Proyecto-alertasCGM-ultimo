@@ -17,3 +17,20 @@ body{
     background-color: #ffc107 !important; /* El color de Bootstrap 'warning' */
     color: #FFFFFF !important;          /* Texto blanco */
 }
+
+
+.watermark-container {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+
+                background-size: 50%;
+                background-position: center;
+                background-repeat: no-repeat;
+                opacity: 0.4;
+                z-index: -1;
+    }
+
+

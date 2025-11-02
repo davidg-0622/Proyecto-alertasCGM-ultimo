@@ -51,23 +51,6 @@
 
                 <!-- Añade la nueva clase a cada item que quieras modificar -->
                 <li><a class="dropdown-item hover-amarillo-oscuro" href="{{ url_for('app.listar') }}">Servicios</a></li>
-
-                <li><a class="dropdown-item hover-amarillo-oscuro" href="{{ url_for('app.crear_servicio') }}">Crear
-                    Servicios</a></li>
-
-                <li><a class="dropdown-item hover-amarillo-oscuro" href="{{ url_for('alertas.total_alertas') }}">Top
-                    Alertas</a></li>
-
-                <li><a class="dropdown-item hover-amarillo-oscuro" href="{{ url_for('alertas.alertas_por_servicio') }}"
-                    target="_blank">Alertas Por Servicio</a></li>
-
-                <li><a class="dropdown-item hover-amarillo-oscuro"
-                    href="{{ url_for('alertas.conteo_alertas_iguales') }}" target="_blank">Agrupación Alertas</a></li>
-
-                <li><a class="dropdown-item hover-amarillo-oscuro"
-                    href="https://bancolombia-dwp.onbmc.com/dwp/app/#/itemprofile/214" target="_blank">Generar
-                    Pedido</a></li>
-                <li>
                   <hr class="dropdown-divider">
                 </li>
                 <li><a class="dropdown-item hover-amarillo-oscuro" href="{{ url_for('auth.logout') }}">Cerrar sesion</a>
@@ -110,7 +93,7 @@
   {% endif %}
   {% endfor %}
 
-  {% block content %}{% endblock %}
+  {% block content_admin %}{% endblock %}
 
 
 

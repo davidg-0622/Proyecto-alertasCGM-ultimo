@@ -1,9 +1,12 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
+from flask import Blueprint, render_template, request, redirect, url_for, flash
 from app.models.servicio import Servicio
+from app.models.user import User
 from app import db # Asume que 'db' se importa desde la aplicación principal
 from math import ceil
 from sqlalchemy import or_
 from app.auth import login_required
+
+
 
 
 # Define el blueprint una sola vez
@@ -26,6 +29,10 @@ def listar():
     page = request.args.get('page', 1, type=int)
 
     query = Servicio.query
+    perfil=User.query.all()
+     # ¡Ahora current_user es el usuario real!
+    print(f'El rol del usuario logueado es: {perfil}') 
+   
 
     if filtro:
         query = query.filter(or_(
@@ -45,7 +52,8 @@ def listar():
         servicios=servicios,
         page=page,
         total_pages=total_pages,
-        filtro=filtro
+        filtro=filtro,
+        perfil=perfil
     )
 
 ########################editar#######################
