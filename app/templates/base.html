@@ -15,67 +15,70 @@
 
 </head>
 <header>
-
    <nav class="navbar navbar-expand-sm navbar-dark bg-dark" data-bs-theme="dark">
     <div class="container-fluid">
       <a class="navbar-brand" href="{{ url_for('app.index') }}">
-        <img src="{{ url_for('static', filename='images/logo1.png') }}" alt="Logo" width="120" height="40"
-          class="d-inline-block align-text-top">
-
+        <img src="{{ url_for('static', filename='images/logo1.png') }}" alt="Logo" width="120" height="40" class="d-inline-block align-text-top">
       </a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar"
-        aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
+      <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
         <div class="offcanvas-header">
-          <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Offcanvas</h5>
+          <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Menú Principal</h5>
           <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
 
-
-        <div class="offcanvas-body ">
+        <div class="offcanvas-body">
           <ul class="navbar-nav justify-content-end flex-grow-1 pe-5">
+            
             {% if g.user %}
 
-            <li class="nav-item">
-              <span class="nav-link active">Hola, {{ g.user.nombre }} </span>
-            </li>
-
+            <!-- Menú de Alertas CGM -->
             <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-                aria-expanded="false">
-                Alertas CGM
+              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+               Monitoreo CGM
               </a>
               <ul class="dropdown-menu">
-
-                <!-- Añade la nueva clase a cada item que quieras modificar -->
                 <li><a class="dropdown-item hover-amarillo-oscuro" href="{{ url_for('app.listar') }}">Servicios</a></li>
-
-                <li><a class="dropdown-item hover-amarillo-oscuro" href="{{ url_for('app.crear_servicio') }}">Crear
-                    Servicios</a></li>
-
-                <li><a class="dropdown-item hover-amarillo-oscuro" href="{{ url_for('alertas.total_alertas') }}">Top
-                    Alertas</a></li>
-
-                <li><a class="dropdown-item hover-amarillo-oscuro" href="{{ url_for('alertas.alertas_por_servicio') }}"
-                    target="_blank">Alertas Por Servicio</a></li>
-
-                <li><a class="dropdown-item hover-amarillo-oscuro"
-                    href="{{ url_for('alertas.conteo_alertas_iguales') }}" target="_blank">Agrupación Alertas</a></li>
-
-                <li><a class="dropdown-item hover-amarillo-oscuro"
-                    href="https://bancolombia-dwp.onbmc.com/dwp/app/#/itemprofile/214" target="_blank">Generar
-                    Pedido</a></li>
-                <li>
-                  <hr class="dropdown-divider">
-                </li>
-                <li><a class="dropdown-item hover-amarillo-oscuro" href="{{ url_for('auth.logout') }}">Cerrar sesion</a>
-                </li>
+                <li><a class="dropdown-item hover-amarillo-oscuro" href="{{ url_for('app.crear_servicio') }}">Crear Servicios</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item hover-amarillo-oscuro" href="{{ url_for('alertas.total_alertas') }}">Top Alertas</a></li>
+                <li><a class="dropdown-item hover-amarillo-oscuro" href="{{ url_for('alertas.alertas_por_servicio') }}">Alertas Por Servicio</a></li>
+                <li><a class="dropdown-item hover-amarillo-oscuro" href="{{ url_for('alertas.conteo_alertas_iguales') }}">Agrupación Alertas</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item hover-amarillo-oscuro" href="https://bancolombia-dwp.onbmc.com/dwp/app/#/itemprofile/214" target="_blank">Generar Pedido</a></li>
               </ul>
             </li>
-          </ul>
+
+            
+             
+            <!-- Menú/Botón de Perfil y Cerrar Sesión -->
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <!-- Muestra el nombre de usuario aquí en la barra principal -->
+                    <i class="bi bi-person-circle"></i> Hola, {{ g.user.nombre }}
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <!-- Enlace directo para Admin Usuarios, visible solo si el perfil es Admin -->
+            {% if g.user.perfil == 'Admin' %} 
+             <li class="nav-item">
+                 <a class="nav-link" href="{{ url_for('auth.Admin') }}">Admin Usuarios</a>
+             </li>
+            {% endif %} 
+                    <li><hr class="dropdown-divider"></li>
+                    <!-- Usamos el estilo mejorado (texto rojo con icono) dentro del menú desplegable -->
+                    <li>
+                        <a class="dropdown-item text-danger" href="{{ url_for('auth.logout') }}">
+                            <i class="bi bi-box-arrow-right"></i> Cerrar sesión
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+
           {% else %}
+          <!-- Usuario no logueado -->
           <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
             <li class="nav-item">
               <a class="nav-link" href="{{ url_for('auth.login') }}">Login</a>
@@ -83,11 +86,10 @@
             <li class="nav-item">
               <a class="nav-link" href="{{ url_for('auth.register') }}">Register</a>
             </li>
-            {% endif %}
+          </ul>
+          {% endif %}
         </div>
       </div>
-    </div>
-
     </div>
   </nav>
 </header>
