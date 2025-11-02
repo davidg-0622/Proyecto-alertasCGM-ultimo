@@ -106,15 +106,18 @@
     <a href="{{ url_for('app.edit_servicio', id=servicio.id_servicio) }}" class="btn btn-warning btn-sm">
         <i class="bi bi-pencil"></i> Editar
     </a>
+     
+    <a href="{{ url_for('app.listar') }}" class="btn btn-secondary btn-sm">Volver a la lista</a>
     <form action="{{ url_for('app.delete_servicio', id=servicio.id_servicio) }}" method="POST" style="display:inline;">
         {% if csrf_token %}
         {{ csrf_token() }}
         {% endif %}
+         {% if g.user.perfil == 'Admin' %} 
         <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Eliminar este servicio?');">
             <i class="bi bi-trash"></i> Eliminar
         </button>
     </form>
-    <a href="{{ url_for('app.listar') }}" class="btn btn-secondary btn-sm">Volver a la lista</a>
+      {% endif %}
 </div>
 
 {% endblock %}

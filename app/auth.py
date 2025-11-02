@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, request, flash, redirect, url_for,
 from werkzeug.security import generate_password_hash, check_password_hash   
 from . import db
 from .models.user import User
-
+from functools import wraps
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
@@ -105,9 +105,25 @@ def login_required(view):
     return wrapped_view
 
 
+
+######################Decorador para que solo el perfil Admin pueda ingresar a la ruta admin ##################33
+
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        # Verifica si el usuario está logueado Y si su perfil es 'Admin'
+        if g.user is None or g.user.perfil != 'Admin':
+            flash('No tienes permiso para acceder a esta página.', 'danger')
+            # Redirige a la página de inicio (asegúrate de que 'app.home' exista o cámbialo a 'auth.login' si no existe)
+            return redirect(url_for('app.listar')) 
+            # Alternativa: return abort(403)
+        return f(*args, **kwargs)
+    return decorated_function
+
 ################################ Admin ###############################3
 @bp.route('/admin', methods=['POST','GET'])
-@login_required
+@login_required     # Primero verifica que esté logueado
+@admin_required   
 def Admin():
     usuarios= User.query.all()
     print(f'los usuarios de la tabla son {usuarios}')
@@ -132,7 +148,6 @@ def cambiar_estado(id_usuario, nuevo_estado):
 
     # Redirige de vuelta a la página de administración
     return redirect(url_for('auth.Admin'))
-
 
 
 
