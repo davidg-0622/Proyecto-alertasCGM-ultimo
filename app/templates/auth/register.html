@@ -52,7 +52,7 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="perfil" class="form-label">Perfil</label>
+                            <label for="perfil" class="form-label">Rol</label>
                             <select class="form-select" id="perfil" name="perfil" required> <!-- Usa form-select para BS5 -->
                                 <option value="" disabled selected>Seleccione un perfil</option>
                                 <option value="Usuario">Usuario</option>
@@ -76,10 +76,17 @@
                         </div>
                     </form>
                 </div>
-            </div>
         </div>
+                      <div class="text-center mt-3">
+            <p class="small">¿Ya tienes usuario? <a href="{{ url_for('auth.login') }}">Login</a></p>
+        </div>
+            </div>
+            
     </div>
 </div>
+
+
+
 
 <div class="watermark-container">
     <img src="{{ url_for('static', filename='images/fondo.png') }}" alt="Imagen principal">

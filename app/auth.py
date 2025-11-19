@@ -56,21 +56,32 @@ def register():
         estado = 0 
         perfil = request.form['perfil']
 
-        error=None
+        # Inicializamos error como None
+        error = None
         existing_user = User.query.filter_by(username=username).first()
+        
         if existing_user is None:
+            # --- BLOQUE DE ÉXITO ---
             new_user = User(nombre=nombre,apellido=apellido, username=username, email=email, password=generate_password_hash(password),estado=estado, perfil=perfil)
             db.session.add(new_user)
             db.session.commit()
-            error= f'Usuario registrado correctamente'
-            return redirect(url_for('auth.login'))
+            
+            # 1. Flashear el mensaje de éxito antes de redirigir
+            flash('Usuario registrado correctamente. Por favor, inicie sesión.', 'success')
+            
+            # 2. Redirigir inmediatamente a la página de login
+            return redirect(url_for('auth.register'))
+        
         else:
-            error= f'El nombre de usuario ya existe'
-
-        flash(error)
+            # --- BLOQUE DE ERROR (si el usuario ya existe) ---
+            error = f'El nombre de usuario {username} ya existe.'
+            
+            # Flashear el mensaje de error y quedarse en la página de registro
+            flash(error, 'danger')
             # La ejecución continúa al return final, mostrando el formulario con el mensaje.
 
     return render_template('auth/register.html')
+
 
 
 
@@ -148,6 +159,31 @@ def cambiar_estado(id_usuario, nuevo_estado):
 
     # Redirige de vuelta a la página de administración
     return redirect(url_for('auth.Admin'))
+
+
+
+####################### delete usuarios admin####################
+
+# En app/auth.py (o donde esté tu Blueprint)
+
+@bp.route('/delete_user/<int:id>', methods=['POST'])
+@login_required
+def delete_user(id):
+    """Elimina un servicio de la base de datos."""
+    
+    # Esta es la línea que mencionas:
+    user = User.query.get_or_404(id) 
+    
+    try:
+        db.session.delete(user)
+        db.session.commit()
+        flash('El usuario ha sido eliminado correctamente.', 'success')
+        return redirect(url_for('auth.Admin'))
+    except Exception:
+        db.session.rollback()
+        flash('Hubo un error al eliminar el servicio.', 'danger')
+        return redirect(url_for('auth.Admin'))
+
 
 
 

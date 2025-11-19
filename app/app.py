@@ -5,6 +5,9 @@ from app import db # Asume que 'db' se importa desde la aplicación principal
 from math import ceil
 from sqlalchemy import or_
 from app.auth import login_required
+from datetime import date
+from app.models.standby import StandBy 
+from sqlalchemy import asc
 
 
 
@@ -13,11 +16,53 @@ from app.auth import login_required
 bp = Blueprint('app', __name__, url_prefix='/app')
 
 
+from datetime import date
+
 @bp.route('/detalle_servicio/<int:id>')
 def detalle_servicio(id):
+    # Obtiene el servicio principal o muestra error 404 si no existe
     servicio = Servicio.query.get_or_404(id) 
-   
-    return render_template('servicios/detalle_servicio.html', servicio=servicio)
+
+    # --- Lógica para obtener el Stand By por servicio ---
+    
+    # 1. Obtenemos el nombre del grupo stand by del servicio actual
+    nombre_grupo = servicio.nombre_grupo_stand_by
+    print(f'el nombre del grupo es {nombre_grupo}')
+
+    # 2. Construimos la consulta ORM para unir y filtrar
+    # Usamos db.session.query() para hacer un JOIN entre dos modelos
+    
+    # Esta consulta busca registros en StandBy donde FC:Producto_Soportado 
+    # coincida con nombre_grupo_stand_by del servicio actual.
+    
+    standby_info = db.session.query(
+        StandBy.mes,
+        StandBy.fc,
+        StandBy.fc_celular,
+        StandBy.fecha_de_servicio,
+        StandBy.fc_producto
+
+    ).join(
+        Servicio,
+        Servicio.nombre_grupo_stand_by == StandBy.fc_producto
+    ).filter(
+        Servicio.id_servicio == id
+    ).order_by(
+        StandBy.mes.asc() # Ordena por la columna 'mes' de forma ascendente
+        # También puedes usar: asc(StandBy.mes)
+    ).all()
+# Ejecuta la consulta y trae todos los resultados coincidentes
+    
+    # Puedes añadir el filtro de fecha actual si lo necesitas, por ejemplo:
+    # .filter(StandBy.fecha_de_servicio == date.today()) 
+    # .all()
+
+
+    # 3. Pasamos la información a la plantilla HTML
+    return render_template('servicios/detalle_servicio.html', 
+                           servicio=servicio, 
+                           standby_info=standby_info)
+
 
 
 ###########################Listar servicio #####################

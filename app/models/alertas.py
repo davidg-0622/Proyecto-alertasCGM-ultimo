@@ -1,47 +1,53 @@
 from .. import db
-
-
+from datetime import datetime # Importar datetime no es estrictamente necesario para el modelo en sí
 
 class Alerta(db.Model):
-    __tablename__ = 'alertas'
+    # En la BD tu tabla se llama 'alertas' (minúsculas, plural)
+    # SQLAlchemy lo inferiría automáticamente, pero lo dejamos explícito si quieres 'alertas1'
+    __tablename__ = 'alertas' 
 
-    idalertas = db.Column(db.Integer, primary_key=True)
-    Host = db.Column(db.String(100))
-    Time = db.Column(db.String(100))
-    Recovery_time = db.Column("Recovery time", db.String(100))  # ← con espacio
-    Duracion = db.Column(db.Float)
-    Status = db.Column(db.String(45))
-    Problem = db.Column(db.String(500))
-    Ack = db.Column(db.Integer)
-    Servicio = db.Column(db.String(500))
-    Cod_App = db.Column(db.String(45))
-    Tipo = db.Column(db.String(45))
-    Rango_Duracion = db.Column("Rango Duracion", db.String(45))  # ← con espacio
-    Severity = db.Column(db.String(45))
-    Actions = db.Column(db.String(45))
-    Tags = db.Column(db.String(800))
-    Operational_data = db.Column("Operational data", db.String(800))  # ← con espacio
-    Tipo_Servicio = db.Column(db.String(45))
+    # --- Definición de Columnas (siguiendo PEP 8: snake_case para atributos Python) ---
 
-    def __init__(self, idalertas, Host, Time, Recovery_time, Duracion, Status, Problem,
-                 Ack, Servicio, Cod_App, Tipo, Rango_Duracion, Severity, Actions,
-                 Tags, Operational_data, Tipo_Servicio):
-        self.idalertas = idalertas
-        self.Host = Host
-        self.Time = Time
-        self.Recovery_time = Recovery_time
-        self.Duracion = Duracion
-        self.Status = Status
-        self.Problem = Problem
-        self.Ack = Ack
-        self.Servicio = Servicio
-        self.Cod_App = Cod_App
-        self.Tipo = Tipo
-        self.Rango_Duracion = Rango_Duracion
-        self.Severity = Severity
-        self.Actions = Actions
-        self.Tags = Tags
-        self.Operational_data = Operational_data
-        self.Tipo_Servicio = Tipo_Servicio
+    # Mapeo de 'idalertas' a 'id' para mayor claridad y convención
+    id = db.Column('idalertas', db.Integer, primary_key=True, autoincrement=True) 
+    
+    # SQLAlchemy mapea automáticamente atributos a columnas con el mismo nombre
+    # Sin embargo, si quieres mantener el nombre de la BD original (capitalizado), 
+    # puedes usar el argumento 'name'. Lo haremos para ser precisos con tu tabla original.
 
-        
+    host = db.Column('Host', db.Text) # Usamos db.Text como en tu BD original
+    time = db.Column('Time', db.DateTime(timezone=False)) # timezone=False por defecto
+    recovery_time_str = db.Column('Recovery_time', db.String(100)) 
+    
+    # Mapeo de Duracion a duracion, especificando el tipo exacto
+    duracion = db.Column('Duracion', db.Double)
+    status = db.Column('Status', db.Text)
+    problem = db.Column('Problem', db.Text)
+    # Usamos db.BigInteger para mapear correctamente el BIGINT de MySQL
+    ack = db.Column('Ack', db.BigInteger) 
+    servicio = db.Column('Servicio', db.Text)
+    cod_app = db.Column('Cod_App', db.Text)
+    tipo = db.Column('Tipo', db.Text)
+    
+    # Estos nombres de columna ya usan guiones bajos, no necesitan el argumento 'name'
+    rango_duracion = db.Column('Rango_Duracion', db.Text) 
+    severity = db.Column('Severity', db.Text)
+    actions = db.Column('Actions', db.Text)
+    tags = db.Column('Tags', db.Text)
+    
+    # Este nombre de columna ya usa guion bajo, no necesita el argumento 'name'
+    operational_data = db.Column('Operational_data', db.Text) 
+    
+    tipo_servicio = db.Column('Tipo_Servicio', db.Text)
+
+    # --- Método __repr__ (recomendado) ---
+    
+    def __repr__(self):
+        """Representación útil al imprimir el objeto Alerta."""
+        return f'<Alerta id={self.id} host={self.host!r} status={self.status!r}>'
+
+    # --- Nota sobre __init__ ---
+    # SQLAlchemy proporciona un constructor predeterminado que acepta argumentos de palabra clave.
+    # El __init__ manual de tu ejemplo no es necesario y a menudo se omite en favor del constructor automático.
+    # Puedes crear instancias así: 
+    # nueva_alerta = Alerta(Host='servidor1', Status='UP', Time=datetime.now(), ...)

@@ -4,120 +4,193 @@
 
 {% block content %}
 
-<h2 class="text-success-emphasis text-center display-5 mb-4">Detalle del servicio</h2>
+<!-- Usamos container-fluid para ocupar todo el ancho disponible -->
+<div class="container-fluid mt-5"> 
+    <div class="row justify-content-center">
+        <!-- Eliminamos las clases col-lg-8 col-md-10 para que la tarjeta ocupe todo el ancho del container-fluid -->
+        <div class="col-12"> 
+            <div class="card shadow-lg">
+                <div class="card-header bg-success text-white">
+                    <h1 class="card-title h3 mb-0">
+                        <i class="bi bi-info-circle me-2"></i>
+                        Detalle del servicio
+                    </h1>
+                </div>
+                <div class="card-body">
+                    <h2 class="card-subtitle mb-4 text-muted">{{ servicio.servicio }}</h2>
 
-<div class="table-responsive mb-4">
-    <!-- Añadir la clase table-sm aquí -->
-    <table class="table table-sm table-striped table-bordered table-hover align-middle">
-        <tbody>
-            <tr>
-                <th class="text-start">ID</th>
-                <td class="text-center">{{ servicio.id_servicio }}</td>
-            </tr>
-            <tr>
-                <th class="text-start">Código</th>
-                <td class="text-center">{{ servicio.codigo_de_aplicacion }}</td>
-            </tr>
-            <tr>
-                <th class="text-start">Nombre del servicio</th>
-                <td class="text-center">{{ servicio.servicio }}</td>
-            </tr>
-            <tr>
-                <th class="text-start">Descripción del servicio</th>
-                <td class="text-center">{{ servicio.descripcion_del_servicio }}</td>
-            </tr>
-            <tr>
-                <th class="text-start">Promesa del servicio</th>
-                <td class="text-center">{{ servicio.promesa_del_servicio or '-' }}</td>
-            </tr>
-            <tr>
-                <th class="text-start">SRE</th>
-                <td class="text-center">{{ servicio.sre }}</td>
-            </tr>
-            <tr>
-                <th class="text-start">EVC</th>
-                <td class="text-center">{{ servicio.evc }}</td>
-            </tr>
-            <tr>
-                <th class="text-start">Contacto Líder</th>
-                <td class="text-center">{{ servicio.contacto_del_lider }}</td>
-            </tr>
-            <tr>
-                <th class="text-start">PO</th>
-                <td class="text-center">{{ servicio.po }}</td>
-            </tr>
-            <tr>
-                <th class="text-start">Elemento Configuración</th>
-                <td class="text-center"><strong>{{ servicio.elemento_de_configuracion }}</strong></td>
-            </tr>
-            <tr>
-                <th class="text-start">Grupo Helix</th>
-                <td class="text-center"><strong>{{ servicio.grupo_inc_helix }}</strong></td>
-            </tr>
-            <tr>
-                <th class="text-start">Runbook</th>
-                <td class="text-center">
-                    {% if servicio.runbook %}
-                    <a href="{{ servicio.runbook }}" target="_blank" class="btn btn-info btn-sm">Ver</a>
-                    {% else %}-{% endif %}
-                </td>
-            </tr>
-            <tr>
-                <th class="text-start">Carpeta Servicios Entregados</th>
-                <td class="text-center">{{ servicio.carpeta_servicios_entregados }}</td>
-            </tr>
-            <tr>
-                <th class="text-start">Relación de Servicios</th>
-                <td class="text-center">{{ servicio.relacion_de_servicios or '-' }}</td>
-            </tr>
-            <tr>
-                <th class="text-start">Grupo Stand By</th>
-                <td class="text-center">{{ servicio.nombre_grupo_stand_by or '-' }}</td>
-            </tr>
-            <tr>
-                <th class="text-start">Líder Técnico</th>
-                <td class="text-center">{{ servicio.lider_tecnico_evc }}</td>
-            </tr>
-            <tr>
-                <th class="text-start">Líder Línea/Área conocimiento</th>
-                <td class="text-center">{{ servicio.lider_linea_area_conicimiento }}</td>
-            </tr>
-            <tr>
-                <th class="text-start">Servicio Especial</th>
-                <td class="text-center">{{ servicio.servicio_especial or '-' }}</td>
-            </tr>
-            <tr>
-                <th class="text-start">Servicio Clave</th>
-                <td class="text-center">{{ servicio.servicio_clave or '-' }}</td>
-            </tr>
-            <tr>
-                <th class="text-start">Encargado CGM</th>
-                <td class="text-center">{{ servicio.encargado_cgm or '-' }}</td>
-            </tr>
-            <tr>
-                <th class="text-start">Plataforma</th>
-                <td class="text-center">{{ servicio.plataforma }}</td>
-            </tr>
-        </tbody>
-    </table>
+                    <div class="table-responsive">
+                        <!-- La tabla ya está diseñada para ser 100% ancha dentro de su contenedor -->
+                        <table class="table table-sm table-striped table-hover align-middle">
+                            <tbody>
+                                <tr>
+                                    <th scope="row" class="text-start w-25">ID</th>
+                                    <td class="text-end">{{ servicio.id_servicio }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="text-start">Código de aplicación</th>
+                                    <td class="text-end">{{ servicio.codigo_de_aplicacion }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="text-start">Descripción del servicio</th>
+                                    <td class="text-start">{{ servicio.descripcion_del_servicio }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="text-start">Promesa del servicio</th>
+                                    <td class="text-end">{{ servicio.promesa_del_servicio or '-' }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="text-start">SRE</th>
+                                    <td class="text-end">{{ servicio.sre }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="text-start">EVC</th>
+                                    <td class="text-end">{{ servicio.evc }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="text-start">Contacto Líder</th>
+                                    <td class="text-end">{{ servicio.contacto_del_lider }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="text-start">PO</th>
+                                    <td class="text-end">{{ servicio.po }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="text-start">Elemento Configuración</th>
+                                    <td class="text-end"><span class="badge bg-primary">{{ servicio.elemento_de_configuracion }}</span></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="text-start">Grupo Helix</th>
+                                    <td class="text-end"><span class="badge bg-info text-dark">{{ servicio.grupo_inc_helix }}</span></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="text-start">Runbook</th>
+                                    <td class="text-end">
+                                        {% if servicio.runbook %}
+                                        <a href="{{ servicio.runbook }}" target="_blank" class="btn btn-dark btn-sm">
+                                            <i class="bi bi-box-arrow-up-right"></i> Ver Enlace
+                                        </a>
+                                        {% else %}
+                                        <span class="text-muted">No disponible</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="text-start">Plataforma</th>
+                                    <td class="text-end">{{ servicio.plataforma }}</td>
+                                </tr>
+                                <!-- ... resto de filas ... -->
+                                <tr>
+                                    <th scope="row" class="text-start">Carpeta Servicios Entregados</th>
+                                    <td class="text-end">{{ servicio.carpeta_servicios_entregados }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="text-start">Relación de Servicios</th>
+                                    <td class="text-end">{{ servicio.relacion_de_servicios or '-' }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="text-start">Grupo Stand By</th>
+                                    <td class="text-end">{{ servicio.nombre_grupo_stand_by or '-' }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="text-start">Líder Técnico</th>
+                                    <td class="text-end">{{ servicio.lider_tecnico_evc }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="text-start">Líder Línea/Área conocimiento</th>
+                                    <td class="text-end">{{ servicio.lider_linea_area_conicimiento }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="text-start">Servicio Especial</th>
+                                    <td class="text-end">{{ servicio.servicio_especial or '-' }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="text-start">Servicio Clave</th>
+                                    <td class="text-end">{{ servicio.servicio_clave or '-' }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="text-start">Encargado CGM</th>
+                                    <td class="text-end">{{ servicio.encargado_cgm or '-' }}</td>
+                                </tr>
+
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="card-footer text-center">
+                    <a href="{{ url_for('app.listar') }}" class="btn btn-secondary me-2">
+                        <i class="bi bi-arrow-left"></i> Volver
+                    </a>
+                    <a href="{{ url_for('app.edit_servicio', id=servicio.id_servicio) }}" class="btn btn-warning me-2">
+                        <i class="bi bi-pencil"></i> Editar
+                    </a>
+                    
+                    <form action="{{ url_for('app.delete_servicio', id=servicio.id_servicio) }}" method="POST" style="display:inline;">
+                        {% if csrf_token %}
+                        {{ csrf_token() }}
+                        {% endif %}
+                        {% if g.user.perfil == 'Admin' %} 
+                        <button type="submit" class="btn btn-danger" onclick="return confirm('¿Está seguro de eliminar este servicio? Esta acción no se puede deshacer.');">
+                            <i class="bi bi-trash"></i> Eliminar
+                        </button>
+                        {% endif %}
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
-<div class="mt-4 text-center">
-    <a href="{{ url_for('app.edit_servicio', id=servicio.id_servicio) }}" class="btn btn-warning btn-sm">
-        <i class="bi bi-pencil"></i> Editar
-    </a>
-     
-    <a href="{{ url_for('app.listar') }}" class="btn btn-secondary btn-sm">Volver a la lista</a>
-    <form action="{{ url_for('app.delete_servicio', id=servicio.id_servicio) }}" method="POST" style="display:inline;">
-        {% if csrf_token %}
-        {{ csrf_token() }}
+
+
+<!-- Agregamos un poco de margen superior para separar esta sección del detalle principal -->
+<div class="mt-5"> 
+    <h2>Información de Stand By </h2>
+
+    <!-- Contenedor responsivo para asegurar que la tabla se vea bien en dispositivos móviles -->
+    <div class="table-responsive">
+        {% if standby_info %}
+            <!-- 
+                Clases de Bootstrap aplicadas:
+                - table: La clase base de Bootstrap para tablas.
+                - table-striped: Añade un color de fondo gris a filas alternas para mejor legibilidad.
+                - table-hover: Resalta la fila cuando pasas el cursor por encima.
+                - table-bordered: Añade bordes a todas las celdas de la tabla.
+                - align-middle: Centra verticalmente el contenido de las celdas.
+            -->
+            <table class="table table-striped table-hover table-bordered align-middle">
+                <!-- table-dark o table-primary para un encabezado con color -->
+                <thead class="table-dark"> 
+                    <tr>
+                        <th>Producto Soportado</th>
+                        <th>Mes</th>
+                        <th>FC (Contacto)</th>
+                        <th>Celular</th>
+                        <th>Fecha de Servicio</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in standby_info %}
+                        <tr>
+                            <td>{{ item.fc_producto }}</td>
+                            <td>{{ item.mes }}</td>
+                            <td>{{ item.fc }}</td>
+                            <td>{{ item.fc_celular }}</td>
+                            <!-- Muestra el texto de la fecha directamente -->
+                            <td>{{ item.fecha_de_servicio if item.fecha_de_servicio else '-' }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <!-- Clase de alerta de Bootstrap para cuando no hay datos -->
+            <div class="alert alert-info" role="alert">
+                No se encontró información de Stand By coincidente para este servicio.
+            </div>
         {% endif %}
-         {% if g.user.perfil == 'Admin' %} 
-        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('¿Eliminar este servicio?');">
-            <i class="bi bi-trash"></i> Eliminar
-        </button>
-    </form>
-      {% endif %}
+    </div>
 </div>
+
 
 {% endblock %}
