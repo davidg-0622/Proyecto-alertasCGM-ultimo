@@ -62,18 +62,16 @@
     <!-- Cambia 'alert-info' por 'alert-light' -->
     <div class="alert alert-light d-flex justify-content-between align-items-center" role="alert"> 
         <div>
-            
             <span id="fraseTexto">{{ frase_generada }}</span>
         </div>
-        <div>
-             <span id="confirmacionCopied" class="badge bg-success me-2" style="display:none;">¡Copiado!</span>
+        <div class="d-flex align-items-center gap-2">
             <button onclick="copiarFrase()" class="btn btn-outline-secondary btn-sm">
                 Copiar
             </button>
+            <span id="confirmacionCopied" class="badge bg-success" style="display:none;">¡Copiado!</span>
         </div>
     </div>
 {% endif %}
-    
     <!-- Se agrega este div para los mensajes flash que probablemente tienes definidos en base.html -->
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
@@ -137,7 +135,7 @@
                     // Oculta el mensaje después de 2 segundos
                     setTimeout(() => {
                         confirmacion.style.display = 'none';
-                    }, 2000);
+                    }, 3000);
                 }
             }).catch(err => {
                 console.error('Error al copiar: ', err);
