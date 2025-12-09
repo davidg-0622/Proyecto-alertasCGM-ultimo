@@ -34,3 +34,14 @@ body{
     }
 
 
+/* estoilos de Bocas */
+
+#hr-degradado {
+    border: none; /* Elimina el borde por defecto */
+    height: 3px; /* Define el grosor de la línea */
+    /* Aplica el gradiente lineal de izquierda a derecha */
+    background: linear-gradient(to right, #ff0000, #ffff00, #0000ff);
+  }
+
+
+

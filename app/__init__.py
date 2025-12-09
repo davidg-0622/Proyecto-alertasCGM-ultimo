@@ -15,10 +15,13 @@ def create_app():
     # Registrar Blueprints
     from .app import bp as main_bp
     from .auth import bp as auth_bp
+    from .boca import bp as boca_bp
     from .alertas_principal import bp as alertas_bp
+  
     app.register_blueprint(main_bp)
     app.register_blueprint(auth_bp)
     app.register_blueprint(alertas_bp)
+    app.register_blueprint(boca_bp)
 
     # Migra todos los modelos a la base de datos
     with app.app_context():

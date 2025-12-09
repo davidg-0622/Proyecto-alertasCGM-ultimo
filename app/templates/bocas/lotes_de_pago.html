@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+ 
+
+{% block content %}
+
+<div class="container mt-4"> 
+    <h1 class="mb-4">Lotes de pago SVE</h1>
+
+<form method="POST" action="{{ url_for('boca.lotes_de_pago') }}" class="mb-4">
+    
+    <!-- PRIMERA FILA -->
+    <div class="row mb-2">
+        <label for="estado_servicio" class="col-md-3 col-form-label">
+            <strong>Selecciona un tipo de notificación:</strong>
+        </label>
+        <div class="col-md-6"> 
+            <select class="form-select" id="boca_lotes_pago" name="boca_lotes_pago" required>
+                <option value="" disabled selected>Seleccione una opción...</option>
+                <option value="validando" {% if valor_anterior_estado == 'validando' %}selected{% endif %}>🗣️ Lotes de Pago por la Sucursal Virtual Empresas Bancolombia</option>
+                <option value="validando" {% if valor_anterior_estado == 'validando' %}selected{% endif %}>🗣️ Lotes de Pago por la Sucursal Virtual Negocios</option>
+                <option value="normalidad" {% if valor_anterior_estado == 'normalidad' %}selected{% endif %}>✅ Lotes de Pago por la Sucursal Virtual Empresas Bancolombia</option>
+                <option value="descartando" {% if valor_anterior_estado == 'descartando' %}selected{% endif %}>✅ Lotes de Pago por la Sucursal Virtual Empresas Bancolombia</option>
+            </select>
+        </div>
+    </div>
+
+
+
+    <div class="row mb-3">
+    <label for="termino_busqueda" class="col-md-3 col-form-label"><strong>Descripción de la Afectación:</strong></label>
+  
+    <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm">
+
+    </div>
+
+    <div class="row mb-3">
+    <label for="termino_busqueda" class="col-md-3 col-form-label"><strong>Hora Inicio Retención::</strong></label>
+  
+    <input type="time" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm">
+
+    </div>
+
+    <div class="row mb-3">
+    <label for="termino_busqueda" class="col-md-3 col-form-label"><strong>Hora Inicio Dosificación::</strong></label>
+  
+    <input type="time" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm">
+
+    </div>
+
+    <div class="row mb-3">
+    <label for="termino_busqueda" class="col-md-3 col-form-label"><strong>Lotes Retenidos::</strong></label>
+  
+    <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm">
+
+    </div>
+
+    <div class="row mb-3">
+    <label for="termino_busqueda" class="col-md-3 col-form-label"><strong>Lotes Procesados::</strong></label>
+  
+    <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm">
+
+    </div>
+
+
+        <div class="row mb-3">
+    <label for="termino_busqueda" class="col-md-3 col-form-label"><strong>Lotes Fallidos:</strong></label>
+  
+    <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm">
+
+    </div>
+
+
+        <div class="row mb-3">
+    <label for="termino_busqueda" class="col-md-3 col-form-label"><strong>Dosificación de Lotes por Minuto:</strong></label>
+  
+    <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm">
+
+    </div>
+
+
+    <button type="button" class="btn btn-success">Success</button>
+</form>
+
+
+
+
+
+    <hr id="hr-degradado"> 
+    
+    <!-- CONTENEDOR DE LA FRASE CON EL BOTÓN DE COPIAR -->
+{% if frase_generada %}
+    <!-- Cambia 'alert-info' por 'alert-light' -->
+    <div class="alert alert-light d-flex justify-content-between align-items-center" role="alert"> 
+        <div>
+            
+            <span id="fraseTexto">{{ frase_generada }}</span>
+        </div>
+        <div>
+             <span id="confirmacionCopied" class="badge bg-success me-2" style="display:none;">¡Copiado!</span>
+            <button onclick="copiarFrase()" class="btn btn-outline-secondary btn-sm">
+                Copiar
+            </button>
+        </div>
+    </div>
+{% endif %}
+    
+    <!-- Se agrega este div para los mensajes flash que probablemente tienes definidos en base.html -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+ 
+
+
+
+
+<hr id="hr-degradado"> 
+
+
+{% endblock %}
