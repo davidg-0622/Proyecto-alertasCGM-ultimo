@@ -4,96 +4,101 @@
 {% block content %}
 
 <div class="container mt-4"> 
-    <h1 class="mb-4">Lotes de pago SVE</h1>
+    <h1 class="mb-4">Lotes de pago SVE- SVN</h1>
 
 <form method="POST" action="{{ url_for('boca.lotes_de_pago') }}" class="mb-4">
     
-    <!-- PRIMERA FILA -->
+    <!-- Select de Tipo de Notificación -->
     <div class="row mb-2">
-        <label for="estado_servicio" class="col-md-3 col-form-label">
+        <label for="boca_lotes_pago" class="col-md-3 col-form-label">
             <strong>Selecciona un tipo de notificación:</strong>
         </label>
         <div class="col-md-6"> 
-            <select class="form-select" id="boca_lotes_pago" name="boca_lotes_pago" required>
+            <select class="form-select" id="boca_lotes_pago" name="boca_lotes_pago" required onchange="toggleHoraOk()">
                 <option value="" disabled selected>Seleccione una opción...</option>
-                <option value="validando" {% if valor_anterior_estado == 'validando' %}selected{% endif %}>🗣️ Lotes de Pago por la Sucursal Virtual Empresas Bancolombia</option>
-                <option value="validando" {% if valor_anterior_estado == 'validando' %}selected{% endif %}>🗣️ Lotes de Pago por la Sucursal Virtual Negocios</option>
-                <option value="normalidad" {% if valor_anterior_estado == 'normalidad' %}selected{% endif %}>✅ Lotes de Pago por la Sucursal Virtual Empresas Bancolombia</option>
-                <option value="descartando" {% if valor_anterior_estado == 'descartando' %}selected{% endif %}>✅ Lotes de Pago por la Sucursal Virtual Empresas Bancolombia</option>
+                <option value="sve_validando" {% if valores_anteriores.tipo_notificacion == 'sve_validando' %}selected{% endif %}>🗣️ Lotes de Pago por la Sucursal Virtual Empresas Bancolombia</option>
+                <option value="svn_validando" {% if valores_anteriores.tipo_notificacion == 'svn_validando' %}selected{% endif %}>🗣️ Lotes de Pago por la Sucursal Virtual Negocios</option>
+                <option value="normalidad" {% if valores_anteriores.tipo_notificacion == 'normalidad' %}selected{% endif %}>✅ Lotes de Pago por la Sucursal Virtual Empresas Bancolombia (Normalidad)</option>
+                <option value="descartando" {% if valores_anteriores.tipo_notificacion == 'descartando' %}selected{% endif %}>✅ Lotes de Pago por la Sucursal Virtual Empresas Bancolombia (Descartando)</option>
             </select>
         </div>
     </div>
 
+    <!-- Campo Descripción de la Afectación -->
+    <div class="row mb-3">
+        <label for="descripcion_afectacion" class="col-md-3 col-form-label"><strong>Descripción de la Afectación:</strong></label>
+        <div class="col-md-6"> 
+            <input type="text" class="form-control" id="descripcion_afectacion" name="descripcion_afectacion" value="{{ valores_anteriores.descripcion_afectacion or '' }}">
+        </div>
+    </div>
 
+    <!-- Campo Hora Inicio Retención -->
+    <div class="row mb-3">
+        <label for="hora_inicio_retencion" class="col-md-3 col-form-label"><strong>Hora Inicio Retención:</strong></label>
+        <div class="col-md-6"> 
+            <input type="time" class="form-control" id="hora_inicio_retencion" name="hora_inicio_retencion" value="{{ valores_anteriores.hora_inicio_retencion or '' }}">
+        </div>
+    </div>
+
+    <!-- Campo Hora Inicio Dosificación -->
+    <div class="row mb-3">
+        <label for="hora_inicio_dosificacion" class="col-md-3 col-form-label"><strong>Hora Inicio Dosificación:</strong></label>
+        <div class="col-md-6"> 
+            <input type="time" class="form-control" id="hora_inicio_dosificacion" name="hora_inicio_dosificacion" value="{{ valores_anteriores.hora_inicio_dosificacion or '' }}">
+        </div>
+    </div>
+    
+    <!-- CAMPO HORA OK (Inicialmente oculto con d-none de Bootstrap) -->
+    <div class="row mb-3 d-none" id="div_hora_ok">
+        <label for="hora_ok" class="col-md-3 col-form-label"><strong>Hora OK:</strong></label>
+        <div class="col-md-6"> 
+            <input type="time" class="form-control" id="hora_ok" name="hora_ok" value="{{ valores_anteriores.hora_ok or '' }}" style="background-color: yellow; color:black;">
+        </div>
+    </div>
+
+
+    <!-- Campos de Lotes -->
+    <div class="row mb-3">
+        <label for="lotes_retenidos" class="col-md-3 col-form-label"><strong>Lotes Retenidos:</strong></label>
+        <div class="col-md-6"> 
+            <input type="text" class="form-control" id="lotes_retenidos" name="lotes_retenidos" value="{{ valores_anteriores.lotes_retenidos or '' }}">
+        </div>
+    </div>
 
     <div class="row mb-3">
-    <label for="termino_busqueda" class="col-md-3 col-form-label"><strong>Descripción de la Afectación:</strong></label>
-  
-    <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm">
-
+        <label for="lotes_procesados" class="col-md-3 col-form-label"><strong>Lotes Procesados:</strong></label>
+        <div class="col-md-6"> 
+            <input type="text" class="form-control" id="lotes_procesados" name="lotes_procesados" value="{{ valores_anteriores.lotes_procesados or '' }}">
+        </div>
     </div>
 
     <div class="row mb-3">
-    <label for="termino_busqueda" class="col-md-3 col-form-label"><strong>Hora Inicio Retención::</strong></label>
-  
-    <input type="time" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm">
-
+        <label for="lotes_fallidos" class="col-md-3 col-form-label"><strong>Lotes Fallidos:</strong></label>
+        <div class="col-md-6"> 
+            <input type="text" class="form-control" id="lotes_fallidos" name="lotes_fallidos" value="{{ valores_anteriores.lotes_fallidos or '' }}">
+        </div>
     </div>
 
     <div class="row mb-3">
-    <label for="termino_busqueda" class="col-md-3 col-form-label"><strong>Hora Inicio Dosificación::</strong></label>
-  
-    <input type="time" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm">
-
+        <label for="lotes_por_minuto" class="col-md-3 col-form-label"><strong>Dosificación de Lotes por Minuto:</strong></label>
+        <div class="col-md-6"> 
+            <input type="text" class="form-control" id="lotes_por_minuto" name="lotes_por_minuto" value="{{ valores_anteriores.lotes_por_minuto or '' }}">
+        </div>
     </div>
 
-    <div class="row mb-3">
-    <label for="termino_busqueda" class="col-md-3 col-form-label"><strong>Lotes Retenidos::</strong></label>
-  
-    <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm">
-
-    </div>
-
-    <div class="row mb-3">
-    <label for="termino_busqueda" class="col-md-3 col-form-label"><strong>Lotes Procesados::</strong></label>
-  
-    <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm">
-
-    </div>
-
-
-        <div class="row mb-3">
-    <label for="termino_busqueda" class="col-md-3 col-form-label"><strong>Lotes Fallidos:</strong></label>
-  
-    <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm">
-
-    </div>
-
-
-        <div class="row mb-3">
-    <label for="termino_busqueda" class="col-md-3 col-form-label"><strong>Dosificación de Lotes por Minuto:</strong></label>
-  
-    <input type="text" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm">
-
-    </div>
-
-
-    <button type="button" class="btn btn-success">Success</button>
+    <!-- Botón de submit -->
+    <button type="submit" class="btn btn-success">Generar Frase</button>
+    <a href="{{ url_for('boca.lotes_de_pago') }}" class="btn btn-secondary">Borrar</a>
 </form>
-
-
-
-
 
     <hr id="hr-degradado"> 
     
-    <!-- CONTENEDOR DE LA FRASE CON EL BOTÓN DE COPIAR -->
+    <!-- Contenedor de la frase usando white-space: pre-wrap; para saltos de línea -->
 {% if frase_generada %}
-    <!-- Cambia 'alert-info' por 'alert-light' -->
     <div class="alert alert-light d-flex justify-content-between align-items-center" role="alert"> 
         <div>
-            
-            <span id="fraseTexto">{{ frase_generada }}</span>
+            <!-- Usamos el estilo CSS para respetar los \n del Python -->
+            <span id="fraseTexto" style="white-space: pre-wrap;">{{ frase_generada }}</span>
         </div>
         <div>
              <span id="confirmacionCopied" class="badge bg-success me-2" style="display:none;">¡Copiado!</span>
@@ -104,24 +109,37 @@
     </div>
 {% endif %}
     
-    <!-- Se agrega este div para los mensajes flash que probablemente tienes definidos en base.html -->
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        {% for category, message in messages %}
-          <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-            {{ message }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-          </div>
-        {% endfor %}
-      {% endif %}
-    {% endwith %}
+    <!-- Script JS para mostrar/ocultar Hora OK y Copiar -->
+    <script>
+        function toggleHoraOk() {
+            const selectElement = document.getElementById('boca_lotes_pago');
+            const divHoraOk = document.getElementById('div_hora_ok');
+            const selectedValue = selectElement.value;
 
- 
+            // Mostrar solo si el valor es 'normalidad' o 'descartando'
+            if (selectedValue === 'normalidad' || selectedValue === 'descartando') {
+                divHoraOk.classList.remove('d-none');
+            } else {
+                divHoraOk.classList.add('d-none');
+            }
+        }
 
+        // Ejecutar al cargar la página para manejar el estado anterior (si hubo POST request)
+        document.addEventListener('DOMContentLoaded', (event) => {
+            toggleHoraOk();
+        });
 
-
-
-<hr id="hr-degradado"> 
+        function copiarFrase() {
+            const fraseTexto = document.getElementById('fraseTexto').innerText;
+            navigator.clipboard.writeText(fraseTexto).then(() => {
+                const confirmacion = document.getElementById('confirmacionCopied');
+                confirmacion.style.display = 'inline';
+                setTimeout(() => {
+                    confirmacion.style.display = 'none';
+                }, 2000);
+            });
+        }
+    </script>
 
 
 {% endblock %}

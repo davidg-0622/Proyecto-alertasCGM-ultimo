@@ -71,27 +71,86 @@ def notificar_boca():
 
 ############################### Lotes de pago ####################################
 
+# Asegúrate de que tus imports en la parte superior del archivo son correctos:
+# from flask import render_template, request, flash, redirect, url_for
+# from flask_login import login_required
+# from . import bp # Suponiendo que usas un Blueprint
+
 @bp.route('/lotes_de_pago', methods=['GET', 'POST'])
 @login_required
 def lotes_de_pago():
-    input_seleccion_afectacion = ""
-    input_estado_valor = ""
-    frase_completa_final = None # <-- Nueva variable para la frase final
+    frase_completa_final = None
+    valores_anteriores = {} 
 
     if request.method == 'POST':
-        input_estado_valor = request.form.get('estado_servicio')
-        input_servicio_valor = request.form.get('termino_busqueda', '').strip()
+        tipo_notificacion_value = request.form.get('boca_lotes_pago')
+        descripcion_afectacion = request.form.get('descripcion_afectacion', '').strip()
+        hora_inicio_retencion = request.form.get('hora_inicio_retencion')
+        hora_inicio_dosificacion = request.form.get('hora_inicio_dosificacion')
+        lotes_retenidos = request.form.get('lotes_retenidos', '').strip()
+        lotes_procesados = request.form.get('lotes_procesados', '').strip()
+        lotes_fallidos = request.form.get('lotes_fallidos', '').strip()
+        lotes_por_minuto = request.form.get('lotes_por_minuto', '').strip()
+        hora_ok_valor = request.form.get('hora_ok', '').strip() # Nuevo campo capturado
 
-        if input_estado_valor and input_servicio_valor:
-            # Aquí es donde construimos la frase en Python
-            if input_estado_valor == 'boca_sve':
-                frase_base = "🗣️ Lotes de Pago por la Sucursal Virtual Empresas Bancolombia"
-            elif input_estado_valor == 'boca_svn':
-                frase_base = "🗣️ Lotes de Pago por la Sucursal Virtual Negocios"
-            elif input_estado_valor == 'normalidad_lotes_svn':
-                frase_base = "✅ Lotes de Pago por la Sucursal Virtual Empresas Bancolombia"
-            elif input_estado_valor == 'normalidad_lotes_sve':
-                frase_base = "✅ Lotes de Pago por la Sucursal Virtual Empresas Bancolombia"
-            else:
-                frase_base = ""
-    return render_template('bocas/lotes_de_pago.html', ) 
+        # Guardar valores para repoblar el formulario
+        valores_anteriores = {
+            'tipo_notificacion': tipo_notificacion_value,
+            'descripcion_afectacion': descripcion_afectacion,
+            'hora_inicio_retencion': hora_inicio_retencion,
+            'hora_inicio_dosificacion': hora_inicio_dosificacion,
+            'lotes_retenidos': lotes_retenidos,
+            'lotes_procesados': lotes_procesados,
+            'lotes_fallidos': lotes_fallidos,
+            'lotes_por_minuto': lotes_por_minuto,
+            'hora_ok': hora_ok_valor,
+        }
+
+        # Mapeo del texto base (asegúrate de que los values coincidan con el HTML)
+        tipo_notificacion_text = ""
+        if tipo_notificacion_value == 'sve_validando':
+            tipo_notificacion_text = "🗣️ Lotes de Pago por la Sucursal Virtual Empresas Bancolombia"
+        elif tipo_notificacion_value == 'svn_validando':
+            tipo_notificacion_text = "🗣️ Lotes de Pago por la Sucursal Virtual Negocios"
+        elif tipo_notificacion_value == 'normalidad':
+            tipo_notificacion_text = "✅ Lotes de Pago por la Sucursal Virtual Empresas Bancolombia (Normalidad)"
+        elif tipo_notificacion_value == 'descartando':
+            tipo_notificacion_text = "✅ Lotes de Pago por la Sucursal Virtual Empresas Bancolombia (Descartando)"
+        
+        # Inicio de la frase con el primer salto de línea
+        frase_completa_final = tipo_notificacion_text + "\n"
+
+        # Construcción del detalle: solo añade líneas si los datos existen
+        if descripcion_afectacion:
+            frase_completa_final += f"{descripcion_afectacion}\n"
+        
+        if hora_inicio_retencion:
+            frase_completa_final += f"Hora Inicio Retención: {hora_inicio_retencion}\n"
+
+        if hora_inicio_dosificacion:
+             frase_completa_final += f"Hora Inicio Dosificación: {hora_inicio_dosificacion}\n"
+        
+        # Inserta Hora OK si existe
+        if hora_ok_valor:
+             frase_completa_final += f"Hora OK: {hora_ok_valor}\n"
+
+        if lotes_retenidos:
+             frase_completa_final += f"Lotes Retenidos: {lotes_retenidos}\n"
+             
+        if lotes_procesados:
+             frase_completa_final += f"Lotes Procesados: {lotes_procesados}\n"
+             
+        if lotes_fallidos:
+             frase_completa_final += f"Lotes Fallidos: {lotes_fallidos}\n"
+             
+        if lotes_por_minuto:
+             frase_completa_final += f"Dosificación de Lotes por Minuto: {lotes_por_minuto}\n"
+
+
+    # Renderizar el template
+    return render_template(
+        'bocas/lotes_de_pago.html',
+        frase_generada=frase_completa_final,
+        valores_anteriores=valores_anteriores
+    )
+
