@@ -3,98 +3,160 @@
 {% block title %}Crear servicio{% endblock %}
 
 {% block content %}
-<h2 class="text-success-emphasis text-center display-5 mb-4">Crear Nuevo Servicio</h2>
+<!-- container-fluid permite que el contenido se extienda a los bordes -->
+<div class="container-fluid py-4 px-md-5"> 
+    <div class="row justify-content-center">
+        <!-- col-12 para usar el máximo ancho disponible -->
+        <div class="col-md-8 col-lg-7 col-xl-8"> 
+            
+            <div class="text-center mb-4">
+                <h2 class="display-5 fw-bold text-success">Registrar Nuevo Servicio</h2>
+                <p class="text-muted">Complete la información técnica y administrativa del servicio</p>
+            </div>
 
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4 p-lg-5"> <!-- Más padding interno para balancear el ancho -->
+                    <form method="POST" action="{{ url_for('app.crear_servicio') }}">
+                        
+                        <div class="row g-4">
+                            <!-- Sección: Identificación -->
+                            <div class="col-12 border-bottom pb-2">
+                                <h5 class="text-secondary fw-bold">Información Básica</h5>
+                            </div>
+                            
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold">Código de Aplicación</label>
+                                <input type="text" class="form-control" name="codigo_de_aplicacion" >
+                            </div>
+                            
+                            <div class="col-md-5">
+                                <label class="form-label fw-bold">Nombre del Servicio <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control border-success-subtle" name="servicio" required>
+                            </div>
 
-<div class="container mt-5">
-<form method="POST" action="{{ url_for('app.crear_servicio') }}" class="row g-3">
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold">Plataforma</label>
+                                <input type="text" class="form-control" name="plataforma" placeholder="Ej: AWS, Azure, On-premise">
+                            </div>
 
-     <div class="col-md-5">
-        <label class="form-label"><strong>Código de Aplicación:</strong></label>
-        <input type="text" class="form-control" name="codigo_de_aplicacion">
-    </div>
-    
-    <div class="col-md-5">
-        <label class="form-label"><strong>Servicio:</strong></label>
-        <input type="text" class="form-control" name="servicio" required>
-    </div>
-    <div class="col-md-5">
-        <label class="form-label"><strong>Descripción del Servicio</strong>:</label>
-        <textarea class="form-control" name="descripcion_del_servicio" ></textarea>
-    </div>
-    <div class="col-md-5">
-        <label class="form-label"><strong>Promesa del Servicio:</strong></label>
-        <input type="text" class="form-control" name="promesa_del_servicio" >
-    </div>
-    <div class="col-md-5">
-        <label class="form-label"><strong>SRE:</strong></label>
-        <input type="text" class="form-control" name="sre" >
-    </div>
-    <div class="col-md-5">
-        <label class="form-label"><strong>EVC:</strong></label>
-        <input type="text" class="form-control" name="evc" >
-    </div>
-    <div class="col-md-5">
-        <label class="form-label"><strong>Contacto del Líder:</strong></label>
-        <input type="number" class="form-control" name="contacto_del_lider">
-    </div>
-    <div class="col-md-5">
-        <label class="form-label"><strong>PO:</strong></label>
-        <input type="text" class="form-control" name="po" >
-    </div>
-    <div class="col-md-5">
-        <label class="form-label"><strong>Elemento de Configuración:</strong></label>
-        <input type="text" class="form-control" name="elemento_de_configuracion">
-    </div>
-    <div class="col-md-5">
-        <label class="form-label"><strong>Grupo INC Helix:</strong></label>
-        <input type="text" class="form-control" name="grupo_inc_helix" >
-    </div>
-    <div class="col-md-5">
-        <label class="form-label"><strong>Runbook:</strong></label>
-        <input type="text" class="form-control" name="runbook">
-    </div>
-    <div class="col-md-5">
-        <label class="form-label"><strong>Carpeta Servicios Entregados:</strong></label>
-        <input type="text" class="form-control" name="carpeta_servicios_entregados">
-    </div>
-    <div class="col-md-5">
-        <label class="form-label"><strong>Relación de Servicios:</strong></label>
-        <input type="text" class="form-control" name="relacion_de_servicios">
-    </div>
-    <div class="col-md-5">
-        <label class="form-label"><strong>Nombre Grupo Stand By:</strong></label>
-        <input type="text" class="form-control" name="nombre_grupo_stand_by">
-    </div>
-    <div class="col-md-5">
-        <label class="form-label"><strong>Líder Técnico EVC:</strong></label>
-        <input type="text" class="form-control" name="lider_tecnico_evc" >
-    </div>
-    <div class="col-md-5">
-        <label class="form-label"><strong>Líder Línea Área Conocimiento:</strong></label>
-        <input type="text" class="form-control" name="lider_linea_area_conocimiento" >
-    </div>
-    <div class="col-md-5">
-        <label class="form-label"><strong>Servicio Especial:</strong></label>
-        <input type="text" class="form-control" name="servicio_especial">
-    </div>
-    <div class="col-md-5">
-        <label class="form-label"><strong>Servicio Clave:</strong></label>
-        <input type="text" class="form-control" name="servicio_clave">
-    </div>
-    <div class="col-md-5">
-        <label class="form-label"><strong>Encargado CGM:</strong></label>
-        <input type="text" class="form-control" name="encargado_cgm">
-    </div>
-    <div class="col-md-5">
-        <label class="form-label"><strong>Plataforma:</strong></label>
-        <input type="text" class="form-control" name="plataforma">
-    </div>
-   
-    <div class="col-12" style="margin-top: 20px;">
-        <button type="submit" class="btn btn-primary">Crear Servicio</button>
-    </div>
-</form>
+                            <div class="col-12">
+                                <label class="form-label fw-bold">Descripción del Servicio</label>
+                                <textarea class="form-control" name="descripcion_del_servicio" rows="2" placeholder="Resumen de funciones..."></textarea>
+                            </div>
 
+                            <!-- Sección: Responsables -->
+                            <div class="col-12 border-bottom pb-2 mt-5">
+                                <h5 class="text-secondary fw-bold">Equipo y Responsables</h5>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold">SRE</label>
+                                <input type="text" class="form-control shadow-sm" name="sre">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold">EVC</label>
+                                <input type="text" class="form-control shadow-sm" name="evc">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold">PO (Product Owner)</label>
+                                <input type="text" class="form-control shadow-sm" name="po">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold">Contacto del Líder</label>
+                                <input type="text" class="form-control shadow-sm" name="contacto_del_lider">
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold">Líder Técnico EVC</label>
+                                <input type="text" class="form-control shadow-sm" name="lider_tecnico_evc">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold">Líder Área Conocimiento</label>
+                                <input type="text" class="form-control shadow-sm" name="lider_linea_area_conocimiento">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold">Encargado CGM</label>
+                                <input type="text" class="form-control shadow-sm" name="encargado_cgm">
+                            </div>
+
+                            <!-- Sección: Operación Técnica -->
+                            <div class="col-12 border-bottom pb-2 mt-5">
+                                <h5 class="text-secondary fw-bold">Operación Técnica</h5>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold">Elemento de Configuración (CI)</label>
+                                <input type="text" class="form-control" name="elemento_de_configuracion">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold">Grupo INC Helix</label>
+                                <input type="text" class="form-control" name="grupo_inc_helix">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold">Nombre Grupo Stand By</label>
+                                <input type="text" class="form-control" name="nombre_grupo_stand_by">
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Runbook (URL/Ruta)</label>
+                                <input type="text" class="form-control border-info-subtle" name="runbook">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Carpeta Servicios Entregados</label>
+                                <input type="text" class="form-control border-info-subtle" name="carpeta_servicios_entregados">
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold">Relación de Servicios</label>
+                                <input type="text" class="form-control" name="relacion_de_servicios">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold">Promesa del Servicio (SLA)</label>
+                                <input type="text" class="form-control" name="promesa_del_servicio">
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label fw-bold">Servicio Especial</label>
+                                <select class="form-select" name="servicio_especial">
+                                    <option value="No">No</option>
+                                    <option value="Si">Si</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label fw-bold">Servicio Clave</label>
+                                <select class="form-select" name="servicio_clave">
+                                    <option value="No">No</option>
+                                    <option value="Si">Si</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Botones -->
+                        <div class="mt-5 pt-4 border-top d-flex justify-content-between align-items-center">
+                            <p class="text-muted mb-0 small">* Verifique la información antes de guardar.</p>
+                            <div>
+                                <a href="{{ url_for('app.index') }}" class="btn btn-outline-secondary px-4 me-2">Cancelar</a>
+                                <button type="submit" class="btn btn-success btn-lg px-5 shadow-sm">
+                                    <i class="fas fa-save me-2"></i>Crear Servicio
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+<style>
+    /* Opcional: Hacer los inputs un poco más grandes para pantallas anchas */
+    .form-control, .form-select {
+        padding: 0.6rem 0.75rem;
+    }
+    .form-label {
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: #555;
+    }
+</style>
 {% endblock %}

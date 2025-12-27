@@ -44,4 +44,19 @@ body{
   }
 
 
+/* Asegúrate que el ID coincida con el HTML */
+#degradado {
+    background: linear-gradient(to right, #0c6b0c, #23b96e, #178a21);
+    padding: 3px; /* Este grosor crea el efecto de borde degradado */
+    border-radius: 0.5rem; /* Opcional: para que las esquinas coincidan con el card */
+}
+
+/* Opcional: Si quieres que el fondo del card siga siendo blanco por dentro */
+#degradado .card {
+    border: none; 
+}
+
+
+
+
 

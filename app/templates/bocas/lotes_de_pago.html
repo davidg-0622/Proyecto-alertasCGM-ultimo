@@ -4,7 +4,32 @@
 {% block content %}
 
 <div class="container mt-4"> 
-    <h1 class="mb-4">Lotes de pago SVE- SVN</h1>
+    
+
+<div class="mb-5">
+    <h1 class="h2 text-muted mb-0 d-flex align-items-center">
+        <span class="p-1 bg-success rounded-circle me-2 pulse-tiny"></span>
+        Lotes de Pago SVE / SVN 
+    </h1>
+   
+</div>
+
+<style>
+    /* Una animación muy sutil para el punto de estado */
+    .pulse-tiny {
+        animation: pulse-green 2s infinite;
+        box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7);
+    }
+    @keyframes pulse-green {
+        0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7); }
+        70% { transform: scale(1); box-shadow: 0 0 0 5px rgba(40, 167, 69, 0); }
+        100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(40, 167, 69, 0); }
+    }
+</style>
+
+
+
+
 
 <form method="POST" action="{{ url_for('boca.lotes_de_pago') }}" class="mb-4">
     
@@ -18,8 +43,8 @@
                 <option value="" disabled selected>Seleccione una opción...</option>
                 <option value="sve_validando" {% if valores_anteriores.tipo_notificacion == 'sve_validando' %}selected{% endif %}>🗣️ Lotes de Pago por la Sucursal Virtual Empresas Bancolombia</option>
                 <option value="svn_validando" {% if valores_anteriores.tipo_notificacion == 'svn_validando' %}selected{% endif %}>🗣️ Lotes de Pago por la Sucursal Virtual Negocios</option>
-                <option value="normalidad" {% if valores_anteriores.tipo_notificacion == 'normalidad' %}selected{% endif %}>✅ Lotes de Pago por la Sucursal Virtual Empresas Bancolombia (Normalidad)</option>
-                <option value="descartando" {% if valores_anteriores.tipo_notificacion == 'descartando' %}selected{% endif %}>✅ Lotes de Pago por la Sucursal Virtual Empresas Bancolombia (Descartando)</option>
+                <option value="normalidad" {% if valores_anteriores.tipo_notificacion == 'normalidad' %}selected{% endif %}>✅ Lotes de Pago por la Sucursal Virtual Empresas Bancolombia </option>
+                <option value="descartando" {% if valores_anteriores.tipo_notificacion == 'descartando' %}selected{% endif %}>✅ Lotes de Pago por la Sucursal Virtual Negocios</option>
             </select>
         </div>
     </div>
@@ -49,12 +74,17 @@
     </div>
     
     <!-- CAMPO HORA OK (Inicialmente oculto con d-none de Bootstrap) -->
-    <div class="row mb-3 d-none" id="div_hora_ok">
-        <label for="hora_ok" class="col-md-3 col-form-label"><strong>Hora OK:</strong></label>
-        <div class="col-md-6"> 
-            <input type="time" class="form-control" id="hora_ok" name="hora_ok" value="{{ valores_anteriores.hora_ok or '' }}" style="background-color: yellow; color:black;">
-        </div>
+  <!-- CAMPO HORA OK -->
+<div class="row mb-3 d-none" id="div_hora_ok">
+    <label for="hora_ok" class="col-md-3 col-form-label"><strong>Hora OK:</strong></label>
+    <div class="col-md-6"> 
+        <input type="time" class="form-control" id="hora_ok" name="hora_ok" value="{{ valores_anteriores.hora_ok or '' }}" style="background-color: yellow; color:black;">
     </div>
+
+   
+</div>
+
+
 
 
     <!-- Campos de Lotes -->
@@ -87,7 +117,7 @@
     </div>
 
     <!-- Botón de submit -->
-    <button type="submit" class="btn btn-success">Generar Frase</button>
+    <button type="submit" class="btn btn-success">Enviar</button>
     <a href="{{ url_for('boca.lotes_de_pago') }}" class="btn btn-secondary">Borrar</a>
 </form>
 
@@ -95,51 +125,66 @@
     
     <!-- Contenedor de la frase usando white-space: pre-wrap; para saltos de línea -->
 {% if frase_generada %}
+    <!-- Contenedor principal usa d-flex justify-content-between align-items-center -->
     <div class="alert alert-light d-flex justify-content-between align-items-center" role="alert"> 
         <div>
             <!-- Usamos el estilo CSS para respetar los \n del Python -->
             <span id="fraseTexto" style="white-space: pre-wrap;">{{ frase_generada }}</span>
         </div>
-        <div>
+        <!-- Este div contiene el mensaje y el botón, alineados automáticamente por el flexbox superior -->
+        <div class="d-flex align-items-center"> 
+             <!-- El mensaje de copiado, ahora dentro de este div -->
              <span id="confirmacionCopied" class="badge bg-success me-2" style="display:none;">¡Copiado!</span>
-            <button onclick="copiarFrase()" class="btn btn-outline-secondary btn-sm">
+            <button onclick="copiarFrase()" class="btn btn-outline-secondary btn-sm" id="copiarButton">
                 Copiar
             </button>
         </div>
     </div>
 {% endif %}
+
+ <hr id="hr-degradado"> 
     
-    <!-- Script JS para mostrar/ocultar Hora OK y Copiar -->
-    <script>
-        function toggleHoraOk() {
-            const selectElement = document.getElementById('boca_lotes_pago');
-            const divHoraOk = document.getElementById('div_hora_ok');
-            const selectedValue = selectElement.value;
 
-            // Mostrar solo si el valor es 'normalidad' o 'descartando'
-            if (selectedValue === 'normalidad' || selectedValue === 'descartando') {
-                divHoraOk.classList.remove('d-none');
-            } else {
-                divHoraOk.classList.add('d-none');
-            }
+<!-- SCRIPT DE COPIAR -->
+<script>
+    // Simplificación de mostrar/ocultar hora
+    function toggleHoraOk() {
+        const val = document.getElementById('boca_lotes_pago').value;
+        const div = document.getElementById('div_hora_ok');
+        // Usamos toggle con una condición booleana
+        div.classList.toggle('d-none', !(val === 'normalidad' || val === 'descartando'));
+    }
+
+    document.addEventListener('DOMContentLoaded', toggleHoraOk);
+
+    // Simplificación de copiar frase
+    async function copiarFrase() {
+        const text = document.getElementById('fraseTexto').textContent;
+        const badge = document.getElementById('confirmacionCopied');
+
+        const success = () => {
+            badge.style.display = 'block';
+            setTimeout(() => badge.style.display = 'none', 3000);
+        };
+
+        try {
+            // Intentar API moderna primero
+            await navigator.clipboard.writeText(text);
+            success();
+        } catch (err) {
+            // Fallback rápido si falla la API
+            const el = document.createElement('textarea');
+            el.value = text;
+            document.body.appendChild(el);
+            el.select();
+            if (document.execCommand('copy')) success();
+            document.body.removeChild(el);
         }
+    }
+</script>
 
-        // Ejecutar al cargar la página para manejar el estado anterior (si hubo POST request)
-        document.addEventListener('DOMContentLoaded', (event) => {
-            toggleHoraOk();
-        });
+  
 
-        function copiarFrase() {
-            const fraseTexto = document.getElementById('fraseTexto').innerText;
-            navigator.clipboard.writeText(fraseTexto).then(() => {
-                const confirmacion = document.getElementById('confirmacionCopied');
-                confirmacion.style.display = 'inline';
-                setTimeout(() => {
-                    confirmacion.style.display = 'none';
-                }, 2000);
-            });
-        }
-    </script>
 
 
 {% endblock %}

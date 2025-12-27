@@ -4,7 +4,7 @@ from datetime import datetime # Importar datetime no es estrictamente necesario 
 class Alerta(db.Model):
     # En la BD tu tabla se llama 'alertas' (minúsculas, plural)
     # SQLAlchemy lo inferiría automáticamente, pero lo dejamos explícito si quieres 'alertas1'
-    __tablename__ = 'alertas' 
+    __tablename__ = 'alertas1' 
 
     # --- Definición de Columnas (siguiendo PEP 8: snake_case para atributos Python) ---
 

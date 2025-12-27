@@ -12,34 +12,15 @@
         <div class="row g-3">
           <div class="col-md-4">
             <label for="fecha_inicio" class="form-label"><strong> Fecha Inicio</strong></label>
-            <input
-              type="date"
-              class="form-control"
-              id="fecha_inicio" 
-              name="fecha_inicio"
-              value="{{ fecha_inicio or '' }}"
-            />
+            <input type="date" class="form-control" id="fecha_inicio" name="fecha_inicio" value="{{ fecha_inicio or '' }}" />
           </div>
           <div class="col-md-4">
             <label for="fecha_fin" class="form-label"><strong>Fecha Fin</strong> </label>
-            <input
-              type="date"
-              class="form-control"
-              id="fecha_fin"
-              name="fecha_fin"
-              value="{{ fecha_fin or '' }}"
-            />
+            <input type="date" class="form-control" id="fecha_fin" name="fecha_fin" value="{{ fecha_fin or '' }}" />
           </div>
           <div class="col-md-4">
             <label for="servicio" class="form-label"><strong>Servicio</strong></label>
-            <input
-              type="text"
-              class="form-control"
-              id="servicio"
-              name="servicio"
-              value="{{ request.args.get('servicio', servicios.Servicio if servicios else '') }}"
-              readonly
-            />
+            <input type="text" class="form-control" id="servicio" name="servicio" value="{{ request.args.get('servicio', servicios.Servicio if servicios else '') }}" readonly />
           </div>
           <div class="col-12 text-center">
             <button type="submit" class="btn btn-primary me-2">Filtrar</button>
@@ -51,11 +32,8 @@
   </div>
 </div>
 
-
-
 <div class="container">
     <div class="row justify-content-start my-4">
-
         <!-- Tarjeta: Total de Alertas -->
         <div class="col-sm-4">
             <div class="card text-white bg-dark mb-3">
@@ -67,62 +45,55 @@
             </div>
         </div>
 
-        <!-- Tarjeta: Plataforma -->
-{% for plataforma, conteo in conteo_hosts.items() %}
-    <!-- Tarjeta: Plataforma -->
-    <div class="col-sm-4">
-        <div class="card text-white bg-dark mb-3">
-            <div class="card-header">{{ plataforma }}</div>
-            <div class="card-body">
-                <h5 class="card-title display-6 text-center" >{{ conteo }}</h5>
-                <p class="card-text">Total de alertas</p>
+        {% for plataforma, conteo in conteo_hosts.items() %}
+        <div class="col-sm-4">
+            <div class="card text-white bg-dark mb-3">
+                <div class="card-header">{{ plataforma }}</div>
+                <div class="card-body">
+                    <h5 class="card-title display-6 text-center" >{{ conteo }}</h5>
+                    <p class="card-text">Total de alertas</p>
+                </div>
             </div>
         </div>
-    </div>
-{% endfor %}
+        {% endfor %}
 
-
-
-        <!-- Tarjeta: Rango Duración -->
-    {% for rango, conteo in conteo_rango_duracion.items() %}
+        {% for rango, conteo in conteo_rango_duracion.items() %}
          <div class="col-sm-4">
-        <div class="card text-white bg-dark mb-3">
-            <div class="card-header">{{ rango }}</div>
-            <div class="card-body">
-                <h5 class="card-title display-6 text-center" >{{ conteo }}</h5>
-                <p class="card-text">Total de alertas</p>
+            <div class="card text-white bg-dark mb-3">
+                <div class="card-header">{{ rango }}</div>
+                <div class="card-body">
+                    <h5 class="card-title display-6 text-center" >{{ conteo }}</h5>
+                    <p class="card-text">Total de alertas</p>
+                </div>
             </div>
         </div>
-    </div>
-{% endfor %}
-
+        {% endfor %}
     </div>
 </div>
-
 
 <h3 class="mt-5 text-center">Detalle de Alertas</h3>
-<!-- Gráfico de alertas por día -->
-<div class="mb-5" style="max-width: 1200px; margin: 0 auto;">
-    <canvas id="graficoAlertasPorDia" width="400" height="200"></canvas>
+
+<!-- CAMBIO AQUÍ: Contenedor con scroll -->
+<div class="mb-5" style="max-width: 1200px; margin: 0 auto; overflow-x: auto; border: 1px solid #eee;">
+    <div id="contenedorGrafico" style="height: 400px; min-width: 100%;">
+        <canvas id="graficoAlertasPorDia"></canvas>
+    </div>
 </div>
+
 {% set servicios = alertas | map(attribute='Servicio') | list %}
 <div class="text-center my-4">
-    <h4 class="fw-bold">Nombre del servicio:  <span class="bg-warning text-dark p-1 rounded">{{ servicios[0] }}</span></h4>
-
-
+    <h4 class="fw-bold">Nombre del servicio:  <span class="bg-warning text-dark p-1 rounded">{{ servicios[0] if servicios else 'N/A' }}</span></h4>
 </div>
 
-
-<!-- Tabla de alertas en Bootstrap -->
+<!-- Tabla de alertas -->
 <div class="table-responsive" style="max-width: 1200px; margin: 0 auto;">
     <table class="table table-bordered table-hover table-sm text-center align-middle" style="font-size: 0.9rem;">
         <thead class="table-dark">
             <tr>
-                <th class="text-center align-middle"><strong>Servicio</strong></th>
-                <th class="text-center align-middle"><strong>Alerta</strong></th>
-                <th class="text-center align-middle"><strong>Host</strong></th>
-                <th class="text-center align-middle"><strong>Fecha y Hora</strong></th>
-
+                <th><strong>Servicio</strong></th>
+                <th><strong>Alerta</strong></th>
+                <th><strong>Host</strong></th>
+                <th><strong>Fecha y Hora</strong></th>
             </tr>
         </thead>
         <tbody>
@@ -138,7 +109,6 @@
     </table>
 </div>
 
-<!-- Script para Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
 <script>
@@ -146,10 +116,14 @@
     const labels = data.map(item => item.Fecha);
     const values = data.map(item => item.Cantidad_Alertas);
 
+    // AJUSTE DINÁMICO: Si hay muchos datos, estiramos el div
+    const contenedor = document.getElementById('contenedorGrafico');
+    if (labels.length > 15) {
+        contenedor.style.width = (labels.length * 50) + "px";
+    }
+
     const ctx = document.getElementById('graficoAlertasPorDia').getContext('2d');
-    
-    // Configuración del plugin DataLabels
-    Chart.register(ChartDataLabels); // ¡Importante registrar el plugin!
+    Chart.register(ChartDataLabels);
 
     new Chart(ctx, {
         type: 'bar',
@@ -165,38 +139,27 @@
         },
         options: {
             responsive: true,
+            maintainAspectRatio: false, // NECESARIO para que respete el scroll
             plugins: {
-                datalabels: { // Habilitar y configurar el plugin
+                datalabels: { 
                     anchor: 'end',
                     align: 'top',
-                    formatter: (value, context) => {
-                        return value; // Muestra el valor numérico
-                    },
-                    color: '#000', // Color del texto (negro)
-                    font: {
-                        weight: 'bold', // Fuente en negrita
-                        size: 16      // <--- Aumenta este valor para hacer el texto más grande
-                    }
+                    formatter: (value) => value,
+                    color: '#000',
+                    font: { weight: 'bold', size: 12 }
                 }
             },
             scales: {
                 x: {
-                    title: {
-                        display: true,
-                        text: 'Fecha'
-                    }
+                    title: { display: true, text: 'Fecha' }
                 },
                 y: {
                     beginAtZero: true,
-                    title: {
-                        display: true,
-                        text: 'Cantidad de Alertas'
-                    }
+                    title: { display: true, text: 'Cantidad de Alertas' }
                 }
             }
         }
     });
 </script>
-
-
 {% endblock %}
+
