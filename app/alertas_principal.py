@@ -201,9 +201,7 @@ def total_alertas():
     )
 
 
-
-################################### Alertas por servicio######################
-
+###################################   Alertas por servicio   ####################
 
 @bp.route('/alertas_por_servicio', methods=['GET', 'POST'])
 @login_required
@@ -213,154 +211,112 @@ def alertas_por_servicio():
     fecha_inicio_str = request.args.get('fecha_inicio', '').strip()
     fecha_fin_str = request.args.get('fecha_fin', '').strip()
 
-    # Inicia la consulta base
-    query_alertas = Alerta.query
+    # ELIMINA esta línea de aquí: entregado_cgm = db.Column(...) -> NO VA EN LA RUTA
 
-    # Convertir las fechas si existen
-    fecha_inicio = None
-    fecha_fin = None
-    if fecha_inicio_str:
-        try:
-            fecha_inicio = datetime.strptime(fecha_inicio_str, '%Y-%m-%d')
-        except ValueError:
-            pass
-    if fecha_fin_str:
-        try:
-            fecha_fin = datetime.strptime(fecha_fin_str, '%Y-%m-%d')
-        except ValueError:
-            pass
+    def aplicar_filtros(q):
+        if servicio:
+            q = q.filter(Alerta.servicio.ilike(f'%{servicio}%'))
+        if severidad:
+            q = q.filter(Alerta.severity.ilike(f'%{severidad}%'))
+        if fecha_inicio_str:
+            try:
+                f_ini = datetime.strptime(fecha_inicio_str, '%Y-%m-%d')
+                q = q.filter(Alerta.time >= f_ini)
+            except ValueError: pass
+        if fecha_fin_str:
+            try:
+                f_fin = datetime.strptime(fecha_fin_str, '%Y-%m-%d') + timedelta(days=1)
+                q = q.filter(Alerta.time < f_fin)
+            except ValueError: pass
+        return q
 
-    # Aplicar filtros a la consulta de SQLAlchemy
-    if servicio:
-        query_alertas = query_alertas.filter(Alerta.servicio.ilike(f'%{servicio}%'))
-    if severidad:
-        query_alertas = query_alertas.filter(Alerta.severity.ilike(f'%{severidad}%'))
-    if fecha_inicio:
-        # Usa Alerta.time directamente, ya que es un campo DateTime
-        query_alertas = query_alertas.filter(Alerta.time >= fecha_inicio)
-    if fecha_fin:
-        # Usa Alerta.time directamente, ya que es un campo DateTime
-        fecha_fin_ajustada = fecha_fin + timedelta(days=1)
-        query_alertas = query_alertas.filter(Alerta.time < fecha_fin_ajustada)
+    # CONSULTA 1: Solo columnas que EXISTEN en tu clase Alerta
+    # He quitado Alerta.entregado_cgm para evitar el AttributeError
+    query_datos = db.session.query(
+        Alerta.id, Alerta.time, Alerta.host, Alerta.servicio, 
+        Alerta.severity, Alerta.operational_data
+    )
+    
+    query_datos = aplicar_filtros(query_datos)
+    alertas_raw = query_datos.all()
+    alertas_list = [r._asdict() for r in alertas_raw]
 
-    # Ejecutar la consulta para obtener las alertas filtradas
-    alertas = query_alertas.all()
+    # CONSULTA 2: Conteo agrupado
+    query_conteo = db.session.query(
+        Alerta.servicio.label('Servicio'), 
+        func.count(Alerta.id).label('Total_Alertas')
+    ).group_by(Alerta.servicio).order_by(func.count(Alerta.id).desc())
+    
+    query_conteo = aplicar_filtros(query_conteo)
+    conteo_servicios = [r._asdict() for r in query_conteo.all()]
 
-    # Procesar con Pandas
-    df_alerts = pd.DataFrame([a.__dict__ for a in alertas])
-    print(f'las alertas por servicio es {df_alerts}')
-    if '_sa_instance_state' in df_alerts.columns:
-      df_alerts.drop('_sa_instance_state', axis=1, inplace=True)
-
-
-    # Conteo de alertas por servicio
-    if 'servicio' in df_alerts.columns: 
-        conteo_por_servicio = df_alerts['servicio'].value_counts().reset_index()
-        print(conteo_por_servicio.head())  # Depuración: muestra las primeras filas del DataFrame
-        conteo_por_servicio.columns = ['Servicio', 'Total_Alertas']
-    else:
-        conteo_por_servicio = pd.DataFrame(columns=['Servicio', 'Total_Alertas'])
-
-       
-
-    # AHORA SÍ, LA INSTRUCCIÓN RETURN COMPLETA Y SIN COMENTARIOS
     return render_template(
         'alertas/alertas_x_servicio.html', 
-        alertas=df_alerts.to_dict(orient='records'),
-        conteo_servicios=conteo_por_servicio.to_dict(orient='records'),
+        alertas=alertas_list,
+        conteo_servicios=conteo_servicios,
         fecha_inicio=fecha_inicio_str,
         fecha_fin=fecha_fin_str
     )
 
 
-
-
-
-
-
-###################################   conteo_alertas_iguales  ####################
-
+################################### Conteo alertas iguales ####################
 
 @bp.route('/conteo_alertas_iguales', methods=['GET'])
 @login_required 
 def conteo_alertas_iguales():
-    # Usamos variables locales con nombres distintos para evitar colisiones lógicas
     servicio_param = request.args.get('servicio', '').strip()
     fecha_inicio_str = request.args.get('fecha_inicio', '').strip()
     fecha_fin_str = request.args.get('fecha_fin', '').strip()
     operational_data_param = request.args.get('operational_data', '').strip()
     rango_duracion_param = request.args.get('Rango_Duracion', '').strip()
 
-    print(f"DEBUG: Fecha Inicio String: '{fecha_inicio_str}'")
-    print(f"DEBUG: Fecha Fin String: '{fecha_fin_str}'")
-    print(f"DEBUG: Servicio Param: '{servicio_param}'")
-
-    # Obtener todos los servicios únicos para el menú desplegable
-    # Se usa 'Alerta.servicio' (minúscula) gracias a tu mapeo de modelo
+    # 1. Optimización: Obtener servicios con un query más directo
     servicios_disponibles = [
-        row[0] for row in Alerta.query.with_entities(Alerta.servicio).distinct().order_by(Alerta.servicio).all()
+        s[0] for s in db.session.query(Alerta.servicio).distinct().order_by(Alerta.servicio).all()
     ]
 
-    # Inicializar la consulta base
-    query_alertas = Alerta.query
+    # 2. Iniciar consulta SELECT servicio, operational_data, COUNT(*)
+    # Esto reemplaza a Pandas y es mucho más rápido
+    query_conteo = db.session.query(
+        Alerta.servicio, 
+        Alerta.operational_data, 
+        func.count(Alerta.id).label('cantidad')
+    ).group_by(Alerta.servicio, Alerta.operational_data)
 
-    # Convertir fechas y aplicar filtros
+    # 3. Aplicar filtros directamente al query de agregación
     if fecha_inicio_str:
         try:
             fecha_inicio = datetime.strptime(fecha_inicio_str, '%Y-%m-%d')
-            # Se usa 'Alerta.time' (minúscula) gracias a tu mapeo de modelo
-            query_alertas = query_alertas.filter(Alerta.time >= fecha_inicio)
-        except ValueError:
-            pass
+            query_conteo = query_conteo.filter(Alerta.time >= fecha_inicio)
+        except ValueError: pass
     
     if fecha_fin_str:
         try:
-            fecha_fin = datetime.strptime(fecha_fin_str, '%Y-%m-%d')
-            fecha_fin_ajustada = fecha_fin + timedelta(days=1)
-            # Se usa 'Alerta.time' (minúscula) gracias a tu mapeo de modelo
-            query_alertas = query_alertas.filter(Alerta.time < fecha_fin_ajustada)
-        except ValueError:
-            pass
+            fecha_fin = datetime.strptime(fecha_fin_str, '%Y-%m-%d') + timedelta(days=1)
+            query_conteo = query_conteo.filter(Alerta.time < fecha_fin)
+        except ValueError: pass
     
-    # --- CORRECCIONES DE FILTRADO ---
-    # Aplica el filtro solo si el valor no está vacío Y no es la cadena literal "None"
     if servicio_param and servicio_param != 'None':
-        # Se usa 'Alerta.servicio' (minúscula)
-        query_alertas = query_alertas.filter(Alerta.servicio == servicio_param)
+        query_conteo = query_conteo.filter(Alerta.servicio == servicio_param)
     
     if operational_data_param and operational_data_param != 'None':
-        # Se usa 'Alerta.operational_data' (minúscula)
-        query_alertas = query_alertas.filter(Alerta.operational_data.ilike(f'%{operational_data_param}%'))
+        query_conteo = query_conteo.filter(Alerta.operational_data.ilike(f'%{operational_data_param}%'))
    
     if rango_duracion_param and rango_duracion_param != 'None':
-        # Se usa 'Alerta.rango_duracion' (minúscula)
-        query_alertas = query_alertas.filter(Alerta.rango_duracion == rango_duracion_param)
+        query_conteo = query_conteo.filter(Alerta.rango_duracion == rango_duracion_param)
 
-    # Obtener las alertas filtradas
-    alertas_filtradas = query_alertas.all()
+    # 4. Ordenar por cantidad descendente y ejecutar
+    # Ahora solo descargas el resumen, no los 79,000 registros
+    conteo_resultado = query_conteo.order_by(func.count(Alerta.id).desc()).all()
 
-    # Convertir las alertas filtradas a un DataFrame de Pandas
-    # Se usan los atributos del modelo en minúscula para crear el DataFrame
-    df_alertas_detalladas = pd.DataFrame({
-        'time': [alerta.time for alerta in alertas_filtradas],
-        'host': [alerta.host for alerta in alertas_filtradas],
-        'operational_data': [alerta.operational_data for alerta in alertas_filtradas],
-        'servicio': [alerta.servicio for alerta in alertas_filtradas],
-    })
-
-    # Realizar el conteo de alertas por tipo de 'operational_data' y 'servicio'
-    if not df_alertas_detalladas.empty:
-        # Usar los nombres de las columnas del DataFrame para el groupby
-        conteo_por_servicio_y_alerta_df = df_alertas_detalladas.groupby(['servicio', 'operational_data']).size().reset_index(name='cantidad')
-        conteo_lista = conteo_por_servicio_y_alerta_df.to_dict('records')
-        conteo = sorted(conteo_lista, key=lambda x: x['cantidad'], reverse=True)
-    else:
-        conteo = [] 
+    # Convertir a formato lista de diccionarios para el template
+    conteo = [
+        {'servicio': r.servicio, 'operational_data': r.operational_data, 'cantidad': r.cantidad} 
+        for r in conteo_resultado
+    ]
     
     return render_template(
         'alertas/conteo_alertas_iguales.html', 
         conteo_por_servicio_y_alerta=conteo,  
         servicios_disponibles=servicios_disponibles
     )
-
-

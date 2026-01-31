@@ -58,5 +58,191 @@ body{
 
 
 
+/* estoilo de sre en detalle de servicio */
+
+.sre-badge {
+    display: inline-block; /* Necesario para que transform funcione bien */
+    transition: all 0.3s ease;
+    margin-right: 10px; /* Crea un espacio de seguridad a la derecha */
+}
+
+.sre-badge:hover {
+    filter: brightness(1.2);
+    /* Crece un 10%, pero el origen es la derecha, así que crece hacia la izquierda */
+    transform: scale(1.1);
+    transform-origin: right; 
+    cursor: pointer;
+}
 
 
+
+/* estoilo de runbook en listar servicio */
+
+
+/* Nueva clase para que crezca hacia la derecha */
+.runbook-badge {
+    display: inline-block;
+    transition: all 0.3s ease;
+    margin-left: 10px; /* Espacio de seguridad a la izquierda */
+}
+
+.runbook-badge:hover {
+    filter: brightness(1.2);
+    transform: scale(1.1);
+    /* ANCLA EL LADO IZQUIERDO: El crecimiento ocurre hacia la derecha */
+    transform-origin: left; 
+    cursor: pointer;
+}
+
+
+
+ /* Estilos específicos para la tabla técnica en listar servicio */
+/* Estilos específicos para la tabla técnica en listar servicio */
+
+
+    /* Estilos avanzados para la tabla técnica */
+    .table-responsive {
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        background: white;
+    }
+
+    .table thead th {
+        position: sticky;
+        top: 0;
+        background-color: #1e293b !important; /* Azul grisáceo profundo */
+        color: #f8fafc;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.7rem;
+        letter-spacing: 0.05em;
+        white-space: nowrap;
+        padding: 15px 12px;
+        border-bottom: 2px solid #334155;
+        z-index: 10;
+    }
+
+    /* Celda de descripción limitada para no deformar la tabla */
+    .desc-cell {
+        max-width: 250px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: 0.85rem;
+    }
+
+    /* Efecto Hover en filas */
+    .table-hover tbody tr:hover {
+        background-color: #f1f5f9 !important;
+        transition: 0.2s;
+    }
+
+    /* Estilo para los botones de acción en línea */
+    .action-btns {
+        display: flex;
+        gap: 5px;
+        justify-content: center;
+    }
+
+    /* Badge del Runbook */
+    .runbook-badge {
+        transition: transform 0.2s ease, filter 0.2s ease;
+        display: inline-block;
+    }
+    .runbook-badge:hover {
+        transform: scale(1.05);
+        filter: brightness(1.1);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    /* Estilos avanzados para la tabla técnic   a */
+    .table-responsive {
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        background: white;
+    }
+
+    .table thead th {
+        position: sticky;
+        top: 0;
+        background-color: #1e293b !important; /* Azul grisáceo profundo */
+        color: #f8fafc;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.7rem;
+        letter-spacing: 0.05em;
+        white-space: nowrap;
+        padding: 15px 12px;
+        border-bottom: 2px solid #334155;
+        z-index: 10;
+    }
+
+    /* Celda de descripción limitada para no deformar la tabla */
+    .desc-cell {
+        max-width: 250px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: 0.85rem;
+    }
+
+    /* Efecto Hover en filas */
+    .table-hover tbody tr:hover {
+        background-color: #f1f5f9 !important;
+        transition: 0.2s;
+    }
+
+    /* Estilo para los botones de acción en línea */
+    .action-btns {
+        display: flex;
+        gap: 5px;
+        justify-content: center;
+    }
+
+    /* Badge del Runbook */
+    .runbook-badge {
+        transition: transform 0.2s ease, filter 0.2s ease;
+        display: inline-block;
+    }
+    .runbook-badge:hover {
+        transform: scale(1.05);
+        filter: brightness(1.1);
+    }
+
+
+
+
+
+.desc-wrap {
+    min-width: 280px;         /* Un poco más de ancho para mejor lectura */
+    max-width: 450px;
+    white-space: pre-wrap;    /* Respeta los "Enter" y saltos automáticos */
+    word-wrap: break-word;
+    font-size: 1rem;          /* Tamaño estándar (igual al resto de la tabla) */
+    line-height: 1.5;         /* Espacio entre líneas para no cansar la vista */
+    text-align: left;
+    color: #334155;           /* Color gris oscuro legible */
+}
+
+
+  /*estilos para enlaces modernos */      
+
+ .link-modern {
+        color: #0056b3; /* Azul corporativo */
+        transition: all 0.2s ease;
+    }
+    .link-modern:hover {
+        color: #003d7a; /* Oscurece al pasar el mouse */
+        text-decoration: underline !important; /* Subrayado solo en hover */
+    }

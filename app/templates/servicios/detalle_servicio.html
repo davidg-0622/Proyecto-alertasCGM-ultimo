@@ -41,14 +41,16 @@
                                     </td>
                                 </tr>
 
-                                <!-- Descripción -->
                                 <tr>
-                                    <th scope="row" class="text-start align-middle">
+                                    <th scope="row" class="text-start align-middle" style="width: 30%;">
                                         <i class="bi bi-file-text text-primary me-2"></i>Descripción del servicio
                                     </th>
-                                    <td class="text-start align-middle text-muted">{{ servicio.descripcion_del_servicio
-                                        }}</td>
+                                    <!-- Cambiamos text-muted por text-dark y añadimos fw-medium -->
+                                    <td class="text-start align-middle text-dark fw-medium" style="line-height: 1.5;">
+                                        {{ servicio.descripcion_del_servicio }}
+                                    </td>
                                 </tr>
+
 
                                 <!-- Promesa del servicio -->
                                 <tr>
@@ -58,13 +60,24 @@
                                     <td class="text-end align-middle">{{ servicio.promesa_del_servicio or '-' }}</td>
                                 </tr>
 
-                                <!-- SRE -->
-                                <tr>
-                                    <th scope="row" class="text-start align-middle">
-                                        <i class="bi bi-gear-wide-connected text-primary me-2"></i>SRE
-                                    </th>
-                                    <td class="text-end align-middle">{{ servicio.sre }}</td>
-                                </tr>
+         <!-- SRE -->
+<!-- SRE -->
+<tr>
+    <th scope="row" class="text-start align-middle">
+        <i class="bi bi-gear-wide-connected text-primary me-2"></i>SRE
+    </th>
+    <td class="text-end align-middle">
+        <!-- Añadimos la clase 'sre-badge' -->
+        <span class="badge rounded-pill bg-warning text-dark fw-bold fs-6 p-2 sre-badge">
+            {{ servicio.sre }}
+        </span>
+    </td>
+</tr>
+
+
+
+
+
 
                                 <!-- EVC -->
                                 <tr>
@@ -94,11 +107,11 @@
                                 <!-- Elemento Configuración -->
                                 <tr>
                                     <th scope="row" class="text-start align-middle">
-                                        <i class="bi bi-hdd-network text-primary me-2"></i>Elemento Configuración
+                                        <i class="bi bi-hdd-network text-primary me-2 fs-4"></i>Elemento Configuración
                                     </th>
                                     <td class="text-end align-middle">
                                         <span
-                                            class="badge bg-primary-subtle text-primary border border-primary-subtle px-3">
+                                            class="badge bg-primary-subtle text-dark border border-primary-subtle px-3">
                                             {{ servicio.elemento_de_configuracion }}
                                         </span>
                                     </td>
@@ -126,7 +139,7 @@
                                         {% if servicio.runbook %}
                                         <a href="{{ servicio.runbook }}" target="_blank"
                                             class="btn btn-outline-dark btn-sm rounded-pill px-3 shadow-sm">
-                                            <i class="bi bi-box-arrow-up-right me-1"></i> Ver Enlace
+                                             <i class="bi bi-box-arrow-up-right me-1"></i> Ver Enlace
                                         </a>
                                         {% else %}
                                         <span class="text-muted small">No disponible</span>
@@ -256,6 +269,25 @@
                                         {% endif %}
                                     </td>
                                 </tr>
+
+<!-- Entregado al CGM -->
+<tr>
+    <th scope="row" class="text-start align-middle">
+        {% if servicio.entregado_cgm|trim|lower in ['sí', 'si'] %}
+            <!-- Icono para el SÍ: Check circular verde -->
+            <i class="bi bi-check-circle-fill text-success me-2"></i>
+        {% else %}
+            <!-- Icono para el NO: X circular roja -->
+            <i class="bi bi-x-circle-fill text-danger me-2"></i>
+        {% endif %}
+        Entregado al CGM 
+    </th>
+    <td class="text-end align-middle fw-bold {% if servicio.entregado_cgm|trim|lower in ['sí', 'si'] %}text-success{% else %}text-danger{% endif %}">
+        {{ servicio.entregado_cgm }}
+    </td>
+</tr>
+
+
 
 
 

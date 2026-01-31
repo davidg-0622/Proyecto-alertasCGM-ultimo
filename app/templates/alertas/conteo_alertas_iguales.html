@@ -10,7 +10,11 @@
     <div class="row justify-content-center mb-5">
         <div class="col-md-10">
             <form action="{{ url_for('alertas.conteo_alertas_iguales') }}" method="get">
-                <h5 class="text-center mb-4">Filtrar alertas</h5>
+                <BR></BR>
+               <h5 class="text-center mb-4 fw-bold text-primary">
+    <i class="bi bi-funnel-fill me-2"></i>FILTRAR ALERTAS REQUERIDAS
+</h5>
+
                 <div class="row g-3 align-items-end">
                     <div class="col-md-3">
                         <label for="fecha_inicio" class="form-label"><strong>Fecha Inicio</strong></label>
@@ -51,17 +55,19 @@
             <caption>Listado detallado del conteo de alertas por servicio y tipo de alerta.</caption>
             <thead class="table-dark">
                 <tr class="text-center align-middle">
+                    <th>Cantidad de Alertas</th>
                     <th>Servicio</th>
                     <th>Detalle Alerta</th>
-                    <th>Cantidad de Alertas</th>
+                 
                 </tr>
             </thead>
             <tbody>
                 {% for fila in conteo_por_servicio_y_alerta %}
                 <tr>
-                    <td class="text-center">{{ fila.servicio }}</td>
-                    <td >{{ fila.operational_data }}</td>
                     <td class="text-center">{{ fila.cantidad }}</td>
+                    <td class="text-center">{{ fila.servicio }}</td>
+                    <td class="text-wrap" style="max-width: 400px;">{{ fila.operational_data }}</td>
+                    
                 </tr>
                 {% else %}
                 <tr>

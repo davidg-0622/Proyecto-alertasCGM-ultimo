@@ -3,7 +3,7 @@
 {% block content %}
 <div class="container mt-4">
     <div class="row">
-        <!-- COLUMNA IZQUIERDA: TÍTULO Y FORMULARIO -->
+        <!-- TÍTULO Y FORMULARIO -->
         <div class="col-md-8">
             <h1 class="mb-4">Catálogo de Servicios CGM</h1>
 
@@ -56,8 +56,8 @@
 
     
 
-<!-- COLUMNA DERECHA: EL CARD SUPERIOR -->
-<!-- COLUMNA DERECHA: EL CARD DINÁMICO -->
+<!--CARD DINAMICO -->
+
 <div class="col-md-4">
     <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
         <!-- Cabecera dinámica: Verde si es SI, Rojo si es NO -->
@@ -100,7 +100,7 @@
 
 
 
-    </div> <!-- FIN DEL ROW SUPERIOR -->
+    </div> 
 
     <hr id="hr-degradado"> 
     
@@ -115,7 +115,9 @@
             <span id="confirmacionCopied" class="badge bg-success" style="display:none;">¡Copiado!</span>
         </div>
     </div>
+
     {% endif %}
+    
 
     <!-- MENSAJES FLASH -->
     {% with messages = get_flashed_messages(with_categories=true) %}

@@ -15,8 +15,8 @@ from sqlalchemy import asc
 # Define el blueprint una sola vez
 bp = Blueprint('app', __name__, url_prefix='/app')
 
+###########################   Detalle del stand by   #####################
 
-from datetime import date
 
 @bp.route('/detalle_servicio/<int:id>')
 def detalle_servicio(id):
@@ -59,9 +59,7 @@ def detalle_servicio(id):
 
 
     # 3. Pasamos la información a la plantilla HTML
-    return render_template('servicios/detalle_servicio.html', 
-                           servicio=servicio, 
-                           standby_info=standby_info)
+    return render_template('servicios/detalle_servicio.html', servicio=servicio, standby_info=standby_info)
 
 
 
@@ -82,6 +80,7 @@ def listar():
     if filtro:
         query = query.filter(or_(
             Servicio.servicio.ilike(f'%{filtro}%'),
+            Servicio.codigo_de_aplicacion.ilike(f'%{filtro}%'),
         ))
         per_page = query.count() or 1  # Si hay filtro, per_page es el número de resultados encontrados
     else:
@@ -131,6 +130,7 @@ def edit_servicio(id):
             servicio.servicio_clave = request.form['servicio_clave']
             servicio.encargado_cgm = request.form['encargado_cgm']
             servicio.plataforma = request.form['plataforma']
+            servicio.entregado_cgm = request.form['entregado_cgm']
 
             db.session.commit()
             flash('Servicio actualizado correctamente.', 'success')

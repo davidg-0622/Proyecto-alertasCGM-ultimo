@@ -9,19 +9,24 @@ from app.auth import login_required
 
 
 
-# Define el blueprint una sola vez
+#  blueprint 
 bp = Blueprint('boca', __name__, url_prefix='/boca')
 
 
 @bp.route('/', methods=['GET', 'POST'])
 @login_required
 def notificar_boca():
-    # ... (imports y otras variables) ...
+    # (variables) ...
     servicios_filtrados = []
     servicio_para_card = None 
 
-    # 1. Obtenemos todos para el datalist (esto está bien)
-    todos_los_servicios_db = Servicio.query.with_entities(Servicio.servicio, Servicio.codigo_de_aplicacion, Servicio.descripcion_del_servicio, Servicio.promesa_del_servicio, Servicio.sre,Servicio.entregado_cgm ).all()
+    # 1. Obtenemos todos para el datalist 
+    todos_los_servicios_db = Servicio.query.with_entities(
+        Servicio.servicio, 
+        Servicio.codigo_de_aplicacion, 
+        Servicio.descripcion_del_servicio, 
+        Servicio.promesa_del_servicio, 
+        Servicio.sre,Servicio.entregado_cgm ).all()
     nombres_servicios = [s.servicio for s in todos_los_servicios_db]
   
 
@@ -47,12 +52,12 @@ def notificar_boca():
             else:
                 frase_base = ""
             
-            # Usa 'input_transaccion_valor' (con 'n')
+            # me muestra la frase completa
             frase_completa_final = f"{frase_base} {input_servicio_valor} {input_transaccion_valor}"
 
            
 
-            # ... (Resto de la lógica de filtrado) ...
+            # 3. Filtramos los servicios según el input del usuario
             servicios_filtrados = Servicio.query.filter(Servicio.servicio == input_servicio_valor).all()
 
             if servicios_filtrados:
@@ -79,8 +84,7 @@ def notificar_boca():
 
 
 
-############################### Lotes de pago ####################################
-############################### Lotes de pago ####################################
+
 ############################### Lotes de pago ####################################
 
 @bp.route('/lotes_de_pago', methods=['GET', 'POST'])
@@ -89,6 +93,8 @@ def lotes_de_pago():
     frase_completa_final = None
     valores_anteriores = {} 
 
+
+    # Procesamos el formulario si es un POST
     if request.method == 'POST':
         tipo_notificacion_value = request.form.get('boca_lotes_pago')
         descripcion_afectacion = request.form.get('descripcion_afectacion', '').strip()
@@ -166,7 +172,7 @@ def lotes_de_pago():
         if lotes_por_minuto:
             frase_completa_final += f"Dosificación de Lotes por Minuto: {lotes_por_minuto}\n"
 
-    # Renderizar el template
+    # Renderizamos la plantilla con la frase generada y los valores anteriores
     return render_template(
         'bocas/lotes_de_pago.html',
         frase_generada=frase_completa_final,
