@@ -333,7 +333,7 @@ def conteo_alertas_iguales():
 
 
 
-
+from collections import Counter
 
 
 @bp.route('/alertas_tag_entregado_cgm_no', methods=['GET', 'POST'])
@@ -341,26 +341,23 @@ def conteo_alertas_iguales():
 def alertas_tag_entregado_cgm_no():
     # 1. Obtener parámetros
     servicio_seleccionado = request.args.get('servicio', '').strip()
+    host_filtro = request.args.get('host', '').strip() # Cambiado a minúscula para consistencia
     fecha_inicio_str = request.args.get('fecha_inicio', '').strip()
     fecha_fin_str = request.args.get('fecha_fin', '').strip()
 
-    # --- NUEVA CONSULTA PARA EL SELECT ---
-    # Traemos solo servicios únicos donde entregado_cgm sea 'no'
+    # --- CONSULTA PARA EL SELECT ---
     servicios_unicos = db.session.query(Alerta.servicio).filter(
         Alerta.entregado_cgm.ilike('no')
     ).distinct().order_by(Alerta.servicio).all()
-    
-    # Convertimos la lista de tuplas en una lista simple de strings
     lista_servicios = [s[0] for s in servicios_unicos if s[0]]
 
     def aplicar_filtros(q):
-        # Siempre filtramos por 'no'
         q = q.filter(Alerta.entregado_cgm.ilike('no'))
-        
         if servicio_seleccionado:
             q = q.filter(Alerta.servicio == servicio_seleccionado)
+        if host_filtro:
+            q = q.filter(Alerta.host.ilike(f'%{host_filtro}%'))
         
-        # ... (tus filtros de fecha se mantienen igual) ...
         if fecha_inicio_str:
             try:
                 f_ini = datetime.strptime(fecha_inicio_str, '%Y-%m-%d')
@@ -380,10 +377,11 @@ def alertas_tag_entregado_cgm_no():
     )
     query_datos = aplicar_filtros(query_datos)
     alertas_list = [r._asdict() for r in query_datos.all()]
-    print(f"Total alertas con entregado_cgm='no': {alertas_list}")  
-    # Debug para verificar cantidad de alertas obtenidas
 
-    # CONSULTA 2: Conteo agrupado
+    # --- GENERAR CONTEO DE HOSTS DESDE LA LISTA ---
+    conteo_hosts = Counter(alerta.get('host') or 'DESCONOCIDO' for alerta in alertas_list)
+
+    # CONSULTA 2: Conteo agrupado por servicio
     query_conteo = db.session.query(
         Alerta.servicio.label('Servicio'), 
         func.count(Alerta.id).label('Total_Alertas')
@@ -395,11 +393,14 @@ def alertas_tag_entregado_cgm_no():
         'alertas/tag_entregado_cgm_no.html', 
         alertas=alertas_list,
         conteo_servicios=conteo_servicios,
-        servicios_dropdown=lista_servicios, # Enviamos la lista al HTML
+        conteo_hosts=conteo_hosts,
+        servicios_dropdown=lista_servicios,
         fecha_inicio=fecha_inicio_str, 
         fecha_fin=fecha_fin_str,
-        servicio_seleccionado=servicio_seleccionado
+        servicio_seleccionado=servicio_seleccionado,
+        host_seleccionado=host_filtro
     )
+
 
 
 ###########################entregado_cgm_por_servico_iguales ######################
@@ -431,4 +432,59 @@ def entregado_cgm_por_servico_iguales():
         'alertas/entregado_cgm_por_servico_iguales.html',
         resumen=resumen_list,
         total_general=total_general
+    )
+
+
+
+################################## Conteo por servicio con tags entregado_cgm = no y descripcion igual   ####################
+@bp.route('/conteo_servicio_tags', methods=['GET'])
+@login_required
+def conteo_servicio_tags():
+    # 1. Parámetros
+    fecha_inicio = request.args.get('fecha_inicio', '').strip()
+    fecha_fin = request.args.get('fecha_fin', '').strip()
+    servicio_filtro = request.args.get('servicio_filtro', '').strip()
+
+    # 2. Consulta para la TABLA (Ya tiene el filtro 'no')
+    query = db.session.query(
+        Alerta.servicio.label('servicio'),
+        Alerta.operational_data.label('operational_data'),
+        func.count(Alerta.id).label('total')
+    ).filter(
+        Alerta.entregado_cgm.ilike('no'),
+        Alerta.operational_data.isnot(None),
+        Alerta.operational_data != ''
+    )
+
+    # Filtros dinámicos para la tabla
+    if servicio_filtro:
+        query = query.filter(Alerta.servicio == servicio_filtro)
+    if fecha_inicio and fecha_fin:
+        query = query.filter(Alerta.time.between(fecha_inicio, fecha_fin))
+
+    resumen_query = query.group_by(
+        Alerta.servicio, 
+        Alerta.operational_data
+    ).order_by(func.count(Alerta.id).desc()).all()
+
+    # 3. CORRECCIÓN: Consulta para el DROPDOWN (Solo servicios con 'no')
+    servicios_raw = db.session.query(Alerta.servicio)\
+        .filter(Alerta.entregado_cgm.ilike('no'))\
+        .distinct()\
+        .all()
+    
+    # Limpiar lista de tuplas
+    lista_servicios = sorted([s[0] for s in servicios_raw if s[0]])
+
+    resumen_list = [r._asdict() for r in resumen_query]
+    total_general = sum(item['total'] for item in resumen_list)
+
+    return render_template(
+        'alertas/conteo_servicio+tags_iguales.html',
+        resumen=resumen_list,
+        total_general=total_general,
+        fecha_inicio=fecha_inicio,
+        fecha_fin=fecha_fin,
+        servicio_filtro=servicio_filtro,
+        servicios_dropdown=lista_servicios
     )

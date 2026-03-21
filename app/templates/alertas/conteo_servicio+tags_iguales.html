@@ -1,0 +1,159 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <!-- Encabezado -->
+    <div class="text-center mb-5">
+        <h2 class="fw-bold text-dark text-uppercase">AGRUPACION POR SERVICIO Y DESCRIPCION DE ALERTA</h2>
+        <span class="badge bg-danger px-3 py-2 shadow-sm">Entregado CGM: No</span>
+    </div>
+    <!-- Formulario de Filtros -->
+    <div class="card bg-dark border-secondary mb-4 shadow-sm">
+        <div class="card-body">
+            <form method="GET" action="{{ url_for('alertas.conteo_servicio_tags') }}" class="row g-3 align-items-end">
+                <div class="col-md-3">
+                    <label class="text-secondary small fw-bold mb-1">SERVICIO</label>
+                    <select name="servicio_filtro"
+                        class="form-select form-select-sm bg-dark text-white border-secondary">
+                        <option value="">-- Todos los Servicios --</option>
+                        {% for s in servicios_dropdown %}
+                        <option value="{{ s }}" {% if s==servicio_filtro %}selected{% endif %}>
+                            {{ s }}
+                        </option>
+                        {% endfor %}
+                    </select>
+
+
+                </div>
+                <div class="col-md-3">
+                    <label class="text-secondary small fw-bold mb-1">FECHA INICIO</label>
+                    <input type="date" name="fecha_inicio"
+                        class="form-control form-control-sm bg-dark text-white border-secondary"
+                        value="{{ fecha_inicio }}">
+                </div>
+                <div class="col-md-3">
+                    <label class="text-secondary small fw-bold mb-1">FECHA FIN</label>
+                    <input type="date" name="fecha_fin"
+                        class="form-control form-control-sm bg-dark text-white border-secondary"
+                        value="{{ fecha_fin }}">
+                </div>
+                <div class="col-md-3 d-flex gap-2">
+                    <button type="submit" class="btn btn-sm btn-primary w-100 fw-bold">FILTRAR</button>
+                    <a href="{{ url_for('alertas.conteo_servicio_tags') }}"
+                        class="btn btn-sm btn-outline-secondary w-100">LIMPIAR</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- Panel de Indicadores (KPIs) -->
+    <div class="row g-4 mb-4 justify-content-center">
+        <div class="col-md-4 col-lg-3">
+            <div class="card bg-dark text-white shadow-sm border-0 h-100"
+                style="border-radius: 12px; border-left: 5px solid #dc3545 !important;">
+                <div class="card-body d-flex align-items-center p-4">
+                    <div class="bg-danger rounded-circle d-flex align-items-center justify-content-center me-3"
+                        style="width: 50px; height: 50px; min-width: 50px;">
+                        <i class="bi bi-gear-fill text-white fs-4"></i>
+                    </div>
+                    <div>
+                        <p class="text-secondary mb-0 fw-bold small text-uppercase l-spacing">TOTAL ALERTAS</p>
+                        <h2 class="fw-bold mb-0 text-white">{{ total_general }}</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Tabla de Detalles -->
+    <div class="row justify-content-center">
+        <div class="col-12">
+            <div class="card shadow-lg border-0 bg-dark text-white"
+                style="border-radius: 12px; overflow: hidden; border: 1px solid #373b3e !important;">
+                <div
+                    class="card-header bg-dark border-bottom border-secondary py-3 d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center">
+                        <div class="bg-primary rounded-pill me-2" style="width: 4px; height: 20px;"></div>
+                        <h5 class="mb-0 text-uppercase ls-1 small fw-bolder text-secondary">Conteo Agrupado</h5>
+                    </div>
+                    <span class="badge rounded-pill bg-opacity-10 bg-info text-info border border-info px-3 py-2">
+                        TOTAL ALERTAS: <span class="ms-1 text-white">{{ total_general }}</span>
+                    </span>
+                </div>
+
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-dark table-hover mb-0 align-middle">
+                            <thead class="bg-black bg-opacity-25">
+                                <tr class="text-secondary small fw-bold text-uppercase ls-1">
+                                    <!-- Asignamos anchos fijos a las columnas pequeñas -->
+                                    <th class="text-center py-3 border-0" style="width: 10%;">Cant.</th>
+                                    <th class="ps-4 py-3 border-0" style="width: 20%;">Servicio</th>
+                                    <!-- La descripción se queda con el resto del espacio (60%) -->
+                                    <th class="py-3 border-0" style="width: 55%;">Descripción Alerta</th>
+                                    <th class="text-end pe-4 py-3 border-0" style="width: 15%;">Acción</th>
+                                </tr>
+                            </thead>
+                            <tbody class="border-top-0">
+                                {% for item in resumen %}
+                                <tr style="border-bottom: 1px solid #2d3035;">
+                                    <td class="text-center">
+                                        <span
+                                            class="badge {{ 'bg-danger' if item.total > 5 else 'bg-secondary' }} bg-opacity-10 {{ 'text-danger' if item.total > 5 else 'text-light' }} fs-6 px-3">
+                                            {{ item.total }}
+                                        </span>
+                                    </td>
+                                    <td class="ps-4">
+                                        <span class="text-light small">{{ item.servicio if item.servicio else 'SIN
+                                            SERVICIO' }}</span>
+                                    </td>
+                                    <td style="min-width: 250px;">
+                                        <!-- Agregamos un mínimo para que no se vea aplastado -->
+                                        <div class="text-warning small font-monospace bg-black bg-opacity-25 p-2 rounded border border-secondary border-opacity-25 text-wrap"
+                                            style="word-break: break-all; line-height: 1.2;">
+                                            {{ item.operational_data if item.operational_data else 'SIN DATA' }}
+                                        </div>
+                                    </td>
+                                    <td class="text-end pe-4">
+                                        <a href="{{ url_for('alertas.alertas_tag_entregado_cgm_no', servicio=item.servicio, op_data=item.operational_data) }}"
+                                            class="btn btn-sm btn-dark border-secondary hover-danger fw-bold text-uppercase px-3"
+                                            style="font-size: 0.7rem;">
+                                            Filtrar <i class="bi bi-arrow-right ms-1"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .ls-1 {
+            letter-spacing: 0.5px;
+        }
+
+        .table-hover tbody tr:hover {
+            background-color: rgba(255, 255, 255, 0.03) !important;
+        }
+
+        /* Efecto hover suave para el botón */
+        .hover-danger:hover {
+            background-color: #dc3545 !important;
+            border-color: #dc3545 !important;
+            color: white !important;
+        }
+
+        /* Estilo para los datos operativos */
+        .font-monospace {
+            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace !important;
+        }
+    </style>
+
+    {% endblock %}
