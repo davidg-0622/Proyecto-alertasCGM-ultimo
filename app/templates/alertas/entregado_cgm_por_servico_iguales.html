@@ -2,48 +2,71 @@
 
 {% block content %}
 <div class="container mt-5">
+    <!-- Encabezado -->
     <div class="text-center mb-5">
-        <h2 class="fw-bold text-dark">RESUMEN ALERTAS</h2>
-        <span class="badge bg-danger px-3 py-2">PENDIENTES POR ENTREGAR AL CGM</span>
+        <h2 class="fw-bold text-dark text-uppercase">Resumen de Alertas</h2>
+        <span class="badge bg-danger px-3 py-2 shadow-sm">Entregado CGM: No</span>
     </div>
 
-    <div class="row justify-content-center">
-        <div class="col-md-12">
-            <div class="card shadow-lg border-0 bg-dark text-white" style="border-radius: 15px;">
-                <div class="card-header bg-transparent border-secondary py-3 d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0 font-monospace">CONTEO POR SERVICIO</h5>
-                    <span class="badge bg-white text-dark fw-bold">TOTAL: {{ total_general }}</span>
+    <!-- Panel de Indicadores (KPIs) -->
+    <div class="row g-4 mb-4 justify-content-center">
+        <div class="col-md-4 col-lg-3">
+            <div class="card bg-dark text-white shadow-sm border-0 h-100" style="border-radius: 12px; border-left: 5px solid #dc3545 !important;">
+                <div class="card-body d-flex align-items-center p-4">
+                    <div class="bg-danger rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px; min-width: 50px;">
+                        <i class="bi bi-megaphone-fill text-white fs-4"></i>
+                    </div>
+                    <div>
+                        <p class="text-secondary mb-0 fw-bold small text-uppercase l-spacing">TOTAL ALERTAS</p>
+                        <h2 class="fw-bold mb-0 text-white">{{ total_general }}</h2>
+                    </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabla de Detalles -->
+    <div class="row justify-content-center">
+        <div class="col-12">
+            <div class="card shadow-lg border-0 bg-dark text-white" style="border-radius: 15px; overflow: hidden;">
+                <div class="card-header bg-dark border-secondary py-3 d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0 font-monospace text-uppercase small fw-bold">Conteo por Servicio</h5>
+                    <span class="badge bg-light text-dark fw-bold">TOTAL: {{ total_general }}</span>
+                </div>
+                
                 <div class="card-body p-0">
                     <div class="table-responsive">
                         <table class="table table-dark table-hover mb-0 align-middle">
-                            <thead class="text-secondary small">
+                            <thead class="text-secondary small text-uppercase">
                                 <tr>
-                                    <th class="ps-4">NOMBRE DEL SERVICIO</th>
-                                    <th class="text-center">ALERTAS PENDIENTES</th>
-                                    <th class="text-end pe-4">ESTADO</th>
+                                    <th class="ps-4 py-3">Nombre del Servicio</th>
+                                    <th class="text-center py-3">Alertas</th>
+                                    <th class="text-end pe-4 py-3">Acción</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for item in resumen %}
                                 <tr>
-                                    <td class="ps-4 fw-bold text-info">{{ item.servicio or 'SIN SERVICIO' }}</td>
+                                    <td class="ps-4 fw-bold text-info">
+                                        {{ item.servicio if item.servicio else 'SIN SERVICIO' }}
+                                    </td>
                                     <td class="text-center">
-                                        <span class="h5 fw-bold {{ 'text-danger' if item.total > 5 else 'text-white' }}">
+                                        <span class="fs-5 fw-bold {{ 'text-danger' if item.total > 5 else 'text-white' }}">
                                             {{ item.total }}
                                         </span>
                                     </td>
                                     <td class="text-end pe-4">
-                                        <!-- Botón para ir al detalle de ese servicio -->
                                         <a href="{{ url_for('alertas.alertas_tag_entregado_cgm_no', servicio=item.servicio) }}" 
-                                           class="btn btn-outline-danger btn-sm border-0">
-                                            Ver Detalle <i class="bi bi-arrow-right-short"></i>
+                                           class="btn btn-sm btn-outline-danger border-0 fw-bold">
+                                            VER DETALLE <i class="bi bi-arrow-right-short ms-1"></i>
                                         </a>
                                     </td>
                                 </tr>
                                 {% else %}
                                 <tr>
-                                    <td colspan="3" class="text-center py-5 text-muted">No hay alertas pendientes actualmente.</td>
+                                    <td colspan="3" class="text-center py-5 text-muted small italic">
+                                        <i class="bi bi-info-circle me-2"></i> No hay alertas pendientes actualmente.
+                                    </td>
                                 </tr>
                                 {% endfor %}
                             </tbody>
@@ -56,9 +79,14 @@
 </div>
 
 <style>
+    .l-spacing { letter-spacing: 1px; }
     .table-hover tbody tr:hover {
-        background-color: rgba(255, 255, 255, 0.05) !important;
+        background-color: rgba(255, 255, 255, 0.03) !important;
+        transition: background 0.3s ease;
     }
     .text-info { color: #0dcaf0 !important; }
+    /* Ajuste fino para los bordes de la tabla en modo dark */
+    .table-dark { --bs-table-border-color: #373b3e; }
 </style>
 {% endblock %}
+
