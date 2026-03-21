@@ -1,53 +1,38 @@
 from .. import db
 from datetime import datetime # Importar datetime no es estrictamente necesario para el modelo en sí
 
+
 class Alerta(db.Model):
-    # En la BD tu tabla se llama 'alertas' (minúsculas, plural)
-    # SQLAlchemy lo inferiría automáticamente, pero lo dejamos explícito si quieres 'alertas1'
-    __tablename__ = 'data_enero2026' 
+    __tablename__ = 'data_marzo2026' 
 
-    # --- Definición de Columnas (siguiendo PEP 8: snake_case para atributos Python) ---
-
-    # Mapeo de 'idalertas' a 'id' para mayor claridad y convención
+    # Identificador principal
     id = db.Column('idalertas', db.Integer, primary_key=True, autoincrement=True) 
     
-    # SQLAlchemy mapea automáticamente atributos a columnas con el mismo nombre
-    # Sin embargo, si quieres mantener el nombre de la BD original (capitalizado), 
-    # puedes usar el argumento 'name'. Lo haremos para ser precisos con tu tabla original.
-
-    host = db.Column('Host', db.Text) # Usamos db.Text como en tu BD original
-    time = db.Column('Time', db.DateTime(timezone=False)) # timezone=False por defecto
-    recovery_time_str = db.Column('Recovery_time', db.String(100)) 
+    # Columnas de Tiempo
+    host = db.Column('Host', db.Text)
+    time = db.Column('Time', db.DateTime)
+    recovery_time = db.Column('Recovery_time', db.DateTime) # Cambiado a DateTime
     
-    # Mapeo de Duracion a duracion, especificando el tipo exacto
-    duracion = db.Column('Duracion', db.Double)
+    # Métricas y Estado
+    duracion = db.Column('Duracion', db.Text) # Cambiado a Text según tu esquema
+    rango_duracion = db.Column('Rango_Duracion', db.Text)
     status = db.Column('Status', db.Text)
     problem = db.Column('Problem', db.Text)
-    # Usamos db.BigInteger para mapear correctamente el BIGINT de MySQL
     ack = db.Column('Ack', db.BigInteger) 
-    servicio = db.Column('Servicio', db.Text)
+    
+    # Clasificación y Metadata
+    servicio = db.Column('servicio', db.Text)
     cod_app = db.Column('Cod_App', db.Text)
-    tipo = db.Column('Tipo', db.Text)
-    
-    # Estos nombres de columna ya usan guiones bajos, no necesitan el argumento 'name'
-    rango_duracion = db.Column('Rango_Duracion', db.Text) 
-    severity = db.Column('Severity', db.Text)
-    actions = db.Column('Actions', db.Text)
-    tags = db.Column('Tags', db.Text)
-    
-    # Este nombre de columna ya usa guion bajo, no necesita el argumento 'name'
-    operational_data = db.Column('Operational_data', db.Text) 
-    
+    tipo = db.Column('tipo', db.Text)
     tipo_servicio = db.Column('Tipo_Servicio', db.Text)
-
-    # --- Método __repr__ (recomendado) ---
+    entregado_cgm = db.Column('entregado_cgm', db.Text) # Agregada
+    tipo_problem = db.Column('tipo_problem', db.Text)   # Agregada
     
-    def __repr__(self):
-        """Representación útil al imprimir el objeto Alerta."""
-        return f'<Alerta id={self.id} host={self.host!r} status={self.status!r}>'
+    # Detalles Técnicos
+    tags = db.Column('Tags', db.Text)
+    severity = db.Column('Severity', db.Text)
+    operational_data = db.Column('Operational_data', db.Text)
+    actions = db.Column('Actions', db.String(45)) # Ajustado a varchar(45)
 
-    # --- Nota sobre __init__ ---
-    # SQLAlchemy proporciona un constructor predeterminado que acepta argumentos de palabra clave.
-    # El __init__ manual de tu ejemplo no es necesario y a menudo se omite en favor del constructor automático.
-    # Puedes crear instancias así: 
-    # nueva_alerta = Alerta(Host='servidor1', Status='UP', Time=datetime.now(), ...)
+    def __repr__(self):
+        return f'<Alerta id={self.id} host={self.host} problem={self.problem[:20]}...>'
