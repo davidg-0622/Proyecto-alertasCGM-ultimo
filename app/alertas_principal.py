@@ -30,11 +30,9 @@ def detalle_alertas():
     fecha_fin_str = request.args.get('fecha_fin', '').strip()
     host_param = request.args.get('Host', '').strip() 
     operational_data_param = request.args.get('Operational_data', '').strip() 
-    rango_duracion_param = request.args.get('Rango_Duracion', '').strip() 
+    rango_duracion_param = request.args.get('Rango_Duracion', '').strip()
+    problem = request.args.get('problem', '').strip() 
 
-
-    print(f"DEBUG: Fecha Inicio String: '{fecha_inicio_str}'")
-    print(f"DEBUG: Fecha Fin String: '{fecha_fin_str}'")
 
     # Iniciar la consulta base de SQLAlchemy
     query_alertas = Alerta.query
@@ -72,6 +70,10 @@ def detalle_alertas():
     if rango_duracion_param and rango_duracion_param != 'None':
         query_alertas = query_alertas.filter(Alerta.rango_duracion == rango_duracion_param)
 
+             
+    if problem and problem != 'None':
+        query_alertas = query_alertas.filter(Alerta.problem == problem)
+
     # **Optimización Opcional**: Puedes ordenar directamente con SQLAlchemy antes de pasarlo a Pandas
     query_alertas = query_alertas.order_by(Alerta.time.desc())
 
@@ -89,7 +91,8 @@ def detalle_alertas():
         'time': 'Time',
         'host': 'Host',
         'operational_data': 'Operational_data',
-        'rango_duracion': 'Rango_Duracion'
+        'rango_duracion': 'Rango_Duracion',
+        'problem': 'Problem'
     }, inplace=True)
 
     # Crear columna formateada para mostrar en HTML
@@ -101,9 +104,10 @@ def detalle_alertas():
     else:
         grafico_data = []
 
-    # Conteo de hosts y rango de duración
+    # Conteo de hosts, rango de duración y problem
     conteo_hosts = df_alerts['Host'].value_counts().to_dict() if 'Host' in df_alerts.columns else {}
     conteo_rango_duracion = df_alerts['Rango_Duracion'].value_counts().to_dict() if 'Rango_Duracion' in df_alerts.columns else {}
+    conteo_problem = df_alerts['Problem'].value_counts().to_dict() if 'Problem' in df_alerts.columns else {}
 
     # Renderizar plantilla con alertas filtradas y datos del gráfico
     return render_template(
@@ -115,7 +119,8 @@ def detalle_alertas():
         conteo_rango_duracion=conteo_rango_duracion,
         fecha_inicio=fecha_inicio_str,
         fecha_fin=fecha_fin_str,
-        servicios={'Servicio': servicio_param} 
+        servicios={'Servicio': servicio_param},
+        problem={'Problem': problem}
     )
 
 
@@ -349,7 +354,9 @@ def alertas_tag_entregado_cgm_no():
     servicios_unicos = db.session.query(Alerta.servicio).filter(
         Alerta.entregado_cgm.ilike('no')
     ).distinct().order_by(Alerta.servicio).all()
+
     lista_servicios = [s[0] for s in servicios_unicos if s[0]]
+    print(f"DEBUG: Servicios únicos con entregado_cgm='no': {lista_servicios}")
 
     def aplicar_filtros(q):
         q = q.filter(Alerta.entregado_cgm.ilike('no'))
@@ -413,9 +420,8 @@ def entregado_cgm_por_servico_iguales():
     # Consulta: Agrupar por servicio y contar IDs donde entregado_cgm es 'no'
     resumen_query = db.session.query(
         Alerta.servicio.label('servicio'),
-        func.count(Alerta.id).label('total')
-    ).filter(
-        Alerta.entregado_cgm.ilike('no')
+        func.count(Alerta.id).label('total')).filter(
+Alerta.entregado_cgm.ilike('no')
     ).group_by(
         Alerta.servicio
     ).order_by(
@@ -488,3 +494,9 @@ def conteo_servicio_tags():
         servicio_filtro=servicio_filtro,
         servicios_dropdown=lista_servicios
     )
+
+
+
+
+
+

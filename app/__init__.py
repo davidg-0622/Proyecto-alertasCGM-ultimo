@@ -17,11 +17,13 @@ def create_app():
     from .auth import bp as auth_bp
     from .boca import bp as boca_bp
     from .alertas_principal import bp as alertas_bp
-  
+    from .jobs import bp as jobs_bp  # Importar el Blueprint de jobs
+
     app.register_blueprint(main_bp)
     app.register_blueprint(auth_bp)
     app.register_blueprint(alertas_bp)
     app.register_blueprint(boca_bp)
+    app.register_blueprint(jobs_bp)  # Registrar el Blueprint de jobs
 
     # Migra todos los modelos a la base de datos
     with app.app_context():

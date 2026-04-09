@@ -25,6 +25,8 @@ class Alerta(db.Model):
     cod_app = db.Column('Cod_App', db.Text)
     tipo = db.Column('tipo', db.Text)
     tipo_servicio = db.Column('Tipo_Servicio', db.Text)
+    id_entidad = db.Column('id_entidad', db.Text)
+    nombre_entidad = db.Column('nombre_entidad', db.Text)
     entregado_cgm = db.Column('entregado_cgm', db.Text) # Agregada
     tipo_problem = db.Column('tipo_problem', db.Text)   # Agregada
     
@@ -32,7 +34,7 @@ class Alerta(db.Model):
     tags = db.Column('Tags', db.Text)
     severity = db.Column('Severity', db.Text)
     operational_data = db.Column('Operational_data', db.Text)
-    actions = db.Column('Actions', db.String(45)) # Ajustado a varchar(45)
+    #actions = db.Column('Actions', db.String(45)) # Ajustado a varchar(45)
 
     def __repr__(self):
         return f'<Alerta id={self.id} host={self.host} problem={self.problem[:20]}...>'
