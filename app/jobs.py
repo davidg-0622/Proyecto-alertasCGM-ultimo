@@ -5,12 +5,103 @@ import time
 
 bp = Blueprint('jobs', __name__, url_prefix='/jobs')
 
+# --- VARIABLE GLOBAL DE CONTROL ---
+PROCESO_ACTIVO = True
+
+############# RUTA PRINCIPAL #############
+
+@bp.route('/')
+def index():
+    return render_template('jobs/crudjobs.html', cantidad=0)
+
+##########################  detener proceso global ##########################
+
+
+@bp.route('/detener', methods=['POST'])
+def detener_proceso():
+    global PROCESO_ACTIVO
+    PROCESO_ACTIVO = False
+    print("!!! SEÑAL DE PARADA RECIBIDA !!!")
+    return jsonify({"ok": True, "message": "Deteniendo..."})
+
+
+
+###################################### EJECUTAR JOBS #####################################
 def ejecutar_pasos_en_pantalla(datos):
     try:
         # Extraer variables con los IDs del HTML
-        user = datos.get('user')
-        password = datos.get('password')
-        servidor = datos.get('instancia_servidor', '01') 
+
+        ini = int(datos.get('instancia_inicial', 1))
+        fin = int(datos.get('instancia_final', 1))
+        equipo = datos.get('equipo', '')
+        subsistema = datos.get('subsistema', '')
+        proceso = datos.get('proceso', '')
+        descripcion = datos.get('descripcion', '')
+        time.sleep(3) 
+        
+        # --- TU RUTA DE NAVEGACIÓN (INTACTA) ---
+        for _ in range(8): 
+            pydirectinput.press('tab')
+        
+        pyautogui.write('1')
+        pydirectinput.press('enter')
+        time.sleep(1)
+        pydirectinput.press('enter')
+        
+        pyautogui.write('2')
+        pydirectinput.press('enter')
+        time.sleep(1)
+        pydirectinput.press('enter')
+
+        pydirectinput.press('f6') 
+        time.sleep(1)
+        pydirectinput.press('f6') 
+        time.sleep(1)
+
+
+        # --- BUCLE DE MATRICULA INSTANCIAS
+        for i in range(ini, fin + 1):
+            instancia_formateada = str(i).zfill(3)
+            
+
+            # 1. Equipo/Maquina
+            pyautogui.write(equipo.upper())
+            time.sleep(2)
+          
+
+            # 2. SubSistema
+            pyautogui.write(subsistema.upper())
+            pydirectinput.press('tab')
+            time.sleep(2)
+
+            # 3. Proceso (Concatenando: PROCESO + SERVIDOR + INSTANCIA)
+            # Ej: RPCCO + 01 + 005 = RPCCO01005
+            proceso_completo = f"{proceso.upper()}{instancia_formateada}"
+            pyautogui.write(proceso_completo)
+
+            time.sleep(2)
+
+            pyautogui.write(descripcion.upper())
+            time.sleep(10) 
+            pydirectinput.press('enter')
+            time.sleep(3) 
+
+        return True, f"Instancias {ini} a {fin} creadas."
+    except Exception as e:
+        return False, str(e)
+            
+            
+
+
+    ##################################### ELIMINAR JOBS #####################################
+
+
+def eliminar_jobs(datos):
+    global PROCESO_ACTIVO
+    PROCESO_ACTIVO = True # Resetear al iniciar
+    try:
+        # Extraer variables con los IDs del HTML
+
         ini = int(datos.get('instancia_inicial', 1))
         fin = int(datos.get('instancia_final', 1))
         equipo = datos.get('equipo', '')
@@ -18,81 +109,112 @@ def ejecutar_pasos_en_pantalla(datos):
         proceso = datos.get('proceso', '')
         descripcion = datos.get('descripcion', '')
 
+                # --- 1. MENSAJE DE ALERTA (CONFIRMACIÓN) ---
+        # El código se detendrá aquí hasta que el usuario responda
+        respuesta = pyautogui.confirm(
+            text=f'¿Está seguro de ELIMINAR las instancias de la {ini} a la {fin}?',
+            title='Confirmación de Eliminación',
+            buttons=['SÍ, ELIMINAR', 'CANCELAR']
+        )
         time.sleep(3) 
         
         # --- TU RUTA DE NAVEGACIÓN (INTACTA) ---
-        pyautogui.write(user.upper(), interval=0.1)
-        pyautogui.write(password, interval=0.1)
-        pydirectinput.press('enter') 
-        time.sleep(1)
-        pydirectinput.press('enter') 
-        time.sleep(3)
-        
-        pyautogui.write('1')
-        pydirectinput.press('enter')
-        pyautogui.write('1')
-        pydirectinput.press('enter')
-
         for _ in range(8): 
             pydirectinput.press('tab')
         
         pyautogui.write('1')
         pydirectinput.press('enter')
+        time.sleep(1)
         pydirectinput.press('enter')
         
         pyautogui.write('2')
         pydirectinput.press('enter')
+        time.sleep(1)
         pydirectinput.press('enter')
 
-        # --- BUCLE DE MATRICULACIÓN CORREGIDO ---
+        # 1. Presionar F6 UNA SOLA VEZ antes de empezar el bucle
+        pydirectinput.press('f6') 
+        time.sleep(1)
+            # 1. Subir una posición
+
+        # --- BUCLE DE MATRICULA INSTANCIAS
         for i in range(ini, fin + 1):
             instancia_formateada = str(i).zfill(3)
+            proceso_completo = f"{proceso.upper()}{instancia_formateada}"
             
-            pydirectinput.press('f6') 
-            time.sleep(1)
+            # 1. Subir una posición (Esto se repite en cada vuelta)
+            pydirectinput.press('up')
+            time.sleep(0.3) 
 
-            # 1. Equipo/Maquina
-            pyautogui.write(equipo.upper())
-            pydirectinput.press('tab')
-
-            # 2. SubSistema
-            pyautogui.write(subsistema.upper())
-            pydirectinput.press('tab')
-
-            # 3. Proceso (Concatenando: PROCESO + SERVIDOR + INSTANCIA)
-            # Ej: RPCCO + 01 + 005 = RPCCO01005
-            proceso_completo = f"{proceso.upper()}{servidor}{instancia_formateada}"
+            # 2. Moverse 26 veces a la derecha (AHORA ESTÁ DENTRO DEL FOR)
+            for _ in range(26):
+                pydirectinput.press('right')
+            
+            # 3. Escribir el proceso (AHORA ESTÁ DENTRO DEL FOR)
             pyautogui.write(proceso_completo)
-            
-            # 4. Los campos intermedios (Servidor, Inicial, Final)
-            # Si el cursor cae en ellos tras el TAB del proceso, los llenamos:
-            pydirectinput.press('tab')
-            pyautogui.write(servidor)
-            pyautogui.write(instancia_formateada)
-            pyautogui.write(instancia_formateada)
-            
-            # 5. Salto a Descripción (Ajusta los TAB si es necesario)
-            pydirectinput.press('tab')
-            pyautogui.write(descripcion.upper())
-            
+            time.sleep(1.5)
             pydirectinput.press('enter')
-            time.sleep(1.5) 
+            time.sleep(1)
+            
+            # 4. Opción 4 y eliminar (AHORA ESTÁ DENTRO DEL FOR)
+            pyautogui.write('4')
+            time.sleep(1)
+            pydirectinput.press('enter')
+            time.sleep(1) #
 
-        return True, f"Instancias {ini} a {fin} creadas."
+        ## mensaje de alerta de confirmación de eliminación
+
+
+                # Esta ventana aparecerá en el centro de tu pantalla
+        respuesta = pyautogui.confirm(
+            text=f'¿Deseas proceder con la eliminación de {fin - ini + 1} instancias?',
+            title='Confirmación de Seguridad iSeries',
+            buttons=['SÍ, ELIMINAR', 'CANCELAR']
+        )
+
+        if respuesta == 'CANCELAR':
+            return False, "Eliminación cancelada por el usuario."
+        
+        # Si eligió SÍ, el código continúa aquí abajo...
+        time.sleep(2) 
+
+        pyautogui.hotkey('shift', 'f11')
+        time.sleep(1)
+
+
+      
+
+        
+        
+        return True, f"Instancias {ini} a {fin} Eliminadas."
     except Exception as e:
         return False, str(e)
+            
+    
 
+
+
+
+
+
+
+
+
+
+
+# RUTAS DE EJECUCIÓN DE JOBS
 
 @bp.route('/test-pasos', methods=['POST'])
 def test_pasos():
     data = request.json
-    # Pasamos todo el diccionario 'data' para tener acceso a todos los campos
     exito, mensaje = ejecutar_pasos_en_pantalla(data)
     return jsonify({"ok": exito, "message": mensaje})
 
-@bp.route('/')
-def index():
-    return render_template('jobs/crudjobs.html')
 
+# RUTA DE ELIMINACIÓN DE JOBS
 
-
+@bp.route('/eliminar-pasos', methods=['POST'])
+def eliminar_pasos_ruta():
+    data = request.json
+    exito, mensaje = eliminar_jobs(data)
+    return jsonify({"ok": exito, "message": mensaje})

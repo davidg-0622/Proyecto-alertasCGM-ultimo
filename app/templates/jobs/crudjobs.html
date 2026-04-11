@@ -7,31 +7,10 @@
             iSeries Nacional - Automatización
         </div>
         <div class="card-body">
-            <!-- Sección de Login -->
-            <div class="row g-2 mb-3">
-                <div class="col-md-6">
-                    <label class="form-label small fw-bold">Usuario AS400</label>
-                    <input type="text" id="user" class="form-control" placeholder="USUARIO">
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label small fw-bold">Contraseña</label>
-                    <input type="password" id="pass" class="form-control" placeholder="••••••••">
-                </div>
-            </div>
-
-            <hr>
-            <h6 class="text-primary fw-bold">Configuración de Instancias</h6>
-
+            <h6 class="text-primary fw-bold mb-3 center">Configuración de Instancias</h6>
+  
             <div class="row g-2">
-                <div class="col-md-6">
-                    <label class="form-label small fw-bold"># Instancia (Servidor)</label>
-                    <input type="text" id="instancia" class="form-control" placeholder="01">
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label small fw-bold">Cant. Instancias</label>
-                    <input type="number" id="cantidad" class="form-control" placeholder="017">
-                </div>
-
+                <!-- Instancias -->
                 <div class="col-md-6">
                     <label class="form-label small fw-bold"># Instancia Inicial</label>
                     <input type="number" id="Instancia_Inicial" class="form-control" placeholder="001">
@@ -40,18 +19,25 @@
                     <label class="form-label small fw-bold"># Instancia Final</label>
                     <input type="number" id="Instancia_Final" class="form-control" placeholder="017">
                 </div>
+                    
+                <div class="col-md-5 mx-auto text-center my-2">
+                    <label class="form-label small fw-bold text-muted">Cant. a Procesar</label>
+                    <input type="text" id="cantidad" class="form-control form-control-sm text-center bg-light fw-bold" 
+                           style="border: 1px solid black;" value="{{ cantidad }}" readonly>
+                </div>
 
+                <!-- Detalles -->
                 <div class="col-12">
-    <label class="form-label small fw-bold">Equipo/Maquina</label>
-    <select id="equipo" class="form-select"> <!-- ID corregido -->
-        <option value="MED">MED</option>
-        <option value="NAL">NAL</option>
-    </select>
-</div>
-<div class="col-12">
-    <label class="form-label small fw-bold">SubSistema</label>
-    <input type="text" id="subsistema_val" class="form-control" placeholder="QFNC1"> <!-- ID único -->
-</div>
+                    <label class="form-label small fw-bold">Equipo/Maquina</label>
+                    <select id="equipo" class="form-select">
+                        <option value="MED">MED</option>
+                        <option value="NAL">NAL</option>
+                    </select>
+                </div>
+                <div class="col-12">
+                    <label class="form-label small fw-bold">SubSistema</label>
+                    <input type="text" id="subsistema_val" class="form-control" placeholder="QFNC1">
+                </div>
                 <div class="col-12">
                     <label class="form-label small fw-bold">Proceso (Instancia)</label>
                     <input type="text" id="proceso" class="form-control" placeholder="RPCCO">
@@ -62,55 +48,110 @@
                 </div>
             </div>
 
-            <div class="mt-4 d-flex gap-2">
-                <button onclick="ejecutarCreacion()" class="btn btn-primary fw-bold flex-fill">Crear</button>
-                <button onclick="eliminar()" class="btn btn-danger fw-bold flex-fill">Eliminar</button>
-                <button onclick="editar()" class="btn btn-warning fw-bold flex-fill">Modificar</button>
+            <!-- Botones -->
+            <div class="mt-4 d-flex flex-wrap gap-2">
+                <button onclick="enviarAccion('crear')" class="btn btn-primary fw-bold flex-fill">Crear</button>
+                <button onclick="enviarAccion('eliminar')" class="btn btn-danger fw-bold flex-fill">Eliminar</button>
+                <button onclick="enviarAccion('editar')" class="btn btn-warning fw-bold flex-fill text-white">Modificar</button>
+                <!-- Nuevo Botón de Stop -->
+                <button id="btnStop" onclick="detenerEjecucion()" class="btn btn-secondary fw-bold flex-fill"
+                    disabled>Detener</button>
             </div>
 
             <div id="resultado" class="mt-3 small text-center fw-bold"></div>
         </div>
     </div>
 
-    <script>
-    async function ejecutarCreacion() {
+
+
+   <script>
+    let controller; 
+
+    function actualizarCantidad() {
+        const ini = parseInt(document.getElementById('Instancia_Inicial').value) || 0;
+        const fin = parseInt(document.getElementById('Instancia_Final').value) || 0;
+        const cantInput = document.getElementById('cantidad');
+        const total = (fin - ini) + 1;
+        cantInput.value = (ini > 0 && fin >= ini) ? total : 0;
+    }
+
+    document.getElementById('Instancia_Inicial').addEventListener('input', actualizarCantidad);
+    document.getElementById('Instancia_Final').addEventListener('input', actualizarCantidad);
+
+    async function enviarAccion(tipo) {
         const resDiv = document.getElementById('resultado');
+        const btnStop = document.getElementById('btnStop');
         
-        // Obtenemos los valores asegurando que los IDs coincidan con el HTML de arriba
         const payload = {
-            user: document.getElementById('user').value,
-            password: document.getElementById('pass').value,
-            instancia_servidor: document.getElementById('instancia').value,
             instancia_inicial: document.getElementById('Instancia_Inicial').value,
             instancia_final: document.getElementById('Instancia_Final').value,
             equipo: document.getElementById('equipo').value,
-            subsistema: document.getElementById('subsistema_val').value, // ID único
+            subsistema: document.getElementById('subsistema_val').value,
             proceso: document.getElementById('proceso').value,
             descripcion: document.getElementById('descripcion').value
         };
 
-        if (!payload.user || !payload.password) {
-            alert("Usuario y contraseña requeridos");
+        if(!payload.instancia_inicial || !payload.instancia_final) {
+            resDiv.innerText = "Por favor completa los datos del formulario.";
+            resDiv.className = "mt-3 small text-center text-danger";
             return;
         }
 
-        resDiv.innerText = "Conectando con AS400...";
-        resDiv.className = "mt-3 small text-center text-warning";
+        let url = '/jobs/test-pasos'; 
+        let mensajeEspera = "Procesando...";
+
+        // AJUSTE: Mensaje específico para cuando Python lanza la alerta
+        if (tipo === 'eliminar') {
+            url = '/jobs/eliminar-pasos';
+            mensajeEspera = "⚠️ Confirma la eliminación de la instancia ...";
+        } else if (tipo === 'editar') {
+            url = '/jobs/editar-pasos';
+        }
+
+        resDiv.innerText = mensajeEspera;
+        resDiv.className = "mt-3 small text-center text-primary fw-bold"; // Azul para indicar espera de acción
         
+        controller = new AbortController();
+        btnStop.disabled = false;
+        btnStop.classList.replace('btn-secondary', 'btn-dark');
+
         try {
-            const response = await fetch('/jobs/test-pasos', {
+            const response = await fetch(url, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify(payload)
+                body: JSON.stringify(payload),
+                signal: controller.signal 
             });
             const data = await response.json();
             resDiv.innerText = data.message;
             resDiv.className = data.ok ? "mt-3 small text-center text-success" : "mt-3 small text-center text-danger";
         } catch (e) {
-            resDiv.innerText = "Error de conexión con el servidor Flask";
-            resDiv.className = "mt-3 small text-center text-danger";
+            if (e.name === 'AbortError') {
+                resDiv.innerText = "Ejecución detenida por el usuario.";
+                resDiv.className = "mt-3 small text-center text-warning fw-bold";
+            } else {
+                resDiv.innerText = "Error de comunicación con el servidor";
+                resDiv.className = "mt-3 small text-center text-danger";
+            }
+        } finally {
+            btnStop.disabled = true;
+            btnStop.classList.replace('btn-dark', 'btn-secondary');
         }
     }
-    </script>
+
+    async function detenerEjecucion() {
+        try {
+            await fetch('/jobs/detener', { method: 'POST' });
+        } catch (err) {
+            console.error("No se pudo contactar al servidor para detener.");
+        }
+
+        if (controller) {
+            controller.abort(); 
+        }
+    }
+</script>
+
+
 </body>
 {% endblock %}
