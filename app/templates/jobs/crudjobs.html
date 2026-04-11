@@ -1,7 +1,9 @@
+
 {% extends 'base.html' %}
 
-{% block content %} 
-<body class="p-5">
+{% block title %}Matricula Jobs menu-24{% endblock %}
+
+{% block content %}
     <div class="card mx-auto shadow" style="max-width: 500px;">
         <div class="card-header bg-dark text-white text-center fw-bold">
             iSeries Nacional - Automatización
@@ -63,95 +65,134 @@
     </div>
 
 
+<!-- FILA DE INDICADORES -->
+<br>
 
-   <script>
-    let controller; 
+    
+<!-- INDICADORES MODERNOS Y SUTILES -->
+<div class="row mb-4 justify-content-center gap-3">
+    <!-- Card: Total General -->
+    <div class="col-md-3">
+        <div class="card shadow-sm border-0" style="background-color: #f8f9fc; border-radius: 10px;">
+            <div class="card-body p-3 text-center">
+                <p class="text-muted mb-1 fw-bold text-uppercase" style="font-size: 0.65rem; letter-spacing: 0.5px;">
+                    Total Jobs Base
+                </p>
+                <div class="d-flex align-items-center justify-content-center">
+                    <span id="total-base-card" class="h4 mb-0 fw-bold text-dark">{{ total_base or 0 }}</span>
+                    <small class="text-muted ms-2" style="font-size: 0.7rem;">registros</small>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    function actualizarCantidad() {
-        const ini = parseInt(document.getElementById('Instancia_Inicial').value) || 0;
-        const fin = parseInt(document.getElementById('Instancia_Final').value) || 0;
-        const cantInput = document.getElementById('cantidad');
-        const total = (fin - ini) + 1;
-        cantInput.value = (ini > 0 && fin >= ini) ? total : 0;
+    <!-- Card: Resultados Filtro -->
+    <div class="col-md-3">
+        <div class="card shadow-sm border-0" style="background-color: #f0f7ff; border-radius: 10px;">
+            <div class="card-body p-3 text-center">
+                <p class="text-primary mb-1 fw-bold text-uppercase" style="font-size: 0.65rem; letter-spacing: 0.5px;">
+                    Encontrados
+                </p>
+                <div class="d-flex align-items-center justify-content-center">
+                    <span id="conteo-filtro" class="h4 mb-0 fw-bold text-primary">{{ encontrados or 0 }}</span>
+                    <small class="text-primary ms-2" style="font-size: 0.7rem;">coincidencias</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<!-- FILA INFERIOR: Tablas -->
+    <div class="row">
+        <!-- Lado Izquierdo: Listado de Jobs -->
+        <div class="col-lg-6">
+            <div class="card shadow h-100">
+                <div class="card-header bg-secondary text-white fw-bold">Listado de Jobs</div>
+                <div class="card-body">
+                    <div class="input-group input-group-sm mb-3">
+                        <input type="text" id="inputFiltro" class="form-control" placeholder="Buscar por Job o Subsistema..." value="{{ filtro or '' }}">
+                        <button class="btn btn-primary" type="button" onclick="actualizarTabla(1)">Buscar</button>
+                        <button class="btn btn-outline-secondary" type="button" onclick="limpiarBusqueda()">Limpiar</button>
+                    </div>
+
+                    <div id="contenedor-tabla">
+                        <div class="table-responsive">
+                            <table class="table table-sm table-striped table-hover border">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th class="small">Nombre Trabajo</th>
+                                        <th class="small">Subsistema</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for job in jobs %}
+                                    <tr>
+                                        <td class="small">{{ job.Nombre_trabajo }}</td>
+                                        <td class="small">{{ job.Subsistema }}</td>                      
+                                    </tr>
+                                    {% else %}
+                                    <tr><td colspan="2" class="text-center small text-muted">Sin resultados.</td></tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        {% if total_pages > 1 %}
+                        <nav class="mt-2">
+                            <ul class="pagination pagination-sm justify-content-center">
+                                {% if page > 1 %}
+                                <li class="page-item"><button type="button" class="page-link" onclick="actualizarTabla({{ page - 1 }})">«</button></li>
+                                {% endif %}
+                                <li class="page-item disabled"><span class="page-link">{{ page }} / {{ total_pages }}</span></li>
+                                {% if page < total_pages %}
+                                <li class="page-item"><button type="button" class="page-link" onclick="actualizarTabla({{ page + 1 }})">»</button></li>
+                                {% endif %}
+                            </ul>
+                        </nav>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lado Derecho: Espacio para segunda tabla -->
+        <div class="col-lg-6">
+            <div class="card shadow h-100">
+                <div class="card-header bg-secondary text-white fw-bold">Jobs registrados menu 24</div>
+                <div class="card-body text-center text-muted pt-5">
+                    <p>Espacio para la siguiente tabla...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+
+
+// Función para calcular la cantidad automáticamente
+function calcularCantidad() {
+    const inicial = parseInt(document.getElementById('Instancia_Inicial').value) || 0;
+    const final = parseInt(document.getElementById('Instancia_Final').value) || 0;
+    
+    // Calculamos la diferencia (incluyendo el número inicial)
+    let total = 0;
+    if (final >= inicial && inicial > 0) {
+        total = (final - inicial) + 1;
     }
+    
+    document.getElementById('cantidad').value = total;
+}
 
-    document.getElementById('Instancia_Inicial').addEventListener('input', actualizarCantidad);
-    document.getElementById('Instancia_Final').addEventListener('input', actualizarCantidad);
+// Escuchamos los cambios en ambos campos
+document.getElementById('Instancia_Inicial').addEventListener('input', calcularCantidad);
+document.getElementById('Instancia_Final').addEventListener('input', calcularCantidad);
 
-    async function enviarAccion(tipo) {
-        const resDiv = document.getElementById('resultado');
-        const btnStop = document.getElementById('btnStop');
-        
-        const payload = {
-            instancia_inicial: document.getElementById('Instancia_Inicial').value,
-            instancia_final: document.getElementById('Instancia_Final').value,
-            equipo: document.getElementById('equipo').value,
-            subsistema: document.getElementById('subsistema_val').value,
-            proceso: document.getElementById('proceso').value,
-            descripcion: document.getElementById('descripcion').value
-        };
-
-        if(!payload.instancia_inicial || !payload.instancia_final) {
-            resDiv.innerText = "Por favor completa los datos del formulario.";
-            resDiv.className = "mt-3 small text-center text-danger";
-            return;
-        }
-
-        let url = '/jobs/test-pasos'; 
-        let mensajeEspera = "Procesando...";
-
-        // AJUSTE: Mensaje específico para cuando Python lanza la alerta
-        if (tipo === 'eliminar') {
-            url = '/jobs/eliminar-pasos';
-            mensajeEspera = "⚠️ Confirma la eliminación de la instancia ...";
-        } else if (tipo === 'editar') {
-            url = '/jobs/editar-pasos';
-        }
-
-        resDiv.innerText = mensajeEspera;
-        resDiv.className = "mt-3 small text-center text-primary fw-bold"; // Azul para indicar espera de acción
-        
-        controller = new AbortController();
-        btnStop.disabled = false;
-        btnStop.classList.replace('btn-secondary', 'btn-dark');
-
-        try {
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify(payload),
-                signal: controller.signal 
-            });
-            const data = await response.json();
-            resDiv.innerText = data.message;
-            resDiv.className = data.ok ? "mt-3 small text-center text-success" : "mt-3 small text-center text-danger";
-        } catch (e) {
-            if (e.name === 'AbortError') {
-                resDiv.innerText = "Ejecución detenida por el usuario.";
-                resDiv.className = "mt-3 small text-center text-warning fw-bold";
-            } else {
-                resDiv.innerText = "Error de comunicación con el servidor";
-                resDiv.className = "mt-3 small text-center text-danger";
-            }
-        } finally {
-            btnStop.disabled = true;
-            btnStop.classList.replace('btn-dark', 'btn-secondary');
-        }
-    }
-
-    async function detenerEjecucion() {
-        try {
-            await fetch('/jobs/detener', { method: 'POST' });
-        } catch (err) {
-            console.error("No se pudo contactar al servidor para detener.");
-        }
-
-        if (controller) {
-            controller.abort(); 
-        }
-    }
 </script>
-
-
-</body>
 {% endblock %}
+
