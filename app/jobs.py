@@ -8,24 +8,40 @@ from app.models.user import User
 from app import db # Asume que 'db' se importa desde la aplicación principal
 from math import ceil
 from sqlalchemy import or_
+import tkinter as tk
+from tkinter import messagebox
 
 bp = Blueprint('jobs', __name__, url_prefix='/jobs')
 
 # --- VARIABLE GLOBAL DE CONTROL ---
 PROCESO_ACTIVO = True
 
+
+
+def pedir_confirmacion_segura(titulo, mensaje):
+    root = tk.Tk()
+    root.withdraw()
+    # Esto fuerza a la ventana a ponerse por encima de TODO (incluso el emulador)
+    root.attributes("-topmost", True) 
+    respuesta = messagebox.askyesno(titulo, mensaje, parent=root)
+    root.destroy()
+    return respuesta
+
+
 ############# RUTA PRINCIPAL #############
 
 @bp.route('/')
 def index():
-    return render_template(
-    'jobs/crudjobs.html', 
-    cantidad=0, 
-    jobs=[],          # Lista de trabajos vacía
-    total_pages=1,    # Valor mínimo para que el IF del HTML funcione
-    page=1,           # Página actual inicial
-    filtro=None       # Sin búsqueda activa
-)
+    # Valores por defecto para la carga inicial
+    total_base = Job.query.count()
+    return render_template('jobs/crudjobs.html', 
+                           cantidad=0, 
+                           total_base=total_base, 
+                           encontrados=0, 
+                           jobs=[], 
+                           total_pages=1, 
+                           page=1)
+
 ##########################  detener proceso global ##########################
 
 
@@ -123,11 +139,10 @@ def eliminar_jobs(datos):
 
                 # --- 1. MENSAJE DE ALERTA (CONFIRMACIÓN) ---
         # El código se detendrá aquí hasta que el usuario responda
-        respuesta = pyautogui.confirm(
-            text=f'¿Está seguro de ELIMINAR las instancias de la {ini} a la {fin}?',
-            title='Confirmación de Eliminación',
-            buttons=['SÍ, ELIMINAR', 'CANCELAR']
-        )
+        msg1 = f"¿Está seguro de ELIMINAR las instancias de la {ini} a la {fin}?"
+        if not pedir_confirmacion_segura("Confirmación de Eliminación", msg1):
+            return False, "Eliminación cancelada por el usuario."
+        
         time.sleep(3) 
         
         # --- TU RUTA DE NAVEGACIÓN (INTACTA) ---
@@ -174,30 +189,16 @@ def eliminar_jobs(datos):
             pydirectinput.press('enter')
             time.sleep(1) #
 
-        ## mensaje de alerta de confirmación de eliminación
+            msg1 = f"¿Está seguro de ELIMINAR las instancias de la {ini} a la {fin}?"
+            if not pedir_confirmacion_segura("Confirmación de Eliminación", msg1):
+                return False, "Eliminación cancelada por el usuario."
 
-
-                # Esta ventana aparecerá en el centro de tu pantalla
-        respuesta = pyautogui.confirm(
-            text=f'¿Deseas proceder con la eliminación de {fin - ini + 1} instancias?',
-            title='Confirmación de Seguridad iSeries',
-            buttons=['SÍ, ELIMINAR', 'CANCELAR']
-        )
-
-        if respuesta == 'CANCELAR':
-            return False, "Eliminación cancelada por el usuario."
-        
         # Si eligió SÍ, el código continúa aquí abajo...
-        time.sleep(2) 
+            time.sleep(2) 
 
-        pyautogui.hotkey('shift', 'f11')
-        time.sleep(1)
+            pyautogui.hotkey('shift', 'f11')
+            time.sleep(1)
 
-
-      
-
-        
-        
         return True, f"Instancias {fin} de {fin} Eliminadas."
     except Exception as e:
         return False, str(e)
@@ -222,12 +223,10 @@ def editar_jobs(datos):
         descripcion = datos.get('descripcion', '')
 
                 # --- 1. MENSAJE DE ALERTA (CONFIRMACIÓN) ---
-        # El código se detendrá aquí hasta que el usuario responda
-        respuesta = pyautogui.confirm(
-            text=f'¿Está seguro de Editar las instancias de la {ini} a la {fin}?',
-            title='Confirmación de Edición',
-            buttons=['SÍ, EDITAR', 'CANCELAR']
-        )
+
+        msg1 = f"¿Está seguro de EDITAR las instancias de la {ini} a la {fin}?"
+        if not pedir_confirmacion_segura("Confirmación de Edición", msg1):
+            return False, "Edición cancelada por el usuario."
         time.sleep(3) 
         
         # --- TU RUTA DE NAVEGACIÓN (INTACTA) ---
@@ -277,57 +276,52 @@ def editar_jobs(datos):
 
 
                 # Esta ventana aparecerá en el centro de tu pantalla
-        respuesta = pyautogui.confirm(
-            text=f'¿Deseas proceder con la edición de {fin - ini + 1} instancias?',
-            title='Confirmación de Seguridad iSeries',
-            buttons=['SÍ, EDITAR', 'CANCELAR']
-        )
-
-        if respuesta == 'CANCELAR':
-            return False, "Edición cancelada por el usuario."
+            msg1 = f"¿Está seguro de EDITAR las instancias de la {ini} a la {fin}?"
+            if not pedir_confirmacion_segura("Confirmación de Edición", msg1):
+                return False, "Edición cancelada por el usuario."
         
         # Si eligió SÍ, el código continúa aquí abajo...
-        time.sleep(2) 
+            time.sleep(2) 
 
-        pyautogui.press('delete', presses=3)
-        time.sleep(1)
-        pydirectinput.press('tab')
-       
-        pyautogui.press('delete', presses=10)
-        time.sleep(1)
-        pydirectinput.press('tab')
-
-        pyautogui.press('delete', presses=10)
-        time.sleep(1)
-        pydirectinput.press('tab')
-
-        pyautogui.press('delete', presses=30)
-        time.sleep(1)
-        time.sleep(2)
+            pyautogui.press('delete', presses=3)
+            time.sleep(1)
+            pydirectinput.press('tab')
         
-        pydirectinput.press('up', presses=6)
-        time.sleep(1)
-     
-        # 1. Equipo/Maquina
-        pyautogui.write(equipo.upper())
-        time.sleep(2)
-    
+            pyautogui.press('delete', presses=10)
+            time.sleep(1)
+            pydirectinput.press('tab')
 
-        # 2. SubSistema
-        pyautogui.write(subsistema.upper())
-        pydirectinput.press('tab')
-        time.sleep(2)
+            pyautogui.press('delete', presses=10)
+            time.sleep(1)
+            pydirectinput.press('tab')
 
-        # 3. Proceso (Concatenando: PROCESO + SERVIDOR + INSTANCIA)
-        # Ej: RPCCO + 01 + 005 = RPCCO01005
-        proceso_completo = f"{proceso.upper()}{instancia_formateada}"
-        pyautogui.write(proceso_completo)
+            pyautogui.press('delete', presses=30)
+            time.sleep(1)
+            time.sleep(2)
+            
+            pydirectinput.press('up', presses=6)
+            time.sleep(1)
+        
+            # 1. Equipo/Maquina
+            pyautogui.write(equipo.upper())
+            time.sleep(2)
+        
 
-        time.sleep(2)
+            # 2. SubSistema
+            pyautogui.write(subsistema.upper())
+            pydirectinput.press('tab')
+            time.sleep(2)
 
-        pyautogui.write(descripcion.upper())
-        time.sleep(10) 
-        pydirectinput.press('enter')
+            # 3. Proceso (Concatenando: PROCESO + SERVIDOR + INSTANCIA)
+            # Ej: RPCCO + 01 + 005 = RPCCO01005
+            proceso_completo = f"{proceso.upper()}{instancia_formateada}"
+            pyautogui.write(proceso_completo)
+
+            time.sleep(2)
+
+            pyautogui.write(descripcion.upper())
+            time.sleep(10) 
+            pydirectinput.press('enter')
         
         
         return True, f"Instancias {ini} a {fin} Editadas."
@@ -373,7 +367,7 @@ def editar_pasos_ruta():
 
 
 
-#################### listar jobs ####################
+#################### listar jobs tabla####################
 
 
 from math import ceil
@@ -392,8 +386,8 @@ def listar():
 
     if filtro:
         query = query.filter(or_(
-            Job.Subsistema.ilike(f'%{filtro}%'),
-            Job.Nombre_trabajo.ilike(f'%{filtro}%'),
+            Job.Subsistema.like(f'%{filtro}%'),
+            Job.Nombre_trabajo.like(f'%{filtro}%'),
         ))
         # 2. Obtenemos cuántos coinciden con la búsqueda
         encontrados = query.count()

@@ -1,24 +1,25 @@
 let controller;
 
-// 1. Cálculo de Cantidad (Optimizado)
-function actualizarCantidad() {
-    const ini = parseInt(document.getElementById('Instancia_Inicial').value) || 0;
-    const fin = parseInt(document.getElementById('Instancia_Final').value) || 0;
-    const cantInput = document.getElementById('cantidad');
-    const total = (fin - ini) + 1;
-    cantInput.value = (ini > 0 && fin >= ini) ? total : 0;
+// 1. Cálculo de cantidad
+function calcularCantidad() {
+    const inicial = parseInt(document.getElementById('Instancia_Inicial').value) || 0;
+    const final = parseInt(document.getElementById('Instancia_Final').value) || 0;
+    let total = (final >= inicial && inicial > 0) ? (final - inicial) + 1 : 0;
+    document.getElementById('cantidad').value = total;
 }
 
-// 2. Escuchas de eventos (Asegúrate de que estos IDs existan en el HTML)
-document.getElementById('Instancia_Inicial')?.addEventListener('input', actualizarCantidad);
-document.getElementById('Instancia_Final')?.addEventListener('input', actualizarCantidad);
+// 2. Selección desde la tabla
+function seleccionarJob(nombre, subsistema) {
+    document.getElementById('proceso').value = nombre;
+    document.getElementById('subsistema_val').value = subsistema;
+    const procesoInput = document.getElementById('proceso');
+    procesoInput.style.backgroundColor = '#d4edda';
+    setTimeout(() => procesoInput.style.backgroundColor = '', 500);
+}
 
-// 3. Función para Buscar y Paginación (CORREGIDA PARA ARCHIVO EXTERNO)
+// 3. Buscador AJAX (Corregido para el backend nuevo)
 function actualizarTabla(pagina) {
-    const filtroInput = document.getElementById('inputFiltro');
-    const filtro = filtroInput ? filtroInput.value : '';
-    
-    // CAMBIO CLAVE: Usamos la ruta manual porque url_for no funciona en archivos .js externos
+    const filtro = document.getElementById('inputFiltro').value;
     const url = `/jobs/listar?page=${pagina}&filtro=${encodeURIComponent(filtro)}`;
 
     fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
@@ -26,35 +27,24 @@ function actualizarTabla(pagina) {
         .then(html => {
             const parser = new DOMParser();
             const doc = parser.parseFromString(html, 'text/html');
-            
-            // Actualizamos la tabla
-            const tabla = doc.getElementById('contenedor-tabla');
-            if (tabla) document.getElementById('contenedor-tabla').innerHTML = tabla.innerHTML;
-            
-            // Actualizamos los Cards de indicadores
-            const conteo = doc.getElementById('conteo-filtro');
-            if (conteo) document.getElementById('conteo-filtro').innerHTML = conteo.innerHTML;
-            
-            const totalBase = doc.getElementById('total-base-card');
-            if (totalBase) document.getElementById('total-base-card').innerHTML = totalBase.innerHTML;
+
+            const nuevaTabla = doc.getElementById('contenedor-tabla');
+            const nuevoConteo = doc.getElementById('conteo-filtro');
+            const nuevoTotal = doc.getElementById('total-base-card');
+
+            if (nuevaTabla) document.getElementById('contenedor-tabla').innerHTML = nuevaTabla.innerHTML;
+            if (nuevoConteo) document.getElementById('conteo-filtro').innerHTML = nuevoConteo.innerHTML;
+            if (nuevoTotal) document.getElementById('total-base-card').innerHTML = nuevoTotal.innerHTML;
         })
-        .catch(err => console.error("Error en búsqueda:", err));
+        .catch(err => console.error("Error al actualizar:", err));
 }
 
-// 4. Limpiar Búsqueda
 function limpiarBusqueda() {
-    const input = document.getElementById('inputFiltro');
-    if (input) input.value = '';
+    document.getElementById('inputFiltro').value = '';
     actualizarTabla(1);
 }
 
-// 5. Cargar datos de la tabla al formulario (Nueva para completar tu flujo)
-function seleccionarJob(nombre, subsistema) {
-    document.getElementById('proceso').value = nombre;
-    document.getElementById('subsistema_val').value = subsistema;
-}
-
-// 6. Enviar Acciones (Tu lógica de fetch actual)
+// 4. Envío de Acciones (Eliminar/Editar)
 async function enviarAccion(tipo) {
     const resDiv = document.getElementById('resultado');
     const btnStop = document.getElementById('btnStop');
@@ -74,34 +64,14 @@ async function enviarAccion(tipo) {
         return;
     }
 
-    // --- NUEVA LÓGICA DE CONFIRMACIÓN EN EL NAVEGADOR ---
-    if (tipo === 'eliminar') {
-        const confirmar = confirm(`¿Estás seguro de ELIMINAR las instancias desde la ${payload.instancia_inicial} hasta la ${payload.instancia_final}?`);
-        if (!confirmar) return; // Se detiene aquí si el usuario cancela
-    }
+    let url = tipo === 'eliminar' ? '/jobs/eliminar-pasos' : 
+              tipo === 'editar' ? '/jobs/editar-pasos' : '/jobs/test-pasos';
     
-    if (tipo === 'editar') {
-        const confirmar = confirm(`¿Deseas EDITAR las instancias seleccionadas?`);
-        if (!confirmar) return;
-    }
-
-    let url = '/jobs/test-pasos'; 
-    let mensajeEspera = "Procesando...";
-
-    if (tipo === 'eliminar') {
-        url = '/jobs/eliminar-pasos';
-        mensajeEspera = "⌛ Ejecutando eliminación en iSeries...";
-    } else if (tipo === 'editar') {
-        url = '/jobs/editar-pasos';
-        mensajeEspera = "⌛ Ejecutando edición en iSeries...";
-    }
-
-    resDiv.innerText = mensajeEspera;
+    resDiv.innerText = "⌛ Ejecutando en iSeries... Valide la ventana emergente.";
     resDiv.className = "mt-3 small text-center text-primary fw-bold";
     
     controller = new AbortController();
     btnStop.disabled = false;
-    btnStop.classList.replace('btn-secondary', 'btn-dark');
 
     try {
         const response = await fetch(url, {
@@ -114,24 +84,15 @@ async function enviarAccion(tipo) {
         resDiv.innerText = data.message;
         resDiv.className = data.ok ? "mt-3 small text-center text-success fw-bold" : "mt-3 small text-center text-danger";
     } catch (e) {
-        if (e.name === 'AbortError') {
-            resDiv.innerText = "Ejecución detenida por el usuario.";
-            resDiv.className = "mt-3 small text-center text-warning fw-bold";
-        } else {
-            resDiv.innerText = "Error de comunicación con el servidor";
-            resDiv.className = "mt-3 small text-center text-danger";
-        }
+        resDiv.innerText = e.name === 'AbortError' ? "Detenido por usuario." : "Error de comunicación.";
+        resDiv.className = "mt-3 small text-center text-warning";
     } finally {
         btnStop.disabled = true;
-        btnStop.classList.replace('btn-dark', 'btn-secondary');
     }
 }
 
-async function detenerEjecucion() {
-    try {
-        await fetch('/jobs/detener', { method: 'POST' });
-    } catch (err) {
-        console.error("No se pudo contactar al servidor.");
-    }
-    if (controller) controller.abort(); 
-}
+// 5. Inicialización de eventos
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('Instancia_Inicial')?.addEventListener('input', calcularCantidad);
+    document.getElementById('Instancia_Final')?.addEventListener('input', calcularCantidad);
+});

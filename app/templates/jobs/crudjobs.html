@@ -1,74 +1,75 @@
-
 {% extends 'base.html' %}
 
 {% block title %}Matricula Jobs menu-24{% endblock %}
 
 {% block content %}
-    <div class="card mx-auto shadow" style="max-width: 500px;">
-        <div class="card-header bg-dark text-white text-center fw-bold">
-            iSeries Nacional - Automatización
-        </div>
-        <div class="card-body">
-            <h6 class="text-primary fw-bold mb-3 center">Configuración de Instancias</h6>
-  
-            <div class="row g-2">
-                <!-- Instancias -->
-                <div class="col-md-6">
-                    <label class="form-label small fw-bold"># Instancia Inicial</label>
-                    <input type="number" id="Instancia_Inicial" class="form-control" placeholder="001">
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label small fw-bold"># Instancia Final</label>
-                    <input type="number" id="Instancia_Final" class="form-control" placeholder="017">
-                </div>
-                    
-                <div class="col-md-5 mx-auto text-center my-2">
-                    <label class="form-label small fw-bold text-muted">Cant. a Procesar</label>
-                    <input type="text" id="cantidad" class="form-control form-control-sm text-center bg-light fw-bold" 
-                           style="border: 1px solid black;" value="{{ cantidad }}" readonly>
-                </div>
-
-                <!-- Detalles -->
-                <div class="col-12">
-                    <label class="form-label small fw-bold">Equipo/Maquina</label>
-                    <select id="equipo" class="form-select">
-                        <option value="MED">MED</option>
-                        <option value="NAL">NAL</option>
-                    </select>
-                </div>
-                <div class="col-12">
-                    <label class="form-label small fw-bold">SubSistema</label>
-                    <input type="text" id="subsistema_val" class="form-control" placeholder="QFNC1">
-                </div>
-                <div class="col-12">
-                    <label class="form-label small fw-bold">Proceso (Instancia)</label>
-                    <input type="text" id="proceso" class="form-control" placeholder="RPCCO">
-                </div>
-                <div class="col-12">
-                    <label class="form-label small fw-bold">Descripción</label>
-                    <input type="text" id="descripcion" class="form-control" maxlength="30" placeholder="Descripción del job">
-                </div>
-            </div>
-
-            <!-- Botones -->
-            <div class="mt-4 d-flex flex-wrap gap-2">
-                <button onclick="enviarAccion('crear')" class="btn btn-primary fw-bold flex-fill">Crear</button>
-                <button onclick="enviarAccion('eliminar')" class="btn btn-danger fw-bold flex-fill">Eliminar</button>
-                <button onclick="enviarAccion('editar')" class="btn btn-warning fw-bold flex-fill text-white">Modificar</button>
-                <!-- Nuevo Botón de Stop -->
-                <button id="btnStop" onclick="detenerEjecucion()" class="btn btn-secondary fw-bold flex-fill"
-                    disabled>Detener</button>
-            </div>
-
-            <div id="resultado" class="mt-3 small text-center fw-bold"></div>
-        </div>
+<div class="card mx-auto shadow" style="max-width: 500px;">
+    <div class="card-header bg-dark text-white text-center fw-bold">
+        iSeries Nacional - Automatización
     </div>
+    <div class="card-body">
+        <h6 class="text-primary fw-bold mb-3 center">Configuración de Instancias</h6>
+
+        <div class="row g-2">
+            <!-- Instancias -->
+            <div class="col-md-6">
+                <label class="form-label small fw-bold"># Instancia Inicial</label>
+                <input type="number" id="Instancia_Inicial" class="form-control" placeholder="001">
+            </div>
+            <div class="col-md-6">
+                <label class="form-label small fw-bold"># Instancia Final</label>
+                <input type="number" id="Instancia_Final" class="form-control" placeholder="017">
+            </div>
+
+            <div class="col-md-5 mx-auto text-center my-2">
+                <label class="form-label small fw-bold text-muted">Cant. a Procesar</label>
+                <input type="text" id="cantidad" class="form-control form-control-sm text-center bg-light fw-bold"
+                    style="border: 1px solid black;" value="{{ cantidad }}" readonly>
+            </div>
+
+            <!-- Detalles -->
+            <div class="col-12">
+                <label class="form-label small fw-bold">Equipo/Maquina</label>
+                <select id="equipo" class="form-select">
+                    <option value="MED">MED</option>
+                    <option value="NAL">NAL</option>
+                </select>
+            </div>
+            <div class="col-12">
+                <label class="form-label small fw-bold">SubSistema</label>
+                <input type="text" id="subsistema_val" class="form-control" placeholder="QFNC1">
+            </div>
+            <div class="col-12">
+                <label class="form-label small fw-bold">Proceso (Instancia)</label>
+                <input type="text" id="proceso" class="form-control" placeholder="RPCCO">
+            </div>
+            <div class="col-12">
+                <label class="form-label small fw-bold">Descripción</label>
+                <input type="text" id="descripcion" class="form-control" maxlength="30"
+                    placeholder="Descripción del job">
+            </div>
+        </div>
+
+        <!-- Botones -->
+        <div class="mt-4 d-flex flex-wrap gap-2">
+            <button onclick="enviarAccion('crear')" class="btn btn-primary fw-bold flex-fill">Crear</button>
+            <button onclick="enviarAccion('eliminar')" class="btn btn-danger fw-bold flex-fill">Eliminar</button>
+            <button onclick="enviarAccion('editar')"
+                class="btn btn-warning fw-bold flex-fill text-white">Modificar</button>
+            <!-- Nuevo Botón de Stop -->
+            <button id="btnStop" onclick="detenerEjecucion()" class="btn btn-secondary fw-bold flex-fill"
+                disabled>Detener</button>
+        </div>
+
+        <div id="resultado" class="mt-3 small text-center fw-bold"></div>
+    </div>
+</div>
 
 
 <!-- FILA DE INDICADORES -->
 <br>
 
-    
+
 <!-- INDICADORES MODERNOS Y SUTILES -->
 <div class="row mb-4 justify-content-center gap-3">
     <!-- Card: Total General -->
@@ -107,92 +108,76 @@
 
 
 <!-- FILA INFERIOR: Tablas -->
-    <div class="row">
-        <!-- Lado Izquierdo: Listado de Jobs -->
-        <div class="col-lg-6">
-            <div class="card shadow h-100">
-                <div class="card-header bg-secondary text-white fw-bold">Listado de Jobs</div>
-                <div class="card-body">
-                    <div class="input-group input-group-sm mb-3">
-                        <input type="text" id="inputFiltro" class="form-control" placeholder="Buscar por Job o Subsistema..." value="{{ filtro or '' }}">
-                        <button class="btn btn-primary" type="button" onclick="actualizarTabla(1)">Buscar</button>
-                        <button class="btn btn-outline-secondary" type="button" onclick="limpiarBusqueda()">Limpiar</button>
-                    </div>
-
-                    <div id="contenedor-tabla">
-                        <div class="table-responsive">
-                            <table class="table table-sm table-striped table-hover border">
-                                <thead class="table-dark">
-                                    <tr>
-                                        <th class="small">Nombre Trabajo</th>
-                                        <th class="small">Subsistema</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for job in jobs %}
-                                    <tr>
-                                        <td class="small">{{ job.Nombre_trabajo }}</td>
-                                        <td class="small">{{ job.Subsistema }}</td>                      
-                                    </tr>
-                                    {% else %}
-                                    <tr><td colspan="2" class="text-center small text-muted">Sin resultados.</td></tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
-                        </div>
-
-                        {% if total_pages > 1 %}
-                        <nav class="mt-2">
-                            <ul class="pagination pagination-sm justify-content-center">
-                                {% if page > 1 %}
-                                <li class="page-item"><button type="button" class="page-link" onclick="actualizarTabla({{ page - 1 }})">«</button></li>
-                                {% endif %}
-                                <li class="page-item disabled"><span class="page-link">{{ page }} / {{ total_pages }}</span></li>
-                                {% if page < total_pages %}
-                                <li class="page-item"><button type="button" class="page-link" onclick="actualizarTabla({{ page + 1 }})">»</button></li>
-                                {% endif %}
-                            </ul>
-                        </nav>
-                        {% endif %}
-                    </div>
+<div class="row">
+    <!-- Lado Izquierdo: Listado de Jobs -->
+    <div class="col-lg-6">
+        <div class="card shadow h-100">
+            <div class="card-header bg-secondary text-white fw-bold">Listado de Jobs</div>
+            <div class="card-body">
+                <div class="input-group input-group-sm mb-3">
+                    <input type="text" id="inputFiltro" class="form-control"
+                        placeholder="Buscar por Job o Subsistema..." value="{{ filtro or '' }}">
+                    <button class="btn btn-primary" type="button" onclick="actualizarTabla(1)">Buscar</button>
+                    <button class="btn btn-outline-secondary" type="button" onclick="limpiarBusqueda()">Limpiar</button>
                 </div>
-            </div>
-        </div>
 
-        <!-- Lado Derecho: Espacio para segunda tabla -->
-        <div class="col-lg-6">
-            <div class="card shadow h-100">
-                <div class="card-header bg-secondary text-white fw-bold">Jobs registrados menu 24</div>
-                <div class="card-body text-center text-muted pt-5">
-                    <p>Espacio para la siguiente tabla...</p>
+                <div id="contenedor-tabla">
+                    <div class="table-responsive">
+                        <table class="table table-sm table-striped table-hover border">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th class="small">Nombre Trabajo</th>
+                                    <th class="small">Subsistema</th>
+                                </tr>
+                            </thead>
+                            <!-- Dentro de tbody de tu Listado de Jobs -->
+                            <tbody>
+                                {% for job in jobs %}
+                                <tr>
+                                    <td class="small">{{ job.Nombre_trabajo }}</td>
+                                    <td class="small text-muted">{{ job.Subsistema }}</td>
+                                    </td>
+                                </tr>
+                                {% else %}
+                                <tr>
+                                    <td colspan="3" class="text-center small text-muted">Sin resultados.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+
+                        </table>
+                    </div>
+
+                    {% if total_pages > 1 %}
+                    <nav class="mt-2">
+                        <ul class="pagination pagination-sm justify-content-center">
+                            {% if page > 1 %}
+                            <li class="page-item"><button type="button" class="page-link"
+                                    onclick="actualizarTabla({{ page - 1 }})">«</button></li>
+                            {% endif %}
+                            <li class="page-item disabled"><span class="page-link">{{ page }} / {{ total_pages }}</span>
+                            </li>
+                            {% if page < total_pages %} <li class="page-item"><button type="button" class="page-link"
+                                    onclick="actualizarTabla({{ page + 1 }})">»</button></li>
+                                {% endif %}
+                        </ul>
+                    </nav>
+                    {% endif %}
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Lado Derecho: Espacio para segunda tabla -->
+    <div class="col-lg-6">
+        <div class="card shadow h-100">
+            <div class="card-header bg-secondary text-white fw-bold">Jobs registrados menu 24</div>
+            <div class="card-body text-center text-muted pt-5">
+                <p>Espacio para la siguiente tabla...</p>
+            </div>
+        </div>
+    </div>
+</div>
 </div>
 
-<script>
-
-
-
-// Función para calcular la cantidad automáticamente
-function calcularCantidad() {
-    const inicial = parseInt(document.getElementById('Instancia_Inicial').value) || 0;
-    const final = parseInt(document.getElementById('Instancia_Final').value) || 0;
-    
-    // Calculamos la diferencia (incluyendo el número inicial)
-    let total = 0;
-    if (final >= inicial && inicial > 0) {
-        total = (final - inicial) + 1;
-    }
-    
-    document.getElementById('cantidad').value = total;
-}
-
-// Escuchamos los cambios en ambos campos
-document.getElementById('Instancia_Inicial').addEventListener('input', calcularCantidad);
-document.getElementById('Instancia_Final').addEventListener('input', calcularCantidad);
-
-</script>
 {% endblock %}
-
