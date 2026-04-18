@@ -10,11 +10,9 @@ from math import ceil
 from sqlalchemy import or_
 import tkinter as tk
 from tkinter import messagebox
+import threading
 
 bp = Blueprint('jobs', __name__, url_prefix='/jobs')
-
-# --- VARIABLE GLOBAL DE CONTROL ---
-PROCESO_ACTIVO = True
 
 
 
@@ -26,6 +24,7 @@ def pedir_confirmacion_segura(titulo, mensaje):
     respuesta = messagebox.askyesno(titulo, mensaje, parent=root)
     root.destroy()
     return respuesta
+
 
 
 ############# RUTA PRINCIPAL #############
@@ -42,15 +41,7 @@ def index():
                            total_pages=1, 
                            page=1)
 
-##########################  detener proceso global ##########################
 
-
-@bp.route('/detener', methods=['POST'])
-def detener_proceso():
-    global PROCESO_ACTIVO
-    PROCESO_ACTIVO = False
-    print("!!! SEÑAL DE PARADA RECIBIDA !!!")
-    return jsonify({"ok": True, "message": "Deteniendo..."})
 
 
 
@@ -110,7 +101,7 @@ def ejecutar_pasos_en_pantalla(datos):
             time.sleep(2)
 
             pyautogui.write(descripcion.upper())
-            time.sleep(10) 
+            time.sleep(5) 
             pydirectinput.press('enter')
             time.sleep(3) 
 
@@ -125,8 +116,7 @@ def ejecutar_pasos_en_pantalla(datos):
 
 
 def eliminar_jobs(datos):
-    global PROCESO_ACTIVO
-    PROCESO_ACTIVO = True # Resetear al iniciar
+
     try:
         # Extraer variables con los IDs del HTML
 
@@ -174,8 +164,9 @@ def eliminar_jobs(datos):
             time.sleep(0.3) 
 
             # 2. Moverse 26 veces a la derecha (AHORA ESTÁ DENTRO DEL FOR)
+
             for _ in range(26):
-                pydirectinput.press('right')
+                pydirectinput.press('right', _pause=0)
             
             # 3. Escribir el proceso (AHORA ESTÁ DENTRO DEL FOR)
             pyautogui.write(proceso_completo)
@@ -185,7 +176,7 @@ def eliminar_jobs(datos):
             
             # 4. Opción 4 y eliminar (AHORA ESTÁ DENTRO DEL FOR)
             pyautogui.write('4')
-            time.sleep(1)
+            time.sleep(1)       
             pydirectinput.press('enter')
             time.sleep(1) #
 
@@ -197,9 +188,12 @@ def eliminar_jobs(datos):
             time.sleep(2) 
 
             pyautogui.hotkey('shift', 'f11')
-            time.sleep(1)
+            time.sleep(1)       
+
+
 
         return True, f"Instancias {fin} de {fin} Eliminadas."
+        
     except Exception as e:
         return False, str(e)
             
@@ -249,6 +243,7 @@ def editar_jobs(datos):
            
         # --- BUCLE DE MATRICULA INSTANCIAS
         for i in range(ini, fin + 1):
+
             instancia_formateada = str(i).zfill(3)
             proceso_completo = f"{proceso.upper()}{instancia_formateada}"
             
@@ -258,7 +253,7 @@ def editar_jobs(datos):
 
             # 2. Moverse 26 veces a la derecha (AHORA ESTÁ DENTRO DEL FOR)
             for _ in range(26):
-                pydirectinput.press('right')
+                pydirectinput.press('right', _pause=0)
             
             # 3. Escribir el proceso (AHORA ESTÁ DENTRO DEL FOR)
             pyautogui.write(proceso_completo)
@@ -320,7 +315,7 @@ def editar_jobs(datos):
             time.sleep(2)
 
             pyautogui.write(descripcion.upper())
-            time.sleep(10) 
+            time.sleep(3) 
             pydirectinput.press('enter')
         
         
@@ -368,9 +363,6 @@ def editar_pasos_ruta():
 
 
 #################### listar jobs tabla####################
-
-
-from math import ceil
 
 @bp.route('/listar')
 @login_required

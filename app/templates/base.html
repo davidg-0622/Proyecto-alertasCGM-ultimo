@@ -12,6 +12,11 @@
   <link rel="shortcut icon" href="{{ url_for('static', filename='images/LogoBancolombia.png') }}" type="image/x-icon">
   <link rel="shortcut icon" href="{{ url_for('static', filename='images/fondo.png') }}" type="image/x-icon">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <style>
+    .dropdown-divider {
+      border-top: 1px solid rgba(255, 255, 255, 0.5);
+    }
+  </style>
   <script src="{{ url_for('static', filename='js/index.js') }}"></script>
 
 
@@ -48,18 +53,27 @@
                 <li><a class="dropdown-item hover-amarillo-oscuro" href="{{ url_for('alertas.total_alertas') }}" target="_blank">Top Alertas</a></li>
                 <li><a class="dropdown-item hover-amarillo-oscuro" href="{{ url_for('alertas.alertas_por_servicio') }}" target="_blank" >Alertas Por Servicio</a></li>
                 <li><a class="dropdown-item hover-amarillo-oscuro" href="{{ url_for('alertas.conteo_alertas_iguales') }}"target="_blank">Agrupación Alertas</a></li>
+
+
+                    <li><hr class="dropdown-divider"></li>
+                 <li><a class="dropdown-item hover-amarillo-oscuro" href="{{ url_for('alertas.alertas_menores_5min') }}" target="_blank">Alertas Menores a 5 Minutos</a></li> <li><a class="dropdown-item hover-amarillo-oscuro" href="{{ url_for('alertas.conteo_alertas_iguales_menores_5_min') }}"target="_blank">Agrupación Alertas < 5 min</a></li>
+                
+
+                       <li><hr class="dropdown-divider"></li>
                  <li><a class="dropdown-item hover-amarillo-oscuro" href="{{ url_for('alertas.entregado_cgm_por_servico_iguales') }}" target="_blank">Agrupación alertas con Tag (entregado_cgm: no)</a></li>
                 <li><a class="dropdown-item hover-amarillo-oscuro" href="{{ url_for('alertas.alertas_tag_entregado_cgm_no') }}" target="_blank">Alertas con Tag (entregado_cgm: no).</a></li>
                  <li><a class="dropdown-item hover-amarillo-oscuro" href="{{ url_for('alertas.conteo_servicio_tags') }}" target="_blank">Agrupación - detalle,tag (entregado_cgm: no)</a></li>
 
                   <li><hr class="dropdown-divider"></li>
 
+                
+
 <li>
     <a class="dropdown-item hover-amarillo-oscuro" href="{{ url_for('jobs.index') }}" target="_blank">
-        Creación- Eliminación- Edición Jobs menu 24
+       Matricula Jobs menú 24
     </a>
 </li>
-                  
+                
                   
                 <li><hr class="dropdown-divider"></li>
                 <li><a class="dropdown-item hover-amarillo-oscuro" href="{{ url_for('boca.notificar_boca') }}" target="_blank" >Boquitas</a></li>

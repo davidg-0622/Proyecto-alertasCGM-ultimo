@@ -1,5 +1,3 @@
-let controller;
-
 // 1. Cálculo de cantidad
 function calcularCantidad() {
     const inicial = parseInt(document.getElementById('Instancia_Inicial').value) || 0;
@@ -17,7 +15,7 @@ function seleccionarJob(nombre, subsistema) {
     setTimeout(() => procesoInput.style.backgroundColor = '', 500);
 }
 
-// 3. Buscador AJAX (Corregido para el backend nuevo)
+// 3. Buscador AJAX
 function actualizarTabla(pagina) {
     const filtro = document.getElementById('inputFiltro').value;
     const url = `/jobs/listar?page=${pagina}&filtro=${encodeURIComponent(filtro)}`;
@@ -47,7 +45,6 @@ function limpiarBusqueda() {
 // 4. Envío de Acciones (Eliminar/Editar)
 async function enviarAccion(tipo) {
     const resDiv = document.getElementById('resultado');
-    const btnStop = document.getElementById('btnStop');
     
     const payload = {
         instancia_inicial: document.getElementById('Instancia_Inicial').value,
@@ -69,25 +66,19 @@ async function enviarAccion(tipo) {
     
     resDiv.innerText = "⌛ Ejecutando en iSeries... Valide la ventana emergente.";
     resDiv.className = "mt-3 small text-center text-primary fw-bold";
-    
-    controller = new AbortController();
-    btnStop.disabled = false;
 
     try {
         const response = await fetch(url, {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(payload),
-            signal: controller.signal 
+            body: JSON.stringify(payload)
         });
         const data = await response.json();
         resDiv.innerText = data.message;
         resDiv.className = data.ok ? "mt-3 small text-center text-success fw-bold" : "mt-3 small text-center text-danger";
     } catch (e) {
-        resDiv.innerText = e.name === 'AbortError' ? "Detenido por usuario." : "Error de comunicación.";
+        resDiv.innerText = "Error de comunicación.";
         resDiv.className = "mt-3 small text-center text-warning";
-    } finally {
-        btnStop.disabled = true;
     }
 }
 

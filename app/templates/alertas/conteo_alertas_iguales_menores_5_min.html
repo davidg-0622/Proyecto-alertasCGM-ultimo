@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+
+{% block title %}Analítica | Agrupación Rápida{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Encabezado -->
+    <div class="row mb-5">
+        <div class="col-12 text-center">
+            <h2 class="fw-light text-secondary text-uppercase" style="letter-spacing: 3px; font-size: 0.85rem;">CGM COES</h2>
+            <h1 class="fw-bold text-danger" style="letter-spacing: -1px;">
+                <i class="bi bi-lightning-charge-fill pulse-red me-2"></i>Agrupación: Alertas < 5 Min
+            </h1>
+            <div class="mx-auto" style="width: 60px; height: 4px; background-color: #dc3545; border-radius: 2px;"></div>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="row justify-content-center mb-4">
+        <div class="col-lg-11">
+            <div class="card shadow-sm border-0" style="border-radius: 12px;">
+                <div class="card-body p-4">
+                    <form action="{{ url_for('alertas.conteo_alertas_iguales_menores_5_min') }}" method="get" class="row g-3 align-items-end">
+                        <div class="col-md-3">
+                            <label class="form-label text-muted small fw-bold text-uppercase">Inicio</label>
+                            <input type="date" class="form-control" name="fecha_inicio" value="{{ fecha_inicio or '' }}" />
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label text-muted small fw-bold text-uppercase">Fin</label>
+                            <input type="date" class="form-control" name="fecha_fin" value="{{ fecha_fin or '' }}" />
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label text-muted small fw-bold text-uppercase">Servicio</label>
+                            <select name="servicio" class="form-select">
+                                <option value="">Todos los servicios</option>
+                                {% for serv in servicios_disponibles %}
+                                <option value="{{ serv }}" {% if serv==request.args.get('servicio') %}selected{% endif %}>{{ serv }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-2 d-flex gap-2">
+                            <button type="submit" class="btn btn-danger w-100 fw-bold shadow-sm">Filtrar</button>
+                            <a href="{{ url_for('alertas.conteo_alertas_iguales_menores_5_min') }}" class="btn btn-outline-secondary"><i class="bi bi-arrow-counterclockwise"></i></a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sección de Tarjetas KPI -->
+    <div class="row justify-content-center mb-5 g-4">
+        <!-- Card: Total Histórico Global (< 5 min) -->
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100" style="border-radius: 15px;">
+                <div class="card-body d-flex align-items-center">
+                    <div class="bg-dark p-3 rounded-3 me-3">
+                        <i class="bi bi-database-fill text-white fs-3"></i>
+                    </div>
+                    <div>
+                        <h6 class="text-muted small fw-bold text-uppercase mb-0">Total Histórico</h6>
+                        <h2 class="fw-bold mb-0 text-dark">{{ total_historico }}</h2>
+                        <small class="text-muted">Alertas < 5 min</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card: Total Filtrado (Dinámica) -->
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100 border-start border-danger border-5" style="border-radius: 15px;">
+                <div class="card-body d-flex align-items-center">
+                    <div class="bg-danger-subtle p-3 rounded-3 me-3">
+                        <i class="bi bi-filter-square-fill text-danger fs-3"></i>
+                    </div>
+                    <div>
+                        <h6 class="text-muted small fw-bold text-uppercase mb-0">Total en Filtro</h6>
+                        <h2 class="fw-bold mb-0 text-danger">{{ total_filtrado }}</h2>
+                        <small class="text-danger fw-semibold">Según búsqueda actual</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabla de Resultados -->
+    <div class="row justify-content-center">
+        <div class="col-lg-11">
+            <div class="card shadow border-0" style="border-radius: 15px; overflow: hidden;">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0" style="table-layout: fixed;">
+                        <thead class="bg-dark text-white">
+                            <tr class="small text-uppercase text-center">
+                                <th class="ps-4 py-3 text-start" style="width: 25%;">Servicio</th>
+                                <th style="width: 55%;">Detalle Operativo</th>
+                                <th style="width: 20%;">Volumen</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabla-body">
+                            {% for fila in conteo_por_servicio_y_alerta %}
+                            <tr>
+                                <td class="ps-4">
+                                    <div class="fw-bold text-dark text-truncate" title="{{ fila.servicio }}">{{ fila.servicio }}</div>
+                                </td>
+                                <td>
+                                    <div class="text-muted small text-break p-2 bg-light rounded border-start border-3 border-danger">
+                                        {{ fila.operational_data }}
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    <div class="d-flex flex-column align-items-center">
+                                        <span class="fw-bold text-danger">{{ fila.cantidad }}</span>
+                                        <div class="progress w-75" style="height: 4px; margin-top: 4px;">
+                                            <div class="progress-bar bg-danger" 
+                                                 style="width: {{ (fila.cantidad / (conteo_por_servicio_y_alerta[0].cantidad if conteo_por_servicio_y_alerta else 1) * 100) }}%">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr><td colspan="3" class="text-center py-5 text-muted">No se encontraron resultados</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    body { background-color: #f4f7f6; }
+    .bg-danger-subtle { background-color: #fbe9eb !important; }
+    .table tbody tr:hover { background-color: #fff5f5 !important; box-shadow: inset 4px 0 0 #dc3545; }
+    .pulse-red { animation: pulse-animation 2s infinite; }
+    @keyframes pulse-animation { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+    .progress { background-color: #e9ecef; border-radius: 10px; }
+</style>
+{% endblock %}

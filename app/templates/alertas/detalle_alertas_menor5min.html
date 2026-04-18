@@ -1,0 +1,165 @@
+{% extends 'base.html' %}
+
+{% block title %}Reporte Crítico | < 5 Min{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Encabezado Corporativo Rojo (Mantenido) -->
+    <div class="row mb-4">
+        <div class="col-12 text-center">
+            <h2 class="fw-light text-secondary text-uppercase" style="letter-spacing: 3px; font-size: 0.8rem;">CGM COES</h2>
+            <h1 class="fw-bold text-danger" style="letter-spacing: -1px;">
+                <i class="bi bi-lightning-charge-fill pulse-red me-2"></i>Solo Alertas < 5 Minutos
+            </h1>
+            <div class="mx-auto" style="width: 80px; height: 4px; background-color: #dc3545; border-radius: 2px;"></div>
+        </div>
+    </div>
+
+    <!-- Filtro de Fecha (Ajustado a tu ruta) -->
+    <div class="row justify-content-center mb-5">
+        <div class="col-lg-10">
+            <div class="card shadow-sm border-0" style="border-radius: 15px; background-color: #f8f9fa;">
+                <div class="card-body p-4">
+                    <form action="{{ url_for('alertas.detalle_alertas_menores_5min') }}" method="get" class="row g-3 align-items-end">
+                        <div class="col-md-3">
+                            <label class="form-label text-muted small fw-bold">FECHA INICIO</label>
+                            <input type="date" class="form-control" name="fecha_inicio" value="{{ fecha_inicio or '' }}" />
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label text-muted small fw-bold">FECHA FIN</label>
+                            <input type="date" class="form-control" name="fecha_fin" value="{{ fecha_fin or '' }}" />
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label text-muted small fw-bold">SERVICIO</label>
+                            <input type="text" class="form-control bg-white fw-bold text-primary" name="servicio" value="{{ request.args.get('servicio', '') }}" readonly />
+                        </div>
+                        <div class="col-md-2 d-flex gap-2">
+                            <button type="submit" class="btn btn-danger w-100 fw-bold">Filtrar</button>
+                            <a href="{{ url_for('alertas.detalle_alertas_menores_5min', servicio=request.args.get('servicio')) }}" class="btn btn-outline-secondary">Limpiar</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tarjetas KPI -->
+    <div class="row g-4 mb-5 justify-content-center">
+        <div class="col-md-5">
+            <div class="card h-100 border-0 shadow-sm border-start border-danger border-5" style="border-radius: 12px;">
+                <div class="card-body text-center">
+                    <h6 class="text-muted small fw-bold text-uppercase mb-2">Total Alertas (< 5 Min)</h6>
+                    <h2 class="display-5 fw-bold text-dark mb-0">{{ alertas|length }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="card h-100 border-0 shadow-sm border-start border-primary border-5" style="border-radius: 12px;">
+                <div class="card-body">
+                    <h6 class="text-muted small fw-bold text-uppercase mb-2">Por Host</h6>
+                    <div class="d-flex flex-wrap gap-2">
+                        {% for host, total in conteo_hosts.items() %}
+                        <span class="badge bg-light text-dark border fw-normal">{{ host }}: <b>{{ total }}</b></span>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gráfico de Tendencia (Usando el contenedor que te funcionó) -->
+    <h3 class="text-center mb-4 fw-bold">Tendencia Diaria</h3>
+    <div class="mb-5 shadow-sm bg-white p-3" style="max-width: 1200px; margin: 0 auto; overflow-x: auto; border-radius: 15px; border: 1px solid #eee;">
+        <div id="contenedorGrafico" style="height: 400px; min-width: 100%;">
+            <canvas id="graficoAlertasPorDia"></canvas>
+        </div>
+    </div>
+
+    <!-- Tabla de Registros -->
+    <div class="card shadow-sm border-0 mb-5" style="border-radius: 15px; overflow: hidden;">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0 text-center" style="font-size: 0.9rem;">
+                <thead class="bg-dark text-white text-uppercase small">
+                    <tr>
+                        <th class="py-3">Servicio</th>
+                        <th>Host</th>
+                        <th>Problem</th>
+                        <th class="text-start">Operational Data</th>
+                        <th class="text-start">Rango</th>
+                        <th>Fecha y Hora</th>
+                    </tr>
+                </thead>
+                <tbody class="border-top-0">
+                    {% for alerta in alertas %}
+                    <tr>
+                        <td class="fw-bold text-primary">{{ alerta.Servicio }}</td>
+                        <td><span class="badge bg-light text-muted border fw-normal px-2">{{ alerta.Host }}</span></td>
+                        <td class="text-secondary small" style="max-width: 180px; white-space: normal; word-break: break-word;">{{ alerta.Problem }}</td>
+                        <td class="text-start small">{{ alerta.Operational_data }}</td>
+                           <td class="text-start small" style="max-width: 100px; white-space: normal; word-break: break-word;">{{ alerta.Rango_Duracion }}</td>
+                            <td class="text-secondary fw-semibold text-danger small">{{ alerta.Fecha_Hora }} </td>
+                        {% else %}
+                        <td class="text-secondary fw-semibold">{{ alerta.Fecha_Hora }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- SCRIPTS: Usando EXACTAMENTE los que te funcionaron -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+<script>
+    const data = {{ grafico_data | tojson | safe }};
+    const labels = data.map(item => item.Fecha);
+    const values = data.map(item => item.Cantidad_Alertas);
+
+    const contenedor = document.getElementById('contenedorGrafico');
+    if (labels.length > 15) {
+        contenedor.style.width = (labels.length * 50) + "px";
+    }
+
+    const ctx = document.getElementById('graficoAlertasPorDia').getContext('2d');
+    Chart.register(ChartDataLabels);
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Cantidad de Alertas por Día',
+                data: values,
+                backgroundColor: 'rgba(220, 53, 69, 0.7)', // Rojo corporativo
+                borderColor: 'rgba(220, 53, 69, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                datalabels: {
+                    anchor: 'end',
+                    align: 'top',
+                    formatter: (value) => value,
+                    color: '#dc3545',
+                    font: { weight: 'bold', size: 12 }
+                },
+                legend: { display: false }
+            },
+            scales: {
+                x: { title: { display: true, text: 'Fecha' } },
+                y: { beginAtZero: true, title: { display: true, text: 'Cantidad' } }
+            }
+        }
+    });
+</script>
+
+<style>
+    body { background-color: #f4f7f6; }
+    .pulse-red { animation: pulse-animation 2s infinite; }
+    @keyframes pulse-animation { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+</style>
+{% endblock %}

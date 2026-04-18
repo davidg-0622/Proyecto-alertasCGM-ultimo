@@ -3,7 +3,11 @@ from datetime import datetime # Importar datetime no es estrictamente necesario 
 
 
 class Alerta(db.Model):
-    __tablename__ = 'data_marzo2026' 
+    __tablename__ = 'data_abril2026' 
+
+    @classmethod
+    def set_table(cls, nombre_tabla):
+        cls.__table__.name = nombre_tabla
 
     # Identificador principal
     id = db.Column('idalertas', db.Integer, primary_key=True, autoincrement=True) 
@@ -38,3 +42,6 @@ class Alerta(db.Model):
 
     def __repr__(self):
         return f'<Alerta id={self.id} host={self.host} problem={self.problem[:20]}...>'
+
+
+
