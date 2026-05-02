@@ -110,7 +110,18 @@
                 <tbody>
                     {% for servicio in servicios_info %}
                     <tr>
-                        <td class="ps-4 text-start fw-bold text-muted small">{{ servicio.codigo_de_aplicacion }}</td>
+<td class="ps-4 text-start">
+    <div class="d-flex align-items-center">
+        <!-- Icono de ID de Aplicación en azul -->
+        <i class="bi bi-app-indicator me-2" style="color: #0d6efd; font-size: 0.9rem; opacity: 0.9;"></i>
+        <span class="fw-bold small" style="color: #0d6efd; letter-spacing: 0.7px;">
+            {{ servicio.codigo_de_aplicacion }}
+        </span>
+    </div>
+</td>
+
+
+
                         <td class="text-start">
                             <a href="{{ url_for('app.detalle_servicio', id=servicio.id_servicio) }}" class="service-link fw-bold">
                                 {{ servicio.servicio }} <i class="bi bi-box-arrow-up-right ms-1 icon-link"></i>
