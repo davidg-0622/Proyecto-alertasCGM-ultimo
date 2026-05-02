@@ -1,163 +1,181 @@
 {% extends 'base.html' %}
 
-
-{% block title %}Top alertas{% endblock %}
+{% block title %}Top Alertas | CGM COES{% endblock %}
 
 {% block content %}
+<div class="container py-5" style="font-family: 'Inter', sans-serif;">
+    
+    <!-- 1. ENCABEZADO -->
+    <div class="row mb-5 text-center">
+        <div class="col-12">
+            <h2 class="fw-light text-secondary text-uppercase mb-1" style="letter-spacing: 4px; font-size: 0.8rem;">CGM COES</h2>
+            <h1 class="fw-bold text-dark display-6" style="letter-spacing: -1px;">SERVICIOS TOP</h1>
+            <div class="mx-auto" style="width: 60px; height: 4px; background: linear-gradient(to right, #0d6efd, #00d2ff); border-radius: 10px;"></div>
+        </div>
+    </div>
 
-
-    <!-- seleccionar rango de fecha de las alertas-->
-<!-- Opción recomendada: mt-4 añade margen superior sin usar <br> -->
-
-<br>
-<h5 class="text-center mb-4 fw-bold text-primary">
-    <i class="bi bi-funnel-fill me-2"></i>FILTRAR ALERTAS REQUERIDAS
-</h5>
-
-<div class="container mt-5">
-    <form action="{{ url_for('alertas.total_alertas') }}" method="post">
-        <div class="row">
-            <div class="col-md-5 mb-3">
-                <label for="Fecha_inicial" class="form-label"><strong>Fecha inicial</strong> </label>
-                <input
-                    type="date"
-                    class="form-control"
-                    id="Fecha_inicial"
-                    name="Fecha_inicial"
-                    value="{{ request.form.Fecha_inicial or '' }}"
-                />
-            </div>
-            <div class="col-md-5 mb-3">
-                <label for="Fecha_final" class="form-label"><strong>Fecha Final</strong> </label>
-                <input
-                    type="date"
-                    class="form-control"
-                    id="Fecha_final"
-                    name="Fecha_final"
-                    value="{{ request.form.Fecha_final or '' }}"
-                />
-            </div>
-            <div class="col-md-2 mb-3 d-flex align-items-end">
-                <button type="submit" class="btn btn-primary me-2">Consultar</button>
-                 <a href="{{ url_for('alertas.total_alertas') }}" class="btn btn-secondary">Borrar</a>
+    <!-- 2. FILTROS DE FECHA -->
+    <div class="row justify-content-center mb-5">
+        <div class="col-lg-10">
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-body p-4 text-center">
+                    <form action="{{ url_for('alertas.total_alertas') }}" method="post" class="row g-3 align-items-end justify-content-center">
+                        <div class="col-md-4 text-start">
+                            <label class="form-label text-muted small fw-bold text-uppercase">Fecha Inicial</label>
+                            <input type="date" class="form-control border-light shadow-none bg-light" name="Fecha_inicial" value="{{ request.form.Fecha_inicial or '' }}" />
+                        </div>
+                        <div class="col-md-4 text-start">
+                            <label class="form-label text-muted small fw-bold text-uppercase">Fecha Final</label>
+                            <input type="date" class="form-control border-light shadow-none bg-light" name="Fecha_final" value="{{ request.form.Fecha_final or '' }}" />
+                        </div>
+                        <div class="col-md-3 d-flex gap-2">
+                            <button type="submit" class="btn btn-primary w-100 fw-bold shadow-sm">Consultar</button>
+                            <a href="{{ url_for('alertas.total_alertas') }}" class="btn btn-outline-secondary px-3"><i class="bi bi-trash3"></i></a>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
-    </form>
+    </div>
+
+    <!-- 3. KPI PRINCIPAL (TAMAÑO EQUILIBRADO) -->
+    <div class="row justify-content-center mb-5">
+        <div class="col-md-5 col-lg-4">
+            <div class="card border-0 shadow-lg overflow-hidden" style="border-radius: 20px; background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);">
+                <div class="card-body p-4 text-center">
+                    <h6 class="text-info small fw-bold text-uppercase mb-2" style="letter-spacing: 2px; opacity: 0.8;">Volumen Total</h6>
+                    <h1 class="fw-bold text-white mb-0" style="letter-spacing: -2px; font-size: 3rem;">{{ alertas }}</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. BUSCADOR -->
+    <div id="search-section" class="row justify-content-center mb-5">
+        <div class="col-lg-8">
+            <form id="searchForm" action="{{ url_for('alertas.total_alertas') }}" method="GET" class="input-group shadow-sm" style="border-radius: 15px; overflow: hidden; border: 1px solid #e2e8f0;">
+                <span class="input-group-text bg-white border-0 ps-4"><i class="bi bi-search text-muted"></i></span>
+                <input type="text" name="label" class="form-control border-0 py-3 shadow-none" placeholder="Buscar servicio..." value="{{ request.args.get('label', '') }}">
+                {% if request.args.get('label') %}
+                <a href="{{ url_for('alertas.total_alertas') }}" class="btn bg-white border-0 d-flex align-items-center px-2">
+                    <i class="bi bi-x-circle-fill text-secondary opacity-50"></i>
+                </a>
+                {% endif %}
+                <button type="submit" class="btn btn-dark px-4 fw-bold">BUSCAR</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 5. TABLA GENERAL -->
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-5">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0 text-center">
+                <thead class="bg-light text-muted small text-uppercase">
+                    <tr>
+                        <th class="ps-4 text-start">Aplicación</th>
+                        <th class="text-start">Servicio</th>
+                        <th>Responsable</th>
+                        <th>Especial</th>
+                        <th>Clave</th>
+                        <th>SRE</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for servicio in servicios_info %}
+                    <tr>
+                        <td class="ps-4 text-start fw-bold text-muted small">{{ servicio.codigo_de_aplicacion }}</td>
+                        <td class="text-start">
+                            <a href="{{ url_for('app.detalle_servicio', id=servicio.id_servicio) }}" class="service-link fw-bold">
+                                {{ servicio.servicio }} <i class="bi bi-box-arrow-up-right ms-1 icon-link"></i>
+                            </a>
+                        </td>
+                        <td class="small">{{ servicio.encargado_cgm }}</td>
+                        <td>
+                            {% if servicio.servicio_especial == 'SI' %}
+                                <span class="badge rounded-pill fw-bold px-3 shadow-sm" style="background-color: #00ff88; color: #000; border: 1px solid #00e67a;">SI</span>
+                            {% else %}
+                                <span class="badge rounded-pill bg-light text-muted border px-3">NO</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if servicio.servicio_clave == 'SI' %}
+                                <span class="badge rounded-pill fw-bold px-3 shadow-sm" style="background-color: #00ff88; color: #000; border: 1px solid #00e67a;">SI</span>
+                            {% else %}
+                                <span class="badge rounded-pill bg-light text-muted border px-3">NO</span>
+                            {% endif %}
+                        </td>
+                        <td class="small text-secondary">{{ servicio.sre }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 6. TABLA TOP 20 (NÚMERO MEDIANO Y ELEGANTE) -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden" style="border-top: 4px solid #334155;">
+                <div class="card-header bg-white py-4 px-4 border-0">
+                    <h4 class="fw-bold mb-0 text-dark">Top 20</h4>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light">
+                            <tr class="text-muted small text-uppercase">
+                                <th class="ps-4 text-center" style="width: 80px;">#</th>
+                                <th>Nombre del Servicio</th>
+                                <th class="text-end pe-5">Total Alertas</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for nombre_servicio, total in servicios %}
+                            <tr>
+                                <td class="ps-4 text-center text-muted small">#{{ loop.index }}</td>
+                                <td class="fw-bold">
+                                    <a href="{{ url_for('alertas.detalle_alertas', servicio=nombre_servicio) }}" class="service-link">
+                                        {{ nombre_servicio }} <i class="bi bi-box-arrow-up-right ms-1 icon-link"></i>
+                                    </a>
+                                </td>
+                                <td class="text-end pe-5">
+                                    <div class="d-inline-flex align-items-center justify-content-end">
+                                        <div class="progress me-3 d-none d-md-flex" style="width: 60px; height: 4px; background-color: #f1f5f9;">
+                                            <div class="progress-bar" style="width: {{ (total / 100 * 100) if total < 100 else 100 }}%; background-color: #f87171;"></div>
+                                        </div>
+                                        <!-- TAMAÑO AJUSTADO: NI MUY GRANDE NI MUY PEQUEÑO -->
+                                        <span class="fw-bold" style="font-size: 1.25rem; color: #ef4444; letter-spacing: -0.5px;">
+                                            {{ total }}
+                                        </span>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
+<style>
+    @import url('https://googleapis.com');
+    body { background-color: #f8fafc; }
+    .service-link { color: #334155; text-decoration: none; transition: 0.2s; }
+    .service-link:hover { color: #0d6efd; }
+    .icon-link { opacity: 0; font-size: 0.7rem; transition: 0.2s; }
+    .service-link:hover .icon-link { opacity: 1; }
+    .table tbody tr:hover { background-color: #f8faff !important; }
+</style>
+
+<script>
+    const searchForm = document.getElementById('searchForm');
+    searchForm.addEventListener('submit', () => { sessionStorage.setItem('scrollPosition', window.scrollY); });
+    window.addEventListener('load', () => {
+        const pos = sessionStorage.getItem('scrollPosition');
+        if (pos) { window.scrollTo(0, pos); sessionStorage.removeItem('scrollPosition'); }
+    });
+</script>
+{% endblock %}
 
 
-
-<div class="container mt-5">
-  <h1 class="text-center mb-4">Total Alertas</h1>
-
-  <!-- Card centrado con total de alertas -->
-  <div class="d-flex justify-content-center mb-5">
-    <div class="card text-bg-dark shadow" style="max-width: 20rem;">
-      <div class="card-header text-center fw-bold">
-        <i class="bi bi-bell-fill"></i> Total Alertas
-      </div>
-      <div class="card-body text-center">
-        <h1 class="card-text display-4">{{ alertas }}</h1>
-      </div>
-    </div>
-  </div>
-
-  <!-- Busqueda del servicio -->
-  <h2 class="text-center mt-5">Información del Servicio</h2>
-  <form method="GET" class="mb-4 d-flex justify-content-center">
-    <input type="text" name="label" class="form-control w-25 me-2" placeholder="Buscar por nombre de servicio"
-      value="{{ request.args.get('label', '') }}">
-    <input type="hidden" name="per_page" value="{{ 10 if request.args.get('label', '')|length > 1 else 1 }}">
-    <button type="submit" class="btn btn-primary me-2">Buscar</button>
-    <a href="{{ url_for('alertas.total_alertas') }}" class="btn btn-secondary">Limpiar</a>
-  </form>
-
-  <div class="table-responsive">
-    <table class="table table-striped table-bordered text-center">
-      <thead class="table-secondary">
-        <tr>
-          <th>Codigo de aplicación</th>
-          <th>Servicio</th>
-          <th>Encargado CGM</th>
-          <th>Servicio Especial</th>
-          <th>Servicio clave</th>
-          <th>SRE</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for servicio in servicios_info %}
-        <tr>
-          <td>{{ servicio.codigo_de_aplicacion}}</td>
-          <td>
-            <a href="{{ url_for('app.detalle_servicio', id=servicio.id_servicio) }}">
-              {{ servicio.servicio }}
-            </a>
-          </td>
-          <td>{{ servicio.encargado_cgm }}</td>
-          <td>
-            {% if servicio.servicio_especial == 'SI' %}
-            <span class="badge bg-success">SI</span>
-            {% else %}
-            {{ servicio.servicio_especial }}
-            {% endif %}
-          </td>
-          <td>
-            {% if servicio.servicio_clave == 'SI' %}
-            <span class="badge bg-success">SI</span>
-            {% else %}
-            {{ servicio.servicio_clave }}
-            {% endif %}
-          </td>
-          <td>{{ servicio.sre }}</td>
-
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-
-
-
-
-
-
-
-    <!-- Tabla de servicios con más alertas -->
-    <h3 class="text-center mb-3">Top 20 servicios con más alertas</h3>
-    <div class="table-responsive">
-      <table class="table table-hover table-bordered align-middle text-center">
-        <thead class="table-dark">
-          <tr>
-            <th scope="col">#</th>
-            <th scope="col">Servicio</th>
-            <th scope="col">Total de alertas</th>
-          </tr>
-        </thead>
-        <tbody>
-    {% for nombre_servicio, total in servicios %}
-    <tr>
-        <td>{{ loop.index }}</td>
-        <td>
-            <!-- El texto debe ir DENTRO de la etiqueta <a> -->
-            <a href="{{ url_for('alertas.detalle_alertas', servicio=nombre_servicio) }}">
-                {{ nombre_servicio }}
-            </a>
-        </td>
-        <td>
-            <!-- bg-danger para rojo (puedes usar bg-warning para amarillo o bg-success para verde) -->
-            <span class="badge bg-danger">
-                {{ total }}
-            </span>
-        </td>
-    </tr>
-    {% endfor %}
-</tbody>
-
-      </table>
-    </div>
-  </div>
-
-
-
-
-  {% endblock %}
