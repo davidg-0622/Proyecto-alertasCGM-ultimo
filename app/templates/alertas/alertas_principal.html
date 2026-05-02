@@ -37,18 +37,45 @@
             </div>
         </div>
     </div>
+<!-- 3. KPI PRINCIPAL (DARK CORPORATE) -->
 
-    <!-- 3. KPI PRINCIPAL (TAMAÑO EQUILIBRADO) -->
-    <div class="row justify-content-center mb-5">
-        <div class="col-md-5 col-lg-4">
-            <div class="card border-0 shadow-lg overflow-hidden" style="border-radius: 20px; background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);">
-                <div class="card-body p-4 text-center">
-                    <h6 class="text-info small fw-bold text-uppercase mb-2" style="letter-spacing: 2px; opacity: 0.8;">Volumen Total</h6>
-                    <h1 class="fw-bold text-white mb-0" style="letter-spacing: -2px; font-size: 3rem;">{{ alertas }}</h1>
+
+ <!-- 3. CARD VOLUMEN DE ALERTAS (DISEÑO CORPORATIVO AZUL) -->
+<div class="row justify-content-center mb-5">
+    <div class="col-md-5 col-lg-4">
+        <div class="card border-0 shadow-lg overflow-hidden" style="border-radius: 16px; background: linear-gradient(145deg, #1a1f2e 0%, #141824 100%); border: 1px solid rgba(255,255,255,0.05) !important;">
+            <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div>
+                        <div class="d-flex align-items-center gap-2 mb-1">
+                            <!-- Punto de estado ahora en azul -->
+                            <span style="width:8px; height:8px; border-radius:50%; background:#3b82f6; display:inline-block; box-shadow: 0 0 8px rgba(59, 130, 246, 0.6);"></span>
+                            <span class="fw-bold text-uppercase" style="font-size:10px; letter-spacing:0.12em; color:#3b82f6;">CGM COES</span>
+                        </div>
+                        <h6 class="fw-bold text-white mb-0" style="font-size:15px;">Volumen de Alertas</h6>
+                    </div>
+                    <div class="d-flex align-items-center justify-content-center" style="width:40px; height:40px; border-radius:10px; background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.06);">
+                        <i class="bi bi-bell-fill text-white" style="font-size:16px;"></i>
+                    </div>
                 </div>
+                
+                <!-- Valor Principal -->
+                <h1 class="fw-bold text-white mb-3" style="font-size: 3.5rem; letter-spacing: -2px; line-height:1;">{{ alertas }}</h1>
+                
+                <div class="d-flex align-items-center gap-2">
+                    <!-- Badge en azul con texto blanco para mejor contraste corporativo -->
+                    <span class="fw-semibold px-3 py-1" style="background:#3b82f6; border-radius:20px; font-size:11px; color:#ffffff; letter-spacing:0.03em;"></span>
+                    <span style="font-size:13px; color:rgba(255,255,255,0.5);">Total acumulado</span>
+                </div>
+                
+                <!-- Línea de acento inferior en azul -->
+                <div class="mt-4" style="height:2px; background:linear-gradient(90deg, #3b82f6, transparent); border-radius:2px;"></div>
             </div>
         </div>
     </div>
+</div>
+
+
 
     <!-- 4. BUSCADOR -->
     <div id="search-section" class="row justify-content-center mb-5">
